@@ -1,0 +1,23 @@
+{
+  "brand": "ĂN BILL · FIGHT NIGHT",
+  "headline": {
+    "streak_broken": "Streak broken",
+    "comeback": "Lội ngược dòng",
+    "derby": "Đại chiến tháng",
+    "blowout": "Hủy diệt",
+    "default": "Fight night"
+  },
+  "win": "Chiến thắng",
+  "bill": "Bill {amount}",
+  "wanted": {
+    "title": "WANTED",
+    "subtitle": "TRUY NÃ TOÀN HỘI",
+    "crime": "{count, plural, =0 {Tội danh: cầm cơ quá tự tin} other {Tội danh: thua # trận liên tiếp}}",
+    "reward": "TIỀN THƯỞNG",
+    "footer": "Ai thắng được người này, bàn sau khỏi trả tiền"
+  },
+  "rivalry": {
+    "title": "ĐẠI CHIẾN",
+    "meetings": "{count, plural, other {# lần đối đầu}} · kình địch cân nhất hội"
+  }
+}

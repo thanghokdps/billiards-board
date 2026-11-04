@@ -1,0 +1,47 @@
+{
+  "title": "Hall of Fame",
+  "kicker": "The golden board",
+  "records": "Club records",
+  "recordsEmpty": {
+    "title": "No records yet",
+    "body": "Log a few matches with scores to start the board."
+  },
+  "record": {
+    "biggestMargin": { "title": "Biggest margin", "unit": "points apart" },
+    "closest": { "title": "Closest match", "unit": "points apart" },
+    "longest": { "title": "Longest match", "unit": "points in total" },
+    "busiestDay": { "title": "Busiest day", "unit": "matches in one day" },
+    "priciestDay": { "title": "Priciest session", "unit": "bill for one session" },
+    "comeback": { "title": "Latest comeback", "unit": "came back from behind" }
+  },
+  "posters": "Special-match posters",
+  "postersEmpty": {
+    "title": "No special matches yet",
+    "body": "Broken streaks, comebacks, derbies and blowouts get a poster here."
+  },
+  "reason": {
+    "streak_broken": "Streak broken",
+    "comeback": "Comeback",
+    "derby": "Monthly derby",
+    "blowout": "Blowout"
+  },
+  "posterAlt": "Poster of {sides}",
+  "posterOpen": "Open the poster of {sides}",
+  "posterSheet": "Match poster, {date}",
+  "posterError": "The poster could not load",
+  "achievements": "Achievements",
+  "nobody": "Nobody holds it yet",
+  "badge": {
+    "sniper_3c": { "name": "3C Sniper", "hint": "10+ three-cushion wins at a 60% win rate" },
+    "atm": { "name": "The ATM", "hint": "Pays the most bills in the club" },
+    "phoenix": { "name": "Phoenix", "hint": "Won a comeback match" },
+    "clock": { "name": "Clockwork", "hint": "Turned up for 20 sessions" },
+    "unstoppable": { "name": "Unstoppable", "hint": "A win streak of 5 or more" },
+    "upset_king": { "name": "Upset king", "hint": "Won an upset match" }
+  },
+  "wrapped": {
+    "title": "Wrapped",
+    "body": "The whole season in review: who won, who paid, who bragged.",
+    "cta": "Open Wrapped"
+  }
+}

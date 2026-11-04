@@ -1,0 +1,56 @@
+{
+  "metaTitle": "Bảng xếp hạng",
+  "title": "Bảng xếp hạng",
+  "kicker": "Thống kê cả hội",
+  "filters": {
+    "gameType": "Thể loại",
+    "period": "Khoảng thời gian"
+  },
+  "summary": "Đang xem {game} · {period}: {count, plural, other {# trận}}",
+  "empty": {
+    "title": "Chưa có trận nào để xếp hạng",
+    "body": "Thử đổi bộ lọc, hoặc ghi một trận mới để bảng bắt đầu chạy."
+  },
+  "podium": {
+    "title": "Bục vinh quang",
+    "rank": "Hạng {rank}",
+    "record": "{wins}T – {losses}B",
+    "provisional": "Chưa đủ {min} trận",
+    "rule": "Xếp theo tỉ lệ thắng, cần tối thiểu {min} trận; chưa đủ thì xếp theo số trận thắng."
+  },
+  "table": {
+    "title": "Bảng chi tiết",
+    "caption": "Thống kê từng người chơi, xếp theo hạng",
+    "player": "Người chơi",
+    "played": "Trận",
+    "record": "T – B",
+    "winRate": "Tỉ lệ thắng",
+    "avgPoints": "Điểm TB",
+    "streak": "Chuỗi",
+    "bestWin": "Thắng dài nhất",
+    "bestLoss": "Thua dài nhất",
+    "form": "Phong độ (10 trận)",
+    "paid": "Đã đóng",
+    "strongest": "Mạnh nhất",
+    "weakest": "Yếu nhất",
+    "hint": "Thể loại mạnh/yếu cần ít nhất 3 trận mỗi loại. Vuốt ngang để xem hết các cột."
+  },
+  "elo": {
+    "title": "Elo (tham khảo)",
+    "hint": "Tự tính ngầm sau mỗi trận, chỉ để tham khảo.",
+    "hide": "Ẩn Elo",
+    "show": "Hiện Elo",
+    "hidden": "Elo đang ẩn. Bấm “Hiện Elo” để xem lại.",
+    "empty": "Cần ít nhất hai ngày có trận để vẽ biểu đồ Elo.",
+    "chartLabel": "Biểu đồ Elo theo ngày; bảng chú thích bên dưới ghi Elo hiện tại của từng người"
+  },
+  "h2h": {
+    "title": "Ma trận đối đầu",
+    "hint": "Mỗi ô là tỉ lệ thắng của người ở hàng khi gặp người ở cột (thắng/số trận).",
+    "self": "{name}: ô trống, không tự đấu với mình",
+    "none": "{row} chưa gặp {col}",
+    "cell": "{row} gặp {col}: thắng {wins} trên {played} trận, tỉ lệ {rate}",
+    "legendLoss": "Hay thua",
+    "legendWin": "Hay thắng"
+  }
+}

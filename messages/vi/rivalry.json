@@ -1,0 +1,20 @@
+{
+  "title": "Kình địch",
+  "kicker": "Cặp đấu cân nhất",
+  "hero": "Đại chiến",
+  "heroAria": "{a} đấu {b}, tỉ số đối đầu {aWins} – {bWins}",
+  "meetings": "{count, plural, other {# lần gặp nhau}}",
+  "streak": "Chuỗi trong cặp đấu",
+  "streakLine": "{name} đang thắng liền {count, plural, other {# trận}} trước đối thủ này",
+  "streakNone": "Chưa bên nào dẫn mạch thắng, còn đánh nhau dài.",
+  "byType": "Chia theo loại bàn",
+  "byTypeEmpty": "Chưa gặp nhau ở loại bàn này",
+  "history": "Các lần gặp gần nhất",
+  "poster": "Poster đại chiến",
+  "posterAlt": "Poster đại chiến {a} và {b}",
+  "posterError": "Không tải được poster",
+  "empty": {
+    "title": "Chưa đủ trận đối đầu",
+    "body": "Cần ít nhất 4 lần hai người gặp nhau để chọn ra cặp kình địch."
+  }
+}

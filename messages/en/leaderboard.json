@@ -1,0 +1,56 @@
+{
+  "metaTitle": "Leaderboard",
+  "title": "Leaderboard",
+  "kicker": "Club stats",
+  "filters": {
+    "gameType": "Game type",
+    "period": "Time range"
+  },
+  "summary": "Showing {game} · {period}: {count, plural, one {# match} other {# matches}}",
+  "empty": {
+    "title": "No matches to rank yet",
+    "body": "Try another filter, or log a match to get the board going."
+  },
+  "podium": {
+    "title": "The podium",
+    "rank": "Rank {rank}",
+    "record": "{wins}W – {losses}L",
+    "provisional": "Fewer than {min} games",
+    "rule": "Ranked by win rate with at least {min} games; below that, by most wins."
+  },
+  "table": {
+    "title": "Full table",
+    "caption": "Stats for every player, in rank order",
+    "player": "Player",
+    "played": "Played",
+    "record": "W – L",
+    "winRate": "Win rate",
+    "avgPoints": "Avg pts",
+    "streak": "Streak",
+    "bestWin": "Best win run",
+    "bestLoss": "Worst loss run",
+    "form": "Form (last 10)",
+    "paid": "Paid",
+    "strongest": "Strongest",
+    "weakest": "Weakest",
+    "hint": "Strongest and weakest game type need at least 3 games of each. Swipe sideways to see every column."
+  },
+  "elo": {
+    "title": "Elo (for reference)",
+    "hint": "Calculated quietly after every match, for reference only.",
+    "hide": "Hide Elo",
+    "show": "Show Elo",
+    "hidden": "Elo is hidden. Press “Show Elo” to bring it back.",
+    "empty": "Elo needs match days on at least two different dates to draw a chart.",
+    "chartLabel": "Elo by day; the key below lists everyone's current Elo"
+  },
+  "h2h": {
+    "title": "Head-to-head",
+    "hint": "Each cell is the row player's win rate against the column player (wins/played).",
+    "self": "{name}: empty cell, a player does not face themselves",
+    "none": "{row} has not played {col} yet",
+    "cell": "{row} vs {col}: won {wins} of {played}, {rate}",
+    "legendLoss": "Mostly loses",
+    "legendWin": "Mostly wins"
+  }
+}

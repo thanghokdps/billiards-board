@@ -1,0 +1,62 @@
+{
+  "title": "History",
+  "kicker": "Every match so far",
+  "filters": {
+    "game": "Game type",
+    "period": "Time range"
+  },
+  "summary": "{matches} · {bill}",
+  "dayBill": "Day total {bill}",
+  "openMatch": "Open match details: {title}",
+  "highlightCount": "{count, plural, one {# highlight} other {# highlights}}",
+  "empty": {
+    "title": "No matches here",
+    "body": "This filter has no matches yet. Try a wider time range or clear the game type.",
+    "reset": "Clear filters"
+  },
+  "sheet": {
+    "title": "Match details",
+    "highlights": "Highlights",
+    "noHighlights": "No photos or clips for this match yet.",
+    "image": "Highlight photo",
+    "openClip": "Open clip",
+    "poster": "Poster",
+    "shortId": "Match {id}"
+  },
+  "admin": {
+    "heading": "Admin only",
+    "addHighlight": "Add a highlight",
+    "kind": "Highlight type",
+    "photo": "Photo",
+    "clip": "Clip link",
+    "file": "Choose a photo",
+    "fileHint": "JPEG, PNG or WebP, up to 1.5 MB",
+    "url": "Clip link (https)",
+    "caption": "Caption (optional)",
+    "upload": "Upload photo",
+    "uploading": "Uploading…",
+    "addLink": "Add link",
+    "highlightAdded": "Highlight added",
+    "removeHighlight": "Remove this highlight",
+    "highlightRemoved": "Highlight removed",
+    "editViaChat": "Edit via chat",
+    "chatPrefill": "Edit match {id}: ",
+    "deleteMatch": "Delete match",
+    "confirmTitle": "Delete this match?",
+    "confirmBody": "It will disappear from the history and the stats. You can undo right after.",
+    "confirmYes": "Delete match",
+    "deleting": "Deleting…",
+    "matchDeleted": "Match deleted",
+    "matchRestored": "Match restored"
+  },
+  "errors": {
+    "type": "Only JPEG, PNG or WebP photos are accepted.",
+    "size": "That photo is too big, 1.5 MB at most. Pick a smaller one.",
+    "noFile": "No photo chosen.",
+    "url": "The link must start with https://",
+    "unauthenticated": "Admin session expired. Sign in again.",
+    "notFound": "Not found, it may have been deleted.",
+    "invalid": "Invalid data.",
+    "generic": "Something went wrong, try again."
+  }
+}

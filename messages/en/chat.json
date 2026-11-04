@@ -1,0 +1,71 @@
+{
+  "title": "Match assistant",
+  "placeholder": "e.g. 3c real Thén beat Dũ 15-11, bill 45k",
+  "disclaimer": "The assistant can make mistakes. Check the card before you tap Save.",
+  "welcomeTitle": "Log a match in 10 seconds",
+  "welcomeBody": "Type or tap the mic and say it like at the table. Every write shows a confirm card.",
+  "suggestions": {
+    "log": "3c real Thén beat Dũ 15-11, bill 45k",
+    "batch": "lunch: libre Bổ > Hi 40-32 bill 50k, 3c fake Lâm beat Thén bill 30k",
+    "money": "who paid the most this month?",
+    "h2h": "Thén vs Lâm all time",
+    "wheel": "spin a 1v1 pairing",
+    "roast": "roast Bổ"
+  },
+  "mic": "Speak to log a match",
+  "micStop": "Stop listening",
+  "micUnsupported": "This browser has no voice input",
+  "listening": "Listening…",
+  "working": "Working it out…",
+  "card": {
+    "createTitle": "{count, plural, one {Log # match} other {Log # matches}}",
+    "updateTitle": "Edit match",
+    "deleteTitle": "Delete this match?",
+    "save": "Save",
+    "saveAll": "Save all",
+    "confirmDelete": "Delete",
+    "cancel": "Discard",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "updated": "Updated",
+    "deletedDone": "Deleted",
+    "cancelled": "Discarded, nothing written",
+    "undo": "Undo · {seconds}s",
+    "undone": "Undone",
+    "retry": "Retry",
+    "failed": "Could not save: {reason}",
+    "before": "Before",
+    "after": "After",
+    "date": "Date {date}",
+    "streakBroken": "STREAK BROKEN",
+    "special": {
+      "streak_broken": "Streak broken!",
+      "comeback": "Comeback!",
+      "derby": "Month-end derby!",
+      "blowout": "Blowout!"
+    }
+  },
+  "ask": {
+    "game_type": "Which game?",
+    "winner": "Who won?",
+    "players": "Who played?",
+    "match": "Which match?",
+    "player": "Which player?",
+    "ambiguous": "Who is “{name}”?",
+    "unknown": "No “{name}” in the group. Who did you mean?"
+  },
+  "stats": {
+    "matches": "{count, plural, one {# match} other {# matches}}"
+  },
+  "h2h": {
+    "title": "Head to head",
+    "meetings": "{count, plural, one {# meeting} other {# meetings}}"
+  },
+  "poster": {
+    "open": "Open image",
+    "loading": "Drawing the poster…"
+  },
+  "error": "The assistant failed. Try again.",
+  "toolFailed": "Could not load the data.",
+  "unauthorized": "Your admin session expired. Log in again."
+}

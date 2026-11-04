@@ -1,0 +1,46 @@
+{
+  "title": "Chế độ TV",
+  "exit": "Thoát",
+  "exitLabel": "Thoát chế độ TV",
+  "prev": "Bảng trước",
+  "next": "Bảng sau",
+  "pause": "Tạm dừng tự chuyển bảng",
+  "play": "Tiếp tục tự chuyển bảng",
+  "shortcutHint": "← → đổi bảng",
+  "panelsLabel": "Các bảng trên màn hình",
+  "panel": {
+    "scoreboard": "Bảng điểm",
+    "streaks": "Chuỗi",
+    "leaderboard": "Top 5",
+    "bill": "Tiền bàn"
+  },
+  "scoreboard": {
+    "title": "Bảng điểm hôm nay",
+    "latestTitle": "Buổi gần nhất",
+    "empty": "Chưa có trận nào",
+    "emptyBody": "Trận đầu tiên sẽ hiện ở đây ngay khi được ghi.",
+    "more": "{count, plural, other {+# trận nữa}}"
+  },
+  "streaks": {
+    "title": "Đang có chuỗi",
+    "hot": "Chuỗi thắng",
+    "cold": "Chuỗi thua",
+    "wins": "{count, plural, other {# trận thắng liền}}",
+    "losses": "{count, plural, other {# trận thua liền}}",
+    "empty": "Chưa ai có chuỗi",
+    "emptyBody": "Thắng hoặc thua liền 2 trận là lên bảng."
+  },
+  "leaderboard": {
+    "title": "Top 5 bảng xếp hạng",
+    "empty": "Chưa có xếp hạng",
+    "emptyBody": "Cần ít nhất một trận để lên bảng."
+  },
+  "bill": {
+    "title": "Tổng tiền bàn",
+    "matches": "Số trận",
+    "average": "Trung bình mỗi trận",
+    "payers": "Đóng nhiều nhất",
+    "empty": "Chưa có bill",
+    "emptyBody": "Tiền bàn sẽ cộng dồn khi các trận được ghi bill."
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "title": "Rivalry",
+  "kicker": "The most evenly matched pair",
+  "hero": "Showdown",
+  "heroAria": "{a} against {b}, head-to-head {aWins} – {bWins}",
+  "meetings": "{count, plural, one {# meeting} other {# meetings}}",
+  "streak": "Streak within the rivalry",
+  "streakLine": "{name} has won {count, plural, one {# match} other {# matches}} in a row against this opponent",
+  "streakNone": "Nobody is on a run yet, it is still a long fight.",
+  "byType": "By table type",
+  "byTypeEmpty": "They have not met on this table type",
+  "history": "Latest meetings",
+  "poster": "Showdown poster",
+  "posterAlt": "Showdown poster of {a} and {b}",
+  "posterError": "The poster could not load",
+  "empty": {
+    "title": "Not enough meetings yet",
+    "body": "The pair needs at least 4 meetings before a rivalry shows up."
+  }
+}
