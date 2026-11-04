@@ -3,6 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { FilterLinks } from "@/components/ui/filter-links";
 import { EmptyState, PageHeader } from "@/components/ui/misc";
+import { RollingNumber } from "@/components/ui/rolling-number";
 import { formatVnd, type Period } from "@/lib/domain";
 import type { MoneyBreakdown } from "@/lib/stats";
 
@@ -55,7 +56,7 @@ export async function MoneyView({ money, period, grain }: MoneyViewProps) {
           <section aria-label={t("total")} className="felt rounded-lg border border-line p-5 shadow-card">
             <p className="text-xs font-medium text-ivory-muted">{t("total")}</p>
             <p className="mt-1 inline-block max-w-full rounded-md bg-night/70 px-3 py-1 digits text-score font-bold text-lamp digits-glow sm:text-hero">
-              {formatVnd(money.total, locale)}
+              <RollingNumber value={formatVnd(money.total, locale)} />
             </p>
             <div className="mt-3 flex flex-wrap items-end gap-x-8 gap-y-2">
               <div>

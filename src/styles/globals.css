@@ -57,6 +57,7 @@
   --animate-pulse-ring: pulse-ring 2s ease-out infinite;
   --animate-lamp-on: lamp-on 0.9s ease-out both;
   --animate-rack-in: rack-in 0.32s cubic-bezier(0.2, 1.3, 0.4, 1) both;
+  --animate-plinth: plinth-rise 0.55s cubic-bezier(0.2, 1.2, 0.4, 1) backwards;
 
   /* One ball colour per page in the navigation rack. */
   --color-pool-yellow: #f2b632;
@@ -78,6 +79,39 @@
     to {
       opacity: 1;
       transform: none;
+    }
+  }
+
+  @keyframes plinth-rise {
+    from {
+      transform: scaleY(0);
+    }
+  }
+
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.625rem);
+    }
+  }
+
+  @keyframes digit-spin {
+    from {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes foil-sweep {
+    0% {
+      opacity: 0;
+      background-position: 0% 0%;
+    }
+    40% {
+      opacity: 0.32;
+    }
+    100% {
+      opacity: 0;
+      background-position: 100% 100%;
     }
   }
 
@@ -272,6 +306,88 @@
   .overlay-fade[data-state="open"] {
     animation: fade-in 0.2s ease-out;
   }
+  /* One LED digit: the real digit holds the width, the reel spins over it. */
+  .digit-cell {
+    position: relative;
+    display: inline-block;
+    overflow-y: clip;
+  }
+  .digit-reel {
+    position: absolute;
+    inset: 0 0 auto;
+    transform: translateY(calc((var(--digit) + 10) * -5%));
+    animation: digit-spin 0.9s cubic-bezier(0.16, 0.84, 0.3, 1) backwards;
+    animation-delay: calc(var(--order) * 45ms);
+  }
+  .digit-reel > span {
+    display: block;
+  }
+  /* The clip would cut a text-shadow into a hard edge; a filter on the parent glows around the clipped digits. */
+  .digits-glow:has(.digit-cell),
+  .digits-glow .digit-cell {
+    text-shadow: none;
+  }
+  .digits-glow:has(.digit-cell) {
+    filter: drop-shadow(0 0 9px rgb(245 196 81 / 0.45));
+  }
+  /* Rows land one after another; past the eighth they arrive together so a long list never makes anyone wait. */
+  .stagger-in > * {
+    animation: rise-in 0.36s cubic-bezier(0.2, 0.8, 0.3, 1) backwards;
+    animation-delay: 320ms;
+  }
+  .stagger-in > :nth-child(1) {
+    animation-delay: 0ms;
+  }
+  .stagger-in > :nth-child(2) {
+    animation-delay: 45ms;
+  }
+  .stagger-in > :nth-child(3) {
+    animation-delay: 90ms;
+  }
+  .stagger-in > :nth-child(4) {
+    animation-delay: 135ms;
+  }
+  .stagger-in > :nth-child(5) {
+    animation-delay: 180ms;
+  }
+  .stagger-in > :nth-child(6) {
+    animation-delay: 225ms;
+  }
+  .stagger-in > :nth-child(7) {
+    animation-delay: 270ms;
+  }
+  .holo-frame {
+    transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+    transition: transform 0.45s cubic-bezier(0.2, 1.3, 0.4, 1);
+  }
+  .holo-frame[data-leaning] {
+    transition: transform 0.08s linear;
+  }
+  .holo-foil {
+    background-image:
+      radial-gradient(circle at var(--foil-x, 50%) var(--foil-y, 50%), rgb(255 255 255 / 0.3), transparent 50%),
+      linear-gradient(
+        115deg,
+        var(--color-lamp),
+        var(--color-pool-pink),
+        var(--color-chalk),
+        var(--color-felt-bright),
+        var(--color-lamp)
+      );
+    background-size:
+      100% 100%,
+      300% 300%;
+    background-position:
+      0 0,
+      var(--foil-x, 50%) var(--foil-y, 50%);
+    mix-blend-mode: color-dodge;
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    animation: foil-sweep 1.8s ease-out 0.5s;
+  }
+  [data-leaning] > .holo-foil {
+    opacity: 0.2;
+  }
   .no-scrollbar {
     scrollbar-width: none;
   }
@@ -314,5 +430,12 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  /* Their delays would otherwise hold the first frame back: a digit stuck at 0, a row still hidden. */
+  .digit-reel,
+  .stagger-in > *,
+  .animate-plinth,
+  .holo-foil {
+    animation: none !important;
   }
 }

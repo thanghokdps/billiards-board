@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 
 import { PlayerAvatar } from "@/components/ui/player-avatar";
+import { RollingNumber } from "@/components/ui/rolling-number";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
 import type { HeadToHead, StatPlayer } from "@/lib/stats";
@@ -32,9 +33,13 @@ export function RivalryHero({ h }: { h: HeadToHead }) {
           aria-label={t("heroAria", { a: h.a.name, b: h.b.name, aWins: h.aWins, bWins: h.bWins })}
           className="flex shrink-0 items-baseline gap-2 rounded-md bg-night/70 px-3 py-2 digits text-score font-bold"
         >
-          <span className={cn(aLeads ? "text-lamp digits-glow" : "text-ivory")}>{h.aWins}</span>
+          <span className={cn(aLeads ? "text-lamp digits-glow" : "text-ivory")}>
+            <RollingNumber value={String(h.aWins)} />
+          </span>
           <span className="text-ivory-faint">:</span>
-          <span className={cn(bLeads ? "text-lamp digits-glow" : "text-ivory")}>{h.bWins}</span>
+          <span className={cn(bLeads ? "text-lamp digits-glow" : "text-ivory")}>
+            <RollingNumber value={String(h.bWins)} />
+          </span>
         </div>
         <Fighter player={h.b} />
       </div>

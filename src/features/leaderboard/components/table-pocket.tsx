@@ -7,17 +7,26 @@ interface TablePocketProps {
   tall: PocketLine;
   wide: PocketLine;
   active: boolean;
+  live: boolean;
   onPick: () => void;
 }
 
 /** A hole in the felt that ranks the balls by one stat. */
-export function TablePocket({ label, tall, wide, active, onPick }: TablePocketProps) {
+export function TablePocket({ label, tall, wide, active, live, onPick }: TablePocketProps) {
   return (
     <button
       type="button"
+      data-pocket
+      data-tall={`${tall.from.x},${tall.from.y}`}
+      data-wide={`${wide.from.x},${wide.from.y}`}
       aria-pressed={active}
       onClick={onPick}
-      className="absolute top-(--y-tall) left-(--x-tall) -mt-5.5 -ml-5.5 size-11 cursor-pointer rounded-full @xl:top-(--y-wide) @xl:left-(--x-wide)"
+      className={cn(
+        "absolute -mt-5.5 -ml-5.5 size-11 cursor-pointer rounded-full",
+        live
+          ? "top-0 left-0 translate-x-(--scene-x) translate-y-(--scene-y)"
+          : "top-(--y-tall) left-(--x-tall) @xl:top-(--y-wide) @xl:left-(--x-wide)",
+      )}
       style={{
         ["--x-tall" as string]: `${tall.from.x}%`,
         ["--y-tall" as string]: `${tall.from.y}%`,
@@ -30,8 +39,9 @@ export function TablePocket({ label, tall, wide, active, onPick }: TablePocketPr
       <span
         aria-hidden
         className={cn(
-          "absolute inset-1.5 rounded-full border-3 bg-night transition-colors",
-          active ? "border-lamp" : "border-night",
+          "absolute inset-1.5 rounded-full border-3 transition-colors",
+          !live && "bg-night",
+          active ? "border-lamp" : live ? "border-transparent" : "border-night",
         )}
       />
       <span

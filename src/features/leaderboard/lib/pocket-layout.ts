@@ -39,7 +39,8 @@ export const POCKETS: Record<PocketMetric, { tall: PocketLine; wide: PocketLine 
   bestLoss: { tall: line(100, 100, 0, 0, BOTTOM_RIGHT), wide: line(100, 100, 0, 0, BOTTOM_RIGHT) },
 };
 
-const NEAREST = 0.14;
+// Clear of the pocket's name, which the tilted table squeezes towards the ball.
+const NEAREST = 0.2;
 const FARTHEST = 0.86;
 
 /** Where a ball rests on the line: the leader by the pocket, the last one by the far end. */

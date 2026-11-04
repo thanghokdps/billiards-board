@@ -57,7 +57,7 @@ export function Scoreboard({ matches, streaks, specials, admin }: ScoreboardProp
   }
 
   return (
-    <ul className="divide-y divide-line">
+    <ul className="stagger-in divide-y divide-line">
       {matches.map((m) => {
         const reason = specials[m.id];
         const footer =

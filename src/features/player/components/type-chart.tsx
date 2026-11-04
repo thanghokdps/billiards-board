@@ -43,7 +43,6 @@ export function TypeChart({ byGameType }: { byGameType: Record<GameType, TypeRat
           <YAxis hide domain={[0, 100]} />
           <Bar
             dataKey="rate"
-            isAnimationActive={false}
             shape={(p: BarShapeProps) => <Rectangle {...p} fill={p.payload.color} radius={[6, 6, 0, 0]} />}
           />
         </BarChart>

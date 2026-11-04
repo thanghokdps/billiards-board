@@ -110,7 +110,7 @@ export function EloSection({ players, history }: { players: StatPlayer[]; histor
                         strokeWidth={2.5}
                         dot={false}
                         connectNulls
-                        isAnimationActive={false}
+                        animationDuration={1200}
                       />
                     ))}
                   </LineChart>

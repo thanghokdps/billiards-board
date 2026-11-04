@@ -1,6 +1,9 @@
 import { useLocale, useTranslations } from "next-intl";
 
+import { RollingNumber } from "@/components/ui/rolling-number";
 import { formatDate, formatVnd } from "@/lib/domain";
+
+import { BreakShot } from "./break-shot";
 
 interface TableHeroProps {
   title: string;
@@ -14,8 +17,9 @@ export function TableHero({ title, date, totalBill }: TableHeroProps) {
   const locale = useLocale();
   return (
     <section aria-labelledby="table-hero-title" className="table-rail">
-      <div className="felt animate-lamp-on rounded-md p-4 shadow-[inset_0_0_32px_rgb(0_0_0/0.45)] sm:p-6">
-        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-5">
+      <div className="felt relative animate-lamp-on rounded-md p-4 shadow-[inset_0_0_32px_rgb(0_0_0/0.45)] sm:p-6">
+        <BreakShot />
+        <div className="relative flex flex-wrap items-end justify-between gap-x-6 gap-y-5">
           <div className="min-w-0">
             <h1 id="table-hero-title" className="font-display text-4xl font-extrabold leading-none sm:text-5xl">
               {title}
@@ -25,7 +29,7 @@ export function TableHero({ title, date, totalBill }: TableHeroProps) {
           <div className="ml-auto text-right">
             <p className="text-xs font-medium">{t("totalBill")}</p>
             <p className="digits digits-glow text-6xl font-extrabold leading-none text-lamp sm:text-hero">
-              {formatVnd(totalBill, locale)}
+              <RollingNumber value={formatVnd(totalBill, locale)} />
             </p>
           </div>
         </div>

@@ -2,6 +2,7 @@ import { Crown } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { PlayerAvatar } from "@/components/ui/player-avatar";
+import { RollingNumber } from "@/components/ui/rolling-number";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
 import { formatPercent } from "@/lib/domain";
@@ -11,8 +12,8 @@ import { SectionTitle } from "./section-title";
 import { MIN_RANKED_GAMES } from "../lib/ranking";
 
 const SLOTS = [
-  { rank: 1, plinth: "h-20", avatar: "xl", order: "order-2" },
-  { rank: 2, plinth: "h-14", avatar: "lg", order: "order-1" },
+  { rank: 1, plinth: "h-20 [animation-delay:300ms]", avatar: "xl", order: "order-2" },
+  { rank: 2, plinth: "h-14 [animation-delay:150ms]", avatar: "lg", order: "order-1" },
   { rank: 3, plinth: "h-10", avatar: "lg", order: "order-3" },
 ] as const;
 
@@ -45,7 +46,7 @@ export function Podium({ top }: { top: PlayerStats[] }) {
                 />
                 <span className="w-full truncate font-bold group-hover:text-lamp">{s.player.name}</span>
                 <span className={cn("digits text-score font-bold", first ? "text-lamp digits-glow" : "text-ivory")}>
-                  {formatPercent(s.winRate, locale)}
+                  <RollingNumber value={formatPercent(s.winRate, locale)} />
                 </span>
                 <span className="text-2xs text-ivory-muted">{t("record", { wins: s.wins, losses: s.losses })}</span>
                 {s.played < MIN_RANKED_GAMES && (
@@ -54,7 +55,7 @@ export function Podium({ top }: { top: PlayerStats[] }) {
               </Link>
               <div
                 className={cn(
-                  "flex w-full items-start justify-center rounded-t-md border border-b-0 pt-2 digits text-2xl font-bold",
+                  "flex w-full origin-bottom animate-plinth items-start justify-center rounded-t-md border border-b-0 pt-2 digits text-2xl font-bold",
                   plinth,
                   first
                     ? "border-lamp/50 bg-lamp/15 text-lamp shadow-lamp"

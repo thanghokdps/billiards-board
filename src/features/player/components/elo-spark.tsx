@@ -3,6 +3,8 @@
 import { useTranslations } from "next-intl";
 import { Line, LineChart, YAxis } from "recharts";
 
+import { RollingNumber } from "@/components/ui/rolling-number";
+
 interface EloSparkProps {
   history: { date: string; elo: number | null }[];
   color: string;
@@ -30,7 +32,7 @@ export function EloSpark({ history, color }: EloSparkProps) {
           accessibilityLayer={false}
         >
           <YAxis hide domain={["dataMin - 10", "dataMax + 10"]} />
-          <Line type="monotone" dataKey="elo" stroke={color} strokeWidth={3} dot={false} isAnimationActive={false} />
+          <Line type="monotone" dataKey="elo" stroke={color} strokeWidth={3} dot={false} animationDuration={1200} />
         </LineChart>
       </div>
       <dl className="grid flex-1 grid-cols-3 gap-2">
@@ -42,7 +44,7 @@ export function EloSpark({ history, color }: EloSparkProps) {
                 key === "current" ? "digits text-3xl font-bold text-lamp digits-glow" : "digits text-3xl font-bold"
               }
             >
-              {value}
+              <RollingNumber value={String(value)} />
             </dd>
           </div>
         ))}

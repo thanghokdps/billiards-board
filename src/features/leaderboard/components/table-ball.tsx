@@ -15,6 +15,8 @@ interface TableBallProps {
   rank: number;
   showTag: boolean;
   selected: boolean;
+  /** The WebGL table is drawing this ball, so this button only sits on it. */
+  live: boolean;
   onPick: () => void;
 }
 
@@ -30,6 +32,7 @@ export function TableBall({
   rank,
   showTag,
   selected,
+  live,
   onPick,
 }: TableBallProps) {
   const tagTall = tagPlacement(tallLine, tall);
@@ -37,12 +40,15 @@ export function TableBall({
   return (
     <button
       type="button"
+      data-ball={stats.player.id}
       aria-label={label}
       aria-pressed={selected}
       onClick={onPick}
       className={cn(
-        "absolute top-(--y-tall) left-(--x-tall) -mt-6 -ml-6 size-12 cursor-pointer rounded-full @xl:top-(--y-wide) @xl:left-(--x-wide)",
-        "transition-[left,top] duration-700 ease-[cubic-bezier(0.2,1.15,0.35,1)] motion-reduce:transition-none",
+        "absolute -mt-6 -ml-6 size-12 cursor-pointer rounded-full",
+        live
+          ? "top-0 left-0 translate-x-(--scene-x) translate-y-(--scene-y)"
+          : "top-(--y-tall) left-(--x-tall) transition-[left,top] duration-700 ease-[cubic-bezier(0.2,1.15,0.35,1)] motion-reduce:transition-none @xl:top-(--y-wide) @xl:left-(--x-wide)",
         selected && "outline-2 outline-offset-4 outline-ivory",
       )}
       style={{
@@ -57,7 +63,12 @@ export function TableBall({
         ["--align-wide" as string]: tagWide.align,
       }}
     >
-      <PlayerAvatar player={stats.player} size="md" streak={stats.current} className="shadow-card" />
+      <PlayerAvatar
+        player={stats.player}
+        size="md"
+        streak={stats.current}
+        className={cn("shadow-card transition-opacity duration-500", live && "opacity-0")}
+      />
       {rank === 0 && showTag && <span aria-hidden className="absolute -inset-1 rounded-full ring-3 ring-lamp" />}
       <span
         aria-hidden
