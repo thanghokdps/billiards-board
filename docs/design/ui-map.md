@@ -1,6 +1,10 @@
 # UI map — admin chat (Ăn Bill)
 
-No Figma: the design is the requirement's concept "Bàn nỉ xanh về đêm" (night billiards hall, felt green, lamp yellow, LED digits). The tokens are in `src/styles/globals.css` (`@theme`). Viewports: 375 px phone and desktop ≥ 1024 px (ADR 0002 Q2v).
+No Figma: the design concept is "Bàn đã bật đèn", a real table from above (wood rail, six pockets, felt under a lamp, scoreboard numerals in Big Shoulders, body text in Be Vietnam Pro). The tokens are in `src/styles/globals.css` (`@theme`). Viewports: 375 px phone and desktop ≥ 1024 px (ADR 0002 Q2v).
+
+## Navigation
+
+One navigation at every width, no sidebar: `FloatingDock` holds Today, History, the 8-ball, Board, and Wheel (viewer) or the assistant (admin). The 8-ball opens `RackMenu`: ten pages racked 1-2-3-4 as balls on the felt, with Change log and Admin as plain links under the rack.
 
 ## Chat states
 
