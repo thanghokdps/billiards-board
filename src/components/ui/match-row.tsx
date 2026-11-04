@@ -37,14 +37,23 @@ function Side({
   winLabel: string;
   lossLabel?: string;
 }) {
+  const isTeam = players.length > 1;
   return (
-    <div className={cn("flex min-w-0 flex-1 items-center gap-2", align === "right" && "flex-row-reverse text-right")}>
+    <div
+      className={cn(
+        "flex min-w-0 flex-1 items-center gap-2",
+        align === "right" && "flex-row-reverse text-right",
+        // Beside two avatars a phone leaves room for a letter or two, so the names go underneath.
+        isTeam && "max-sm:flex-col max-sm:gap-1",
+        isTeam && (align === "right" ? "max-sm:items-end" : "max-sm:items-start"),
+      )}
+    >
       <div className={cn("flex", align === "right" ? "flex-row-reverse -space-x-reverse" : "", "-space-x-2")}>
         {players.map((p) => (
           <PlayerAvatar key={p.id} player={p} size="sm" streak={streaks?.[p.id]} />
         ))}
       </div>
-      <div className="min-w-0">
+      <div className="min-w-0 max-w-full">
         {/* A 2v2 side wraps: truncating two names on a phone left only initials next to the avatars. */}
         <p className={cn("font-bold leading-tight wrap-anywhere", won ? "text-ivory" : "text-ivory-muted")}>
           {players.map((p) => p.name).join(" & ")}
