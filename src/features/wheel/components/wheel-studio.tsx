@@ -9,7 +9,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { Chip } from "@/components/ui/chip";
 import { EmptyState } from "@/components/ui/misc";
 import { useChat } from "@/features/shell";
-import { MATCH_FORMATS, matchTitle, type MatchFormat } from "@/lib/domain";
+import { matchTitle, PAIRING_FORMATS, type PairingFormat } from "@/lib/domain";
 import { applyVictim, probabilities, type WheelEntry } from "@/lib/wheel";
 import type { PlayerRef } from "@/server/matches/schema";
 
@@ -50,7 +50,7 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
   const hintId = useId();
   const [included, setIncluded] = useState<number[]>(defaultIncluded);
   const [weights, setWeights] = useState<Record<number, number>>({});
-  const [mode, setMode] = useState<MatchFormat>("2v2");
+  const [mode, setMode] = useState<PairingFormat>("2v2");
   const [spinnerId, setSpinnerId] = useState<number | null>(null);
   const [victimId, setVictimId] = useState<number | null>(null);
   const [multiplier, setMultiplier] = useState<number | null>(null);
@@ -119,7 +119,7 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
     setWeights({});
   }
 
-  function changeMode(next: MatchFormat) {
+  function changeMode(next: PairingFormat) {
     setMode(next);
     setPicks([]);
   }
@@ -192,7 +192,7 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
         <section>
           <CardTitle>{t("modeTitle")}</CardTitle>
           <div role="group" aria-label={t("modeTitle")} className="flex gap-2">
-            {MATCH_FORMATS.map((m) => (
+            {PAIRING_FORMATS.map((m) => (
               <Chip
                 key={m}
                 selected={mode === m}

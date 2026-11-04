@@ -4,10 +4,32 @@ export const GAME_TYPES = ["3c_real", "3c_fake", "libre"] as const;
 export type GameType = (typeof GAME_TYPES)[number];
 /** Display names, the same in every language. */
 export const GAME_LABEL: Record<GameType, string> = { "3c_real": "3C Real", "3c_fake": "3C Fake", libre: "Libre" };
-export const MATCH_FORMATS = ["1v1", "2v2", "1v1v1"] as const;
+/** The formats the group plays among itself: what the wheel can pair. */
+export const PAIRING_FORMATS = ["1v1", "2v2", "1v1v1"] as const;
+export type PairingFormat = (typeof PAIRING_FORMATS)[number];
+export const MATCH_FORMATS = [...PAIRING_FORMATS, "guest"] as const;
 export type MatchFormat = (typeof MATCH_FORMATS)[number];
 export type Side = "a" | "b";
-export const PLAYERS_IN_FORMAT: Record<MatchFormat, number> = { "1v1": 2, "2v2": 4, "1v1v1": 3 };
+export const PLAYERS_IN_FORMAT: Record<PairingFormat, number> = { "1v1": 2, "2v2": 4, "1v1v1": 3 };
+
+/**
+ * The opponent of a guest match, for display only. The guest is no row in `players`: a guest match is
+ * sideA = the player, sideB empty, winnerSide "a" when the player won, so every per-player list leaves it out.
+ */
+export const GUEST_SEAT = {
+  id: 0,
+  slug: "guest",
+  name: "Guest",
+  nickname: null,
+  ballColor: "#8a8f98",
+  ballNumber: 0,
+  avatarUrl: null,
+};
+
+/** Side B as shown: its players, or the guest. */
+export function shownSideB<T>(match: { format: MatchFormat; sideB: T[] }): (T | typeof GUEST_SEAT)[] {
+  return match.format === "guest" ? [GUEST_SEAT] : match.sideB;
+}
 
 /**
  * A 1v1v1 has one loser who pays and two winners, so it is stored as two sides: sideA = the winners,
@@ -16,6 +38,7 @@ export const PLAYERS_IN_FORMAT: Record<MatchFormat, number> = { "1v1": 2, "2v2":
 export function formatOfSides(sizeA: number, sizeB: number): MatchFormat | null {
   if (sizeA === 1 && sizeB === 1) return "1v1";
   if (sizeA === 2 && sizeB === 2) return "2v2";
+  if (sizeA === 1 && sizeB === 0) return "guest";
   return sizeA === 2 && sizeB === 1 ? "1v1v1" : null;
 }
 
@@ -26,7 +49,7 @@ export function matchTitle(
 ): string {
   const names = (side: { name: string }[]) => side.map((p) => p.name);
   if (match.format === "1v1v1") return [...names(match.sideA), ...names(match.sideB)].join(` ${vs} `);
-  return `${names(match.sideA).join(" & ")} ${vs} ${names(match.sideB).join(" & ")}`;
+  return `${names(match.sideA).join(" & ")} ${vs} ${names(shownSideB(match)).join(" & ")}`;
 }
 
 /** "40-32", or "A 40, B 32, C 18" for a 1v1v1; null when no score was recorded. */

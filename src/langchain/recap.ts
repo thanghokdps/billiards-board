@@ -3,7 +3,7 @@ import "server-only";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 
 import type { Locale } from "@/i18n/routing";
-import { formatDate, formatVnd, GAME_LABEL, matchTitle, scoreLine } from "@/lib/domain";
+import { formatDate, formatVnd, GAME_LABEL, matchTitle, scoreLine, shownSideB } from "@/lib/domain";
 import { computePlayerStats } from "@/lib/stats";
 import { getServerEnv } from "@/server/env";
 import { loadBoard } from "@/server/stats/service";
@@ -41,7 +41,7 @@ async function recapFacts(date: string, locale: Locale) {
         ? { everyOneForThemselves: matchTitle(m), loserPaysAlone: m.sideB[0]?.name }
         : {
             sideA: m.sideA.map((p) => p.name),
-            sideB: m.sideB.map((p) => p.name),
+            sideB: shownSideB(m).map((p) => p.name),
             winner: m.winnerSide === "a" ? "sideA" : "sideB",
           }),
       score: scoreLine(m),

@@ -144,6 +144,18 @@ if (process.argv.includes("--demo")) {
       { matchId: threeWay.id, playerId: third, side: "b", score: 18 },
     ]);
   }
+  if (latest && first && second) {
+    const guestMatches = await db
+      .insert(matches)
+      .values([
+        { sessionId: latest.id, playedAt: new Date(), gameType: "3c_real", format: "guest", winnerSide: "b" },
+        { sessionId: latest.id, playedAt: new Date(), gameType: "libre", format: "guest", winnerSide: "a" },
+      ])
+      .returning();
+    await db
+      .insert(matchPlayers)
+      .values([first, second].map((playerId, i) => ({ matchId: guestMatches[i]!.id, playerId, side: "a" as const })));
+  }
   console.log("demo matches seeded");
 }
 
