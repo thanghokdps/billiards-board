@@ -23,6 +23,7 @@ One navigation at every width, no sidebar: `FloatingDock` holds Today, History, 
 | Table frame | `features/home/components/table-frame.tsx`, `.pool-*` | CSS pocket table: rails, cushions, sights, six pockets |
 | Dock | `features/shell/components/floating-dock.tsx`, `.dock*` | Wooden rail tilted by a pseudo-element behind upright keys; the current page is a key held down |
 | Pixel pet | `features/shell` (`pixel-pet`, `lib/pet-brain`, `lib/pet-sprites`) | Canvas sprite. Roams; a click makes it leap there, cheer on a control, go dizzy after four quick clicks; it tumbles on scroll, cheers on a new page, sleeps after 25 s idle. Absent under reduced motion, never takes a click |
+| Backdrop | `features/shell` (`lamp-smoke`, `match-art`, `lib/smoke-shader`, `lib/match-strokes`) | Raw WebGL smoke at 0.4 scale and 30 fps, no `three`. The last 16 matches paint as ball paths in the winner's colour, seeded by match id, then the canvas stops. Reduced motion gets one still frame |
 
 WebGL failure or a lost context falls back to the flat table or chart. A new `.digit-reel`-style delayed animation must also go in the reduced-motion block of `globals.css`, or its delay holds back the first frame.
 

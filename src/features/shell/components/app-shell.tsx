@@ -10,6 +10,7 @@ import { MatchMomentOverlay } from "@/features/matches";
 import { Link, usePathname } from "@/i18n/navigation";
 
 import { FloatingDock } from "./floating-dock";
+import { LampSmoke } from "./lamp-smoke";
 import { LanguageSwitch } from "./language-switch";
 import { PixelPet } from "./pixel-pet";
 import { ChatContext, type ChatControls, type PendingChatMessage } from "../chat-context";
@@ -19,10 +20,12 @@ const AdminChat = dynamic(() => import("@/features/chat").then((m) => m.AdminCha
 
 interface AppShellProps {
   admin: boolean;
+  /** Painting behind the page, from the server; left out on full-bleed screens. */
+  art: ReactNode;
   children: ReactNode;
 }
 
-export function AppShell({ admin, children }: AppShellProps) {
+export function AppShell({ admin, art, children }: AppShellProps) {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const [chatOpen, setChatOpen] = useState(false);
@@ -56,6 +59,10 @@ export function AppShell({ admin, children }: AppShellProps) {
 
   return (
     <ChatContext.Provider value={controls}>
+      <div aria-hidden className="backdrop">
+        <LampSmoke />
+        {art}
+      </div>
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-lamp focus:px-3 focus:py-2 focus:text-night"

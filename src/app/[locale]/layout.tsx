@@ -5,12 +5,13 @@ import { Be_Vietnam_Pro, Big_Shoulders } from "next/font/google";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { Toaster } from "sonner";
 
-import { AppShell } from "@/features/shell";
+import { AppShell, MatchArt, toMatchStrokes } from "@/features/shell";
 import { routing } from "@/i18n/routing";
 import { isAdmin } from "@/server/auth/session";
+import { findMatches } from "@/server/matches/repository";
 
 const shoulders = Big_Shoulders({
   subsets: ["latin", "vietnamese"],
@@ -49,6 +50,14 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
+const ART_MATCHES = 16;
+
+/** Decoration under Suspense, so it never delays the page, and a failed read must not take the page down with it. */
+async function RecentMatchArt() {
+  const matches = await findMatches({ limit: ART_MATCHES, order: "desc" }).catch(() => []);
+  return <MatchArt strokes={toMatchStrokes(matches)} />;
+}
+
 export default async function LocaleLayout({
   children,
   params,
@@ -64,7 +73,16 @@ export default async function LocaleLayout({
     <html lang={locale} className={`${shoulders.variable} ${beVietnam.variable}`}>
       <body>
         <NextIntlClientProvider>
-          <AppShell admin={admin}>{children}</AppShell>
+          <AppShell
+            admin={admin}
+            art={
+              <Suspense>
+                <RecentMatchArt />
+              </Suspense>
+            }
+          >
+            {children}
+          </AppShell>
           <Toaster
             theme="dark"
             position="top-center"
