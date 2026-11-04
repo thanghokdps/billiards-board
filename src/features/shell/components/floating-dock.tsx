@@ -16,7 +16,7 @@ const SHORT_LABEL: Record<string, string> = { home: "homeShort", leaderboard: "l
 /** The active tab is a key held down, so it does not rely on colour alone. */
 function tabClass(active: boolean) {
   return cn(
-    "dock-key mx-auto flex h-14 w-full max-w-20 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl text-2xs font-semibold",
+    "dock-key mx-auto flex h-14 w-full max-w-20 cursor-pointer flex-col items-center justify-center gap-0.5 whitespace-nowrap rounded-xl text-2xs font-semibold",
     active ? "text-lamp" : "text-ivory-muted hover:text-ivory",
   );
 }
