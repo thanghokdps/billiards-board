@@ -38,6 +38,7 @@ Run on the live app, in /vi and /en, at 375 px and desktop. The console must sta
 - [ ] Two cards open, "ok" or "lưu cả hai" → asks which one, nothing written; "lưu thẻ thứ hai" → only that card saves; "hủy cả hai" → both say discarded, nothing written.
 - [ ] Card open, "à không, bill 60k, lưu đi" → new card with 60k still waiting, old card replaced, nothing written.
 - [ ] After a chat save and Undo, reload and open the chat → no new POST or DELETE on `/api/admin/matches`.
+- [ ] Tap Save, then Undo, reload → the card shows its outcome with no buttons in the same browser.
 - [ ] Card open, a stats or off-topic message → normal answer, card stays usable, one reminder line.
 - [ ] No open card, "ok lưu đi" → "nothing pending", nothing written.
 - [ ] "tháng này ai đóng nhiều nhất" → bar chart card; "Thén vs Lâm" → H2H card; "quay 1v1, Bổ x5" → wheel card → "Tạo trận từ cặp này" prefills the composer; "làm poster trận vừa rồi" → poster card; "cà khịa Bổ" → text only.
