@@ -1,7 +1,9 @@
 import "server-only";
 
+import { AIMessage, HumanMessage, type BaseMessage } from "@langchain/core/messages";
+
 import type { Player } from "@/db/schema";
-import type { CardNotice, NameProblem, NeedsInput, ToolFailure } from "@/lib/agent-results";
+import { TOOL_NAMES, type CardNotice, type NameProblem, type NeedsInput, type ToolFailure } from "@/lib/agent-results";
 import { localDate, type GameType } from "@/lib/domain";
 import { resolvePlayerName } from "@/lib/names";
 import { findMatches, findMatchById } from "@/server/matches/repository";
@@ -9,6 +11,8 @@ import type { MatchView, PlayerRef } from "@/server/matches/schema";
 import { listPlayers, toPlayerRef } from "@/server/players/repository";
 
 import { readTrustedContext, type AgentContext } from "../context";
+
+const PROPOSE_TOOLS = new Set<string>([TOOL_NAMES.proposeMatches, TOOL_NAMES.proposeUpdate, TOOL_NAMES.proposeDelete]);
 
 export const GAME_TYPE_OPTIONS: NeedsInput["options"] = [
   { label: "3C Real", value: "3c_real" },
@@ -23,6 +27,16 @@ export function requireContext(runtime: { context?: unknown }): AgentContext {
   const context = readTrustedContext(runtime.context);
   if (!context) throw new Error("no trusted caller");
   return context;
+}
+
+/**
+ * A confirm writes, so a turn gets one, and none beside a proposal: "bill 60k, lưu đi" would otherwise save
+ * the card that proposal replaces. Tools of one model step run in parallel, so the check reads the calls.
+ */
+export function confirmBlockedThisTurn(messages: BaseMessage[]): boolean {
+  const turn = messages.slice(messages.findLastIndex((m) => HumanMessage.isInstance(m)) + 1);
+  const calls = turn.flatMap((m) => (AIMessage.isInstance(m) ? (m.tool_calls ?? []) : [])).map((c) => c.name);
+  return calls.some((name) => PROPOSE_TOOLS.has(name)) || calls.filter((n) => n === TOOL_NAMES.resolveCard).length > 1;
 }
 
 export const todayIn = (context: AgentContext) => localDate(new Date(), context.timeZone);

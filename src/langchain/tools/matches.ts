@@ -1,5 +1,7 @@
 import "server-only";
 
+import type { BaseMessage } from "@langchain/core/messages";
+import type { ToolRuntime } from "@langchain/core/tools";
 import { tool } from "langchain";
 import { z } from "zod";
 
@@ -22,6 +24,7 @@ import { matchInputSchema, type MatchPatch, type MatchView } from "@/server/matc
 import { listPlayers } from "@/server/players/repository";
 
 import {
+  confirmBlockedThisTurn,
   findTargetMatch,
   GAME_TYPE_OPTIONS,
   json,
@@ -458,8 +461,15 @@ export const proposeDeleteTool = tool(
 );
 
 export const resolveCardTool = tool(
-  async (input, runtime) => {
+  async (input, runtime: ToolRuntime<{ messages: BaseMessage[] }>) => {
     const { openCards, pageId } = requireContext(runtime);
+    if (input.decision === "confirm" && confirmBlockedThisTurn(runtime.state.messages)) {
+      const notice: CardNotice = {
+        status: "card_notice",
+        message: "Nothing was saved: this turn already proposed or decided a card. Ask the admin to check it first.",
+      };
+      return json(notice);
+    }
     // Numbers, not toolCallIds: live turns copied stale ids from earlier tool calls in the thread.
     const cards = openCards.length === 1 ? openCards : openCards.filter((_, i) => input.cardNumbers?.includes(i + 1));
     // The model turned a bare "ok" into every card despite the prompt, and a confirm writes, even deletes.

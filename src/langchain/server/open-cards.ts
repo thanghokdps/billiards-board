@@ -21,11 +21,19 @@ export function chatPageId(context: RunAgentInput["context"]): string {
 
 /** Keeps only ids that are proposals of this thread, so a forged id has nothing to resolve or supersede. */
 export function openCardsFrom(ids: string[], messages: BaseMessage[]): OpenCard[] {
-  return messages.flatMap((message) => {
-    if (!ToolMessage.isInstance(message) || !ids.includes(message.tool_call_id)) return [];
-    if (typeof message.content !== "string") return [];
-    const result = parseToolResult(message.content);
-    if (result?.status !== "proposal") return [];
-    return [{ id: message.tool_call_id, kind: result.kind, proposal: message.content }];
+  const results = messages.flatMap((message) => {
+    if (!ToolMessage.isInstance(message) || typeof message.content !== "string") return [];
+    return [{ id: message.tool_call_id, content: message.content, result: parseToolResult(message.content) }];
+  });
+  // A reload forgets decisions in the browser; card taps never reach the checkpoint, so those can still look open.
+  const closed = new Set(
+    results.flatMap(({ result }) => {
+      if (result?.status === "proposal") return result.supersedes;
+      return result?.status === "card_decision" ? result.cardIds : [];
+    }),
+  );
+  return results.flatMap(({ id, content, result }) => {
+    if (result?.status !== "proposal" || !ids.includes(id) || closed.has(id)) return [];
+    return [{ id, kind: result.kind, proposal: content }];
   });
 }

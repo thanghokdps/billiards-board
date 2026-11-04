@@ -36,6 +36,7 @@ Run on the live app, in /vi and /en, at 375 px and desktop. The console must sta
 - [ ] Card open, "ok lưu đi" → the card saves once and offers Undo; "xóa đi" on a delete card does the same.
 - [ ] Card open, "thôi bỏ đi" → the card says discarded, nothing written.
 - [ ] Two cards open, "ok" or "lưu cả hai" → asks which one, nothing written; "lưu thẻ thứ hai" → only that card saves; "hủy cả hai" → both say discarded, nothing written.
+- [ ] Card open, "à không, bill 60k, lưu đi" → new card with 60k still waiting, old card replaced, nothing written.
 - [ ] After a chat save and Undo, reload and open the chat → no new POST or DELETE on `/api/admin/matches`.
 - [ ] Card open, a stats or off-topic message → normal answer, card stays usable, one reminder line.
 - [ ] No open card, "ok lưu đi" → "nothing pending", nothing written.
