@@ -18,7 +18,36 @@ export type CardState =
   | { phase: "superseded" }
   | { phase: "failed"; reason: string };
 
-const states = new Map<string, CardState>();
+const STORAGE_KEY = "anbill.card-outcomes";
+const MAX_STORED = 200;
+const FINAL_PHASES: readonly string[] = ["done", "undone", "cancelled", "superseded"];
+
+/**
+ * A reload must not bring back the buttons of a decided card: tapping them repeats a delete or a stale update.
+ * shortcut: per browser, another device still shows the buttons; move to the server if the admin uses two devices.
+ */
+function loadOutcomes(): Map<string, CardState> {
+  try {
+    const stored: unknown = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "[]");
+    if (!Array.isArray(stored)) return new Map();
+    const outcomes = (stored as [string, string][]).filter(([, phase]) => FINAL_PHASES.includes(phase));
+    return new Map(outcomes.map(([id, phase]) => [id, { phase, at: 0, undo: null } as CardState]));
+  } catch {
+    // No window during the server render, or storage is blocked: outcomes then last for this page only.
+    return new Map();
+  }
+}
+
+function storeOutcomes(): void {
+  const outcomes = [...states].filter(([, s]) => FINAL_PHASES.includes(s.phase)).map(([id, s]) => [id, s.phase]);
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(outcomes.slice(-MAX_STORED)));
+  } catch {
+    // Storage is blocked or full: the card still works, only the reload protection is lost.
+  }
+}
+
+const states = loadOutcomes();
 const appliedDecisions = new Set<string>();
 const listeners = new Set<() => void>();
 // One shared object: useSyncExternalStore loops forever if the snapshot is a new object on every read.
@@ -30,6 +59,7 @@ export function getCardState(id: string): CardState {
 
 export function setCardState(id: string, state: CardState): void {
   states.set(id, state);
+  storeOutcomes();
   listeners.forEach((l) => l());
 }
 
