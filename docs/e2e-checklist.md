@@ -10,7 +10,8 @@ Run on the live app, in /vi and /en, at 375 px and desktop. The console must sta
 - [ ] Leaderboard: podium, table, Elo chart (hide toggle remembered), 5×5 heatmap readable at 375 px.
 - [ ] Player profile: FIFA card, form, nemesis/prey, badges.
 - [ ] Money, Hall of Fame (posters load), Rivalry (poster), Predictions, Wrapped story (tap, keys, auto-advance), TV mode (rotates, full-bleed).
-- [ ] Wheel: participant chips, 1v1/2v2, long-press victim, x2/x3/x5/x6 (4 players with x5 leaves the victim at ≈ 6%), +/−, % on slices, spin 2–3 s, skip, then sound and vibrate. No "Tạo trận" button for viewers.
+- [ ] Wheel: opens in 2v2, participant chips, 1v1/2v2, long-press victim, x5/x10 repeat every name N times with chances unchanged (with a victim: 4 players with x5 leaves the victim at ≈ 6%), +/−, % on slices when names are not repeated, spin 2–3 s, skip, then sound and vibrate. No "Tạo trận" button for viewers.
+- [ ] Wheel spinner: pick "Ai quay?" → that player leaves the wheel and sits on side A. 4 players: one spin fills both teams. 5 players: first spin is the partner, then spin for the other team. 1v1: the winner is the opponent. No spinner: everyone on the wheel, as before.
 - [ ] `POST /api/admin/matches` without the cookie → 401; `/api/copilotkit` without the cookie → 401.
 - [ ] The 8-ball tab opens the wheel, not the chat.
 

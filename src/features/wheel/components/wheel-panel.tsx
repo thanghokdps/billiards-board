@@ -31,11 +31,14 @@ interface WheelPanelProps {
   onSpinningChange?: (spinning: boolean) => void;
   /** Rendered directly under the wheel, above the spin button (e.g. the ×N shortcut chips). */
   belowWheel?: ReactNode;
+  /** The player spinning: off the wheel and already seated on side A. */
+  spinnerId?: number | null;
 }
 
 /**
  * One tap spins the next pick; each winner is removed for the next spin (requirement: "tự loại người đã trúng").
  * 1v1 = two spins, 2v2 = four spins alternating side A / side B.
+ * With a spinner, side A fills first (2v2: the first winner is their partner) and one seat fewer is spun for.
  */
 export function WheelPanel({
   players,
@@ -47,6 +50,7 @@ export function WheelPanel({
   onPicksChange,
   onSpinningChange,
   belowWheel,
+  spinnerId = null,
 }: WheelPanelProps) {
   const t = useTranslations("wheel");
   const locale = useLocale();
@@ -64,23 +68,37 @@ export function WheelPanel({
   );
 
   const needed = mode === "1v1" ? 2 : 4;
+  const spins = spinnerId === null ? needed : needed - 1;
   const byId = useMemo(() => new Map(players.map((p) => [p.id, p])), [players]);
   const entries = useMemo<WheelEntry[]>(
     () =>
       players
-        .filter((p) => !picks.includes(p.id))
+        .filter((p) => !picks.includes(p.id) && p.id !== spinnerId)
         .map((p) => ({ id: p.id, label: p.name, color: p.ballColor, weight: weights[p.id] ?? 1 }))
         .filter((e) => e.weight > 0),
-    [players, picks, weights],
+    [players, picks, weights, spinnerId],
   );
-  const done = picks.length >= needed;
-  const canSpin = !spinning && !done && entries.length > 0 && entries.length + picks.length >= needed;
+  const done = picks.length >= spins;
+  const canSpin = !spinning && !done && entries.length > 0 && entries.length + picks.length >= spins;
 
-  const onResult = useCallback((entry: WheelEntry) => setPicks([...picks, entry.id]), [picks, setPicks]);
-  const pairing: WheelPairing = {
-    sideA: picks.filter((_, i) => i % 2 === 0).map((id) => byId.get(id)!),
-    sideB: picks.filter((_, i) => i % 2 === 1).map((id) => byId.get(id)!),
-  };
+  const onResult = useCallback(
+    (entry: WheelEntry) => {
+      const rest = entries.filter((e) => e.id !== entry.id).map((e) => e.id);
+      // Exactly the seats left: those players are the other team, so there is nothing to spin for.
+      const seatedWithoutSpin = spinnerId !== null && rest.length === spins - picks.length - 1 ? rest : [];
+      setPicks([...picks, entry.id, ...seatedWithoutSpin]);
+    },
+    [entries, picks, setPicks, spinnerId, spins],
+  );
+  const seated = spinnerId === null ? picks : [spinnerId, ...picks];
+  const toPlayers = (ids: number[]) => ids.map((id) => byId.get(id)!);
+  const pairing: WheelPairing =
+    spinnerId === null
+      ? {
+          sideA: toPlayers(seated.filter((_, i) => i % 2 === 0)),
+          sideB: toPlayers(seated.filter((_, i) => i % 2 === 1)),
+        }
+      : { sideA: toPlayers(seated.slice(0, needed / 2)), sideB: toPlayers(seated.slice(needed / 2)) };
 
   return (
     <div className="space-y-4">
@@ -109,17 +127,17 @@ export function WheelPanel({
         ) : (
           <Button size="lg" onClick={() => wheel.current?.spin()} disabled={!canSpin} className="min-w-40">
             <Sparkles className="size-4" aria-hidden />
-            {picks.length === 0 ? t("spin") : t("spinNext", { n: picks.length + 1, total: needed })}
+            {picks.length === 0 ? t("spin") : t("spinNext", { n: picks.length + 1, total: spins })}
           </Button>
         )}
       </div>
 
-      {(picks.length > 0 || !canSpin) && (
+      {(seated.length > 0 || !canSpin) && (
         <div aria-live="polite" className="rounded-lg border border-line bg-surface-2 p-3">
-          {entries.length + picks.length < needed && (
+          {entries.length + picks.length < spins && (
             <p className="text-center text-sm text-loss">{t("notEnough", { n: needed })}</p>
           )}
-          {picks.length > 0 && (
+          {seated.length > 0 && (
             <div className="flex items-center justify-between gap-3">
               <Team players={pairing.sideA} />
               <span className="font-display text-xl font-bold text-lamp">VS</span>

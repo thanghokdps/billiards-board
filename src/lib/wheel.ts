@@ -40,11 +40,11 @@ export function pickWeighted(entries: WheelEntry[], random: () => number = crypt
   return active.at(-1) ?? null;
 }
 
-/** "xN" shortcut: everyone except the victim weighs N, the victim 1 (4 players, x5 → 1/16 ≈ 6 %). */
+/** "xN" shortcut: everyone weighs N, a victim stays at 1 (4 players, x5 → 1/16 ≈ 6 %). */
 export function applyVictim(entries: WheelEntry[], victimId: number | null, multiplier: number): WheelEntry[] {
   return entries.map((e) => ({
     ...e,
-    weight: e.weight === 0 ? 0 : victimId === null ? 1 : e.id === victimId ? 1 : multiplier,
+    weight: e.weight === 0 ? 0 : e.id === victimId ? 1 : multiplier,
   }));
 }
 
@@ -55,22 +55,21 @@ export interface Slice {
   share: number;
 }
 
-/** Slices in degrees, clockwise from 12 o'clock. */
+/**
+ * Equal slices in degrees, clockwise from 12 o'clock: an entry of weight N appears N times, the names
+ * going round in order so the copies are spread out. Weights are whole numbers (chips and +/- only).
+ */
 export function slicesOf(entries: WheelEntry[]): Slice[] {
   const active = activeEntries(entries);
-  const total = active.reduce((s, e) => s + e.weight, 0);
-  let angle = 0;
-  return active.map((entry) => {
-    const share = entry.weight / total;
-    const slice = { entry, start: angle, end: angle + share * 360, share };
-    angle += share * 360;
-    return slice;
-  });
+  const rounds = Math.max(0, ...active.map((e) => e.weight));
+  const copies = Array.from({ length: rounds }, (_, round) => active.filter((e) => e.weight > round)).flat();
+  const width = 360 / copies.length;
+  return copies.map((entry, i) => ({ entry, start: i * width, end: (i + 1) * width, share: 1 / copies.length }));
 }
 
 /**
- * Final rotation so the pointer at 12 o'clock lands inside the winner's slice, at a random point that
- * stays clear of the slice edges; several full turns first.
+ * Final rotation so the pointer at 12 o'clock lands inside one of the winner's slices, at a random point
+ * that stays clear of the slice edges; several full turns first.
  */
 export function rotationFor(
   slices: Slice[],
@@ -78,7 +77,8 @@ export function rotationFor(
   current: number,
   random: () => number = cryptoRandom,
 ): number {
-  const slice = slices.find((s) => s.entry.id === winnerId);
+  const copies = slices.filter((s) => s.entry.id === winnerId);
+  const slice = copies[Math.floor(random() * copies.length)];
   if (!slice) return current;
   const width = slice.end - slice.start;
   const inside = slice.start + width * (0.15 + random() * 0.7);
