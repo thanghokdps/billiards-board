@@ -79,6 +79,7 @@ const eloGain = (winnerRating: number, loserRating: number, k: number) =>
 /**
  * Elo replayed over the matches in order. 2v2 uses team averages and every member gets the team delta.
  * In a 1v1v1 the loser plays each winner at half K: the sum stays zero and the loser risks what a 1v1 costs.
+ * A guest match moves no rating but keeps its history entry: `cardStats` reads history by match index.
  */
 export function computeElo(matches: StatMatch[]): {
   ratings: Map<number, number>;
@@ -99,7 +100,7 @@ export function computeElo(matches: StatMatch[]): {
         lost += gain;
       }
       ratings.set(loser.id, loserRating - lost);
-    } else {
+    } else if (m.format !== "guest") {
       const rw = winners.reduce((s, p) => s + get(p.id), 0) / winners.length;
       const rl = losers.reduce((s, p) => s + get(p.id), 0) / losers.length;
       const delta = eloGain(rw, rl, ELO_K);

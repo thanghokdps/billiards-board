@@ -16,7 +16,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const gameTypeEnum = pgEnum("game_type", ["3c_real", "3c_fake", "libre"]);
-export const matchFormatEnum = pgEnum("match_format", ["1v1", "2v2", "1v1v1"]);
+export const matchFormatEnum = pgEnum("match_format", ["1v1", "2v2", "1v1v1", "guest"]);
 export const sideEnum = pgEnum("side", ["a", "b"]);
 
 export const players = pgTable("players", {

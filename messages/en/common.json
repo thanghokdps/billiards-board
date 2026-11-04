@@ -10,6 +10,7 @@
   "bill": "Bill",
   "noBill": "No bill yet",
   "noScore": "No score",
+  "guestMatch": "On tour",
   "matches": "{count, plural, one {# match} other {# matches}}",
   "players": "Players",
   "today": "Today",

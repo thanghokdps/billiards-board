@@ -1,6 +1,6 @@
 import "server-only";
 
-import { formatTime, localDate, matchTitle, scoreLine } from "@/lib/domain";
+import { formatTime, localDate, matchTitle, scoreLine, shownSideB } from "@/lib/domain";
 import { findMatches } from "@/server/matches/repository";
 import { listPlayers } from "@/server/players/repository";
 
@@ -33,7 +33,7 @@ export async function loadContextSnapshot(context: AgentContext, now: Date): Pro
       const result =
         m.format === "1v1v1"
           ? `loser ${side(m.sideB)}`
-          : `winner ${m.winnerSide === "a" ? side(m.sideA) : side(m.sideB)}`;
+          : `winner ${m.winnerSide === "a" ? side(m.sideA) : side(shownSideB(m))}`;
       return `${m.id} · ${formatTime(m.playedAt, "en", context.timeZone)} · ${GAME[m.gameType]} · ${matchTitle(m)} · ${scoreLine(m) ?? "no score"} · ${result} · ${bill}`;
     }),
   };

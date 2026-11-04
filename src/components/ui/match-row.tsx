@@ -2,7 +2,7 @@ import { useLocale, useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
 import { cn } from "@/lib/cn";
-import { formatTime, formatVnd } from "@/lib/domain";
+import { formatTime, formatVnd, shownSideB } from "@/lib/domain";
 import type { MatchView, PlayerRef } from "@/server/matches/schema";
 
 import { GameTypeBadge } from "./game-type-badge";
@@ -106,16 +106,16 @@ export function MatchRow({ match, streaks, footer, compact, className }: MatchRo
   const locale = useLocale();
   const aWon = match.winnerSide === "a";
   const hasScore = match.scoreA != null && match.scoreB != null;
-  // No bill on the match means nobody paid, so the loser carries no label.
-  const lossLabel = match.bill != null ? t("paysBill") : undefined;
+  const isGuest = match.format === "guest";
+  // No bill on the match means nobody paid, so the loser carries no label. A guest match has no bill, only a loser.
+  const lossLabel = isGuest ? t("loss") : match.bill != null ? t("paysBill") : undefined;
+  const billLabel = match.bill != null ? formatVnd(match.bill, locale) : t("noBill");
   return (
     <article className={cn("py-3", className)}>
       <div className="mb-2 flex items-center gap-2 text-2xs text-ivory-muted">
         <GameTypeBadge gameType={match.gameType} />
         {match.playedAt && <time dateTime={match.playedAt}>{formatTime(match.playedAt, locale)}</time>}
-        <span className="ml-auto font-semibold text-ivory-muted">
-          {match.bill != null ? formatVnd(match.bill, locale) : t("noBill")}
-        </span>
+        <span className="ml-auto font-semibold text-ivory-muted">{isGuest ? t("guestMatch") : billLabel}</span>
       </div>
       {match.format === "1v1v1" ? (
         <ThreeWayBoard match={match} streaks={streaks} lossLabel={lossLabel} />
@@ -131,7 +131,7 @@ export function MatchRow({ match, streaks, footer, compact, className }: MatchRo
           />
           <div
             className="flex shrink-0 items-baseline gap-1 rounded-sm bg-night px-2.5 py-1 digits text-3xl font-bold"
-            aria-label={hasScore ? `${match.scoreA}–${match.scoreB}` : t("noScore")}
+            aria-label={hasScore ? `${match.scoreA}–${match.scoreB}` : isGuest ? t("vs") : t("noScore")}
           >
             {hasScore ? (
               <>
@@ -144,7 +144,7 @@ export function MatchRow({ match, streaks, footer, compact, className }: MatchRo
             )}
           </div>
           <Side
-            players={match.sideB}
+            players={shownSideB(match)}
             won={!aWon}
             align="right"
             streaks={streaks}

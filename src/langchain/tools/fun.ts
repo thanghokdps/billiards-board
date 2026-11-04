@@ -4,7 +4,7 @@ import { tool } from "langchain";
 import { z } from "zod";
 
 import { TOOL_NAMES, type PosterResult, type WheelSetup } from "@/lib/agent-results";
-import { MATCH_FORMATS, matchTitle, PLAYERS_IN_FORMAT } from "@/lib/domain";
+import { matchTitle, PAIRING_FORMATS, PLAYERS_IN_FORMAT } from "@/lib/domain";
 import { computePlayerStats, wanted } from "@/lib/stats";
 import { toPlayerRef } from "@/server/players/repository";
 
@@ -55,7 +55,7 @@ export const spinWheelTool = tool(
       '- "bỏ Lâm" → exclude. "Bổ x5" → target Bổ, multiplier 5 (everyone else weighs 5× Bổ). Default players: everyone.',
     ].join("\n"),
     schema: z.object({
-      mode: z.enum(MATCH_FORMATS),
+      mode: z.enum(PAIRING_FORMATS),
       include: z.array(z.string()).max(8).nullable().describe("only these players; null = everyone"),
       exclude: z.array(z.string()).max(8).nullable(),
       target: z.string().nullable().describe("the 'victim' whose slice shrinks"),
