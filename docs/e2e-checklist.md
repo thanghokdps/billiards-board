@@ -32,6 +32,14 @@ Run on the live app, in /vi and /en, at 375 px and desktop. The console must sta
 - [ ] Unknown or ambiguous name → chips of candidates.
 - [ ] "trận vừa rồi bill 50k" → before/after card → Save; Undo restores.
 - [ ] "xóa trận vừa rồi" → delete card → Delete; Undo restores.
+- [ ] Card open, "à không, bill 60k" → old card says replaced with no buttons, new card shows 60k; repeat a second change on an update card → the new card keeps both changes.
+- [ ] Card open, "ok lưu đi" → the card saves once and offers Undo; "xóa đi" on a delete card does the same.
+- [ ] Card open, "thôi bỏ đi" → the card says discarded, nothing written.
+- [ ] Two cards open, "ok" or "lưu cả hai" → asks which one, nothing written; "lưu thẻ thứ hai" → only that card saves; "hủy cả hai" → both say discarded, nothing written.
+- [ ] Card open, "à không, bill 60k, lưu đi" → new card with 60k still waiting, old card replaced, nothing written.
+- [ ] After a chat save and Undo, reload and open the chat → no new POST or DELETE on `/api/admin/matches`.
+- [ ] Card open, a stats or off-topic message → normal answer, card stays usable, one reminder line.
+- [ ] No open card, "ok lưu đi" → "nothing pending", nothing written.
 - [ ] "tháng này ai đóng nhiều nhất" → bar chart card; "Thén vs Lâm" → H2H card; "quay 1v1, Bổ x5" → wheel card → "Tạo trận từ cặp này" prefills the composer; "làm poster trận vừa rồi" → poster card; "cà khịa Bổ" → text only.
 - [ ] Out of scope ("viết code python") → one-line decline with an example.
 - [ ] Mic: Vietnamese speech → interim text → the composer is filled.

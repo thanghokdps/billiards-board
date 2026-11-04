@@ -3,12 +3,13 @@
 import { useRenderTool } from "@copilotkit/react-core/v2";
 import { AlertTriangle, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { ReactElement } from "react";
+import { useEffect, type ReactElement } from "react";
 
-import { AGENT_ID, parseToolResult, TOOL_NAMES } from "@/lib/agent-results";
+import { AGENT_ID, parseToolResult, TOOL_NAMES, type CardDecision } from "@/lib/agent-results";
 
 import { ProposalCard } from "./proposal-card";
 import { AskChips, HeadToHeadCard, PosterCard, StatsCard, WheelCard } from "./result-cards";
+import { applyCardDecision } from "../lib/card-store";
 
 interface ToolRenderProps {
   name: string;
@@ -40,6 +41,12 @@ function Failure() {
   );
 }
 
+/** Renders nothing: the open card above shows the outcome. */
+function ApplyCardDecision({ toolCallId, result }: { toolCallId: string; result: CardDecision }) {
+  useEffect(() => applyCardDecision(toolCallId, result), [toolCallId, result]);
+  return null;
+}
+
 function ToolResult({ name, toolCallId, status, result }: ToolRenderProps): ReactElement | null {
   if (status !== "complete") return <Working />;
   const parsed = parseToolResult(result);
@@ -53,6 +60,10 @@ function ToolResult({ name, toolCallId, status, result }: ToolRenderProps): Reac
       return <AskChips key={toolCallId} result={parsed} />;
     case "proposal":
       return <ProposalCard proposal={parsed} toolCallId={toolCallId} />;
+    case "card_decision":
+      return <ApplyCardDecision toolCallId={toolCallId} result={parsed} />;
+    case "card_notice":
+      return null;
     case "ok":
       break;
   }

@@ -36,5 +36,6 @@ export async function loadContextSnapshot(context: AgentContext, now: Date): Pro
           : `winner ${m.winnerSide === "a" ? side(m.sideA) : side(shownSideB(m))}`;
       return `${m.id} · ${formatTime(m.playedAt, "en", context.timeZone)} · ${GAME[m.gameType]} · ${matchTitle(m)} · ${scoreLine(m) ?? "no score"} · ${result} · ${bill}`;
     }),
+    openCards: context.openCards.map((c, i) => `#${i + 1} · ${c.kind} · ${c.proposal}`),
   };
 }

@@ -3,16 +3,25 @@
 import { Check, Loader2, RotateCcw, Trash2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useEffectEvent, useState, useSyncExternalStore } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MatchRow } from "@/components/ui/match-row";
 import { AdminApiError, matchesApi, revertPatch, useMatchMoment } from "@/features/matches";
 import type { Proposal } from "@/lib/agent-results";
+import { cn } from "@/lib/cn";
 import { formatDate } from "@/lib/domain";
 
-import { getCardState, setCardState, subscribeCards, UNDO_WINDOW_MS, type CardState } from "../lib/card-store";
+import {
+  getCardState,
+  registerCard,
+  setCardState,
+  subscribeCards,
+  supersedeCards,
+  UNDO_WINDOW_MS,
+  type CardState,
+} from "../lib/card-store";
 
 function useCardState(id: string): CardState {
   return useSyncExternalStore(
@@ -50,7 +59,7 @@ export function ProposalCard({ proposal, toolCallId }: { proposal: Proposal; too
   async function confirm() {
     // Retrying after a failure is safe: the create carries the same idempotency key.
     const phase = getCardState(toolCallId).phase;
-    if (phase !== "idle" && phase !== "failed") return;
+    if (phase !== "idle" && phase !== "failed" && phase !== "requested") return;
     setCardState(toolCallId, { phase: "saving" });
     try {
       let undo: () => Promise<void>;
@@ -84,6 +93,17 @@ export function ProposalCard({ proposal, toolCallId }: { proposal: Proposal; too
     }
   }
 
+  const runConfirm = useEffectEvent(() => void confirm());
+
+  useEffect(() => {
+    registerCard(toolCallId);
+    supersedeCards(proposal.supersedes);
+  }, [toolCallId, proposal.supersedes]);
+
+  useEffect(() => {
+    if (state.phase === "requested") runConfirm();
+  }, [state.phase]);
+
   async function runUndo() {
     const s = getCardState(toolCallId);
     if (s.phase !== "done" || !s.undo) return;
@@ -105,7 +125,13 @@ export function ProposalCard({ proposal, toolCallId }: { proposal: Proposal; too
         : t("deleteTitle");
 
   return (
-    <Card className={proposal.kind === "delete" ? "my-2 border-ball/40" : "my-2 border-lamp/30"}>
+    <Card
+      className={cn(
+        "my-2",
+        proposal.kind === "delete" ? "border-ball/40" : "border-lamp/30",
+        state.phase === "superseded" && "opacity-60",
+      )}
+    >
       <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-3">
         <p className="font-display text-xl font-bold leading-tight">{title}</p>
         {proposal.kind === "create" && (
@@ -197,6 +223,7 @@ function CardFooter({ state, kind, secondsLeft, onConfirm, onCancel, onUndo }: F
           </Button>
         </>
       );
+    case "requested":
     case "saving":
       return (
         <p className="flex items-center gap-2 text-sm text-ivory-muted">
@@ -223,6 +250,8 @@ function CardFooter({ state, kind, secondsLeft, onConfirm, onCancel, onUndo }: F
       return <p className="text-sm text-ivory-muted">{t("undone")}</p>;
     case "cancelled":
       return <p className="text-sm text-ivory-muted">{t("cancelled")}</p>;
+    case "superseded":
+      return <p className="text-sm text-ivory-muted">{t("superseded")}</p>;
     case "failed":
       return (
         <>

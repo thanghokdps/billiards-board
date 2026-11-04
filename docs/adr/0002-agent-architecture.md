@@ -47,8 +47,9 @@ Rung: **L3** for the transport — `LangChainGraphAgent extends AbstractAgent` (
 
 ## Built (2026-11-04)
 
-- Agent `assistant` with 9 tools (`src/langchain/tools/`), the confirm cards and renderers (`src/features/chat/`), and the in-process AG-UI emitter. The thread id is `admin-YYYY-MM-DD` (hyphen, not colon), set server-side.
+- Agent `assistant` with 10 tools (`src/langchain/tools/`), the confirm cards and renderers (`src/features/chat/`), and the in-process AG-UI emitter. The thread id is `admin-YYYY-MM-DD` (hyphen, not colon), set server-side.
 - Writes: idempotency key on create (`matches.client_key`), undo via delete/restore/patch-back.
+- Chat decisions (user decision, 2026-11-04): the admin may confirm or cancel an open card in chat, deletes included. `resolve_card` still writes nothing; the card calls the admin route, so Q4 holds, but the model now reads the admin's words before a write. Undo covers a misread, and with several cards open a chat confirm is limited to one card. Editing a card replaces it with a new one; other chat leaves it open with one reminder line.
 - Posters: `src/server/posters/` + `/api/poster/{match,wanted,rivalry}` with Barlow OFL fonts (Vietnamese), so no AI image.
 - Recap: `src/langchain/recap.ts` on the cheap model via `POST /api/admin/recap`. Trash talk is answered by the primary model from `trash_talk` facts, not the cheap one.
 - Admin login is rate-limited (5 failures / 15 min per IP, in memory per instance).

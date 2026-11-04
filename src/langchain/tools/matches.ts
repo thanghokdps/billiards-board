@@ -1,10 +1,14 @@
 import "server-only";
 
+import type { BaseMessage } from "@langchain/core/messages";
+import type { ToolRuntime } from "@langchain/core/tools";
 import { tool } from "langchain";
 import { z } from "zod";
 
 import {
   TOOL_NAMES,
+  type CardDecision,
+  type CardNotice,
   type CreateProposal,
   type DeleteProposal,
   type MatchList,
@@ -19,7 +23,17 @@ import { findMatches } from "@/server/matches/repository";
 import { matchInputSchema, type MatchPatch, type MatchView } from "@/server/matches/schema";
 import { listPlayers } from "@/server/players/repository";
 
-import { findTargetMatch, GAME_TYPE_OPTIONS, json, requireContext, resolveNames, todayIn } from "./shared";
+import {
+  confirmBlockedThisTurn,
+  findTargetMatch,
+  GAME_TYPE_OPTIONS,
+  json,
+  latestHidesOpenCard,
+  requireContext,
+  resolveNames,
+  supersededCards,
+  todayIn,
+} from "./shared";
 
 type Roster = Awaited<ReturnType<typeof listPlayers>>;
 
@@ -230,7 +244,13 @@ export const proposeMatchesTool = tool(
         return json({ status: "error", message: parsed.error.issues.map((i) => i.message).join("; ") });
       proposed.push({ input: parsed.data, sideA: seated.sideA, sideB: seated.sideB });
     }
-    const result: CreateProposal = { status: "proposal", kind: "create", date: today, matches: proposed };
+    const result: CreateProposal = {
+      status: "proposal",
+      kind: "create",
+      date: today,
+      matches: proposed,
+      supersedes: supersededCards(context),
+    };
     return json(result);
   },
   {
@@ -241,6 +261,7 @@ export const proposeMatchesTool = tool(
       "- One entry per match, in the order the user listed them. 1v1 = one name per side, 2v2 = two.",
       "- 1v1v1 = threeWay with the three names and the loser; sideA, sideB and winnerSide stay null.",
       "- Guest match = guest with the player and the loser, one entry per match; sideA, sideB and winnerSide stay null.",
+      "- Also how to correct a match on an open card: send every match of the card again, corrected.",
     ].join("\n"),
     schema: z.object({ matches: z.array(draftSchema).min(1).max(10) }),
   },
@@ -339,7 +360,9 @@ function preview(before: MatchView, patch: MatchPatch, refs: Refs): MatchView {
 
 export const proposeUpdateTool = tool(
   async (input, runtime) => {
-    requireContext(runtime);
+    const context = requireContext(runtime);
+    const notice = latestHidesOpenCard(input.match, context);
+    if (notice) return json(notice);
     const target = await findTargetMatch(input.match);
     if ("status" in target) return json(target);
     const roster = await listPlayers();
@@ -395,6 +418,7 @@ export const proposeUpdateTool = tool(
       before: target,
       after,
       patch,
+      supersedes: supersededCards(context),
     };
     return json(result);
   },
@@ -413,10 +437,17 @@ export const proposeUpdateTool = tool(
 
 export const proposeDeleteTool = tool(
   async (input, runtime) => {
-    requireContext(runtime);
+    const context = requireContext(runtime);
+    const notice = latestHidesOpenCard(input.match, context);
+    if (notice) return json(notice);
     const target = await findTargetMatch(input.match);
     if ("status" in target) return json(target);
-    const result: DeleteProposal = { status: "proposal", kind: "delete", match: target };
+    const result: DeleteProposal = {
+      status: "proposal",
+      kind: "delete",
+      match: target,
+      supersedes: supersededCards(context),
+    };
     return json(result);
   },
   {
@@ -426,5 +457,54 @@ export const proposeDeleteTool = tool(
       '- "undo" right after saving a match means delete that latest match.',
     ].join("\n"),
     schema: z.object({ match: matchRef }),
+  },
+);
+
+export const resolveCardTool = tool(
+  async (input, runtime: ToolRuntime<{ messages: BaseMessage[] }>) => {
+    const { openCards, pageId } = requireContext(runtime);
+    if (input.decision === "confirm" && confirmBlockedThisTurn(runtime.state.messages)) {
+      const notice: CardNotice = {
+        status: "card_notice",
+        message: "Nothing was saved: this turn already proposed or decided a card. Ask the admin to check it first.",
+      };
+      return json(notice);
+    }
+    // Numbers, not toolCallIds: live turns copied stale ids from earlier tool calls in the thread.
+    const cards = openCards.length === 1 ? openCards : openCards.filter((_, i) => input.cardNumbers?.includes(i + 1));
+    // The model turned a bare "ok" into every card despite the prompt, and a confirm writes, even deletes.
+    if (!cards.length || (input.decision === "confirm" && cards.length > 1)) {
+      const notice: CardNotice = {
+        status: "card_notice",
+        message: openCards.length
+          ? "Several cards are open: nothing was saved or cancelled. A confirm takes exactly one card, so ask the admin which one. A cancel can take every number in cardNumbers if the admin meant all of them."
+          : "No card is open: nothing was saved or cancelled. Tell the admin nothing is pending.",
+      };
+      return json(notice);
+    }
+    const result: CardDecision = {
+      status: "card_decision",
+      cardIds: cards.map((c) => c.id),
+      decision: input.decision,
+      pageId,
+    };
+    return json(result);
+  },
+  {
+    name: TOOL_NAMES.resolveCard,
+    description: [
+      "- Passes the admin's chat answer to open confirm cards, like tapping their buttons. The cards do the write and show the result.",
+      "- Use only when the admin's newest message itself confirms or cancels. Not for changing a card: propose it again.",
+    ].join("\n"),
+    schema: z.object({
+      decision: z.enum(["confirm", "cancel"]),
+      cardNumbers: z
+        .array(z.number().int().min(1))
+        .max(20)
+        .nullish()
+        .describe(
+          'when several cards are open: the # from "Open confirm cards"; one for confirm, any number for cancel',
+        ),
+    }),
   },
 );

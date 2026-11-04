@@ -1,18 +1,25 @@
 "use client";
 
-import { CopilotChat, useAgent, useConfigureSuggestions, useCopilotKit } from "@copilotkit/react-core/v2";
+import {
+  CopilotChat,
+  useAgent,
+  useAgentContext,
+  useConfigureSuggestions,
+  useCopilotKit,
+} from "@copilotkit/react-core/v2";
 import { Mic, MicOff } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import type { PendingChatMessage } from "@/features/shell";
-import { AGENT_ID } from "@/lib/agent-results";
+import { AGENT_ID, CHAT_PAGE_CONTEXT, OPEN_CARDS_CONTEXT } from "@/lib/agent-results";
 import { cn } from "@/lib/cn";
 import { localDate } from "@/lib/domain";
 
 import { ChatView } from "./chat-view";
+import { CHAT_PAGE_ID, getOpenCardIds, subscribeCards } from "../lib/card-store";
 import { DraftContext, type Draft } from "../lib/draft-context";
 import { SendContext } from "../lib/send-context";
 import { useSpeech } from "../lib/use-speech";
@@ -37,6 +44,11 @@ export function ChatPanel({ pendingMessage, onPendingSent }: ChatPanelProps) {
   const [spoken, setSpoken] = useState<Draft | null>(null);
 
   useToolRenderers();
+
+  // Tapping a card never reaches the agent, so each run tells it which cards are still open.
+  const openCards = useSyncExternalStore(subscribeCards, getOpenCardIds, getOpenCardIds);
+  useAgentContext({ description: OPEN_CARDS_CONTEXT, value: openCards });
+  useAgentContext({ description: CHAT_PAGE_CONTEXT, value: CHAT_PAGE_ID });
 
   const suggestions = useMemo(
     () => SUGGESTION_KEYS.map((key) => ({ title: t(`suggestions.${key}`), message: t(`suggestions.${key}`) })),

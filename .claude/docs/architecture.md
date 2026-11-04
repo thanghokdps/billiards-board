@@ -24,6 +24,7 @@
 
 - **In-process agent, no LangGraph server**: Vercel can't host `langgraphjs dev`. `LangChainGraphAgent extends AbstractAgent` runs the compiled graph inside the Next route and turns `streamEvents` v2 into AG-UI events (ADR 0002, rung L3).
 - **User writes**: `propose_*` tools only validate the request and resolve names. The confirm card (`features/chat/renderers/proposal-card.tsx`) calls `/api/admin/matches*`, sending the `toolCallId` as the idempotency key; undo is available for 30 s.
+- **Open cards**: tapping a card never reaches the agent, so each run sends the ids of undecided cards in `RunAgentInput.context`. `server/open-cards.ts` keeps only ids that are proposals in this thread's checkpoint and puts them in the run context and CONTEXT. A new proposal closes every card that was open when the turn began (`supersedes`). `resolve_card` passes a chat "ok" or "cancel" to the card, which still does the write. With several cards open the model picks by #number; a confirm takes exactly one card (the tool refuses more), a cancel any number. A confirm is also refused when the same turn proposed a card or already called `resolve_card`, and cards the checkpoint shows as replaced or decided in chat stop counting as open. The decision echoes the page load's `pageId`, so a reload that replays it writes nothing. A turn that leaves a card open ends with a fixed reminder line from the emitter, not from the model.
 - **Identity**: the admin cookie is checked in the CopilotKit route, which builds `{ adminId, locale, timeZone }` on the server. Tools read it with `readTrustedContext(runtime.context)`. The client's history is never trusted: only the newest user message is taken, and the rest comes from the Postgres checkpointer, one thread per admin per day.
 - **Recursion limit 60**: every middleware hook is a graph node, so with PII on, one model → tools round takes about 10 super-steps.
 - **Byte-stable prompt prefix**: dynamic data (date, roster, today's matches) goes only into CONTEXT, marked as data.
@@ -35,7 +36,7 @@
 3. The agent runs `agent.graph.streamEvents` on thread `admin-<local date>`, through the PII guard and redaction, the tool-call limit (12), retry and error mapping, the model fallback, and the dynamic system prompt.
 4. A tool call streams `TOOL_CALL_*`, then `TOOL_CALL_RESULT`; the reply streams `TEXT_MESSAGE_*`, then `RUN_FINISHED`.
 5. The client's wildcard `useRenderTool` parses the result with `parseToolResult` and renders a card: proposal, ask chips, stats chart, head-to-head, wheel or poster.
-6. Tapping Save calls the admin route, which writes, audits and records events. Then `router.refresh()` runs and the "match moment" overlay plays.
+6. Tapping Save, or confirming in chat, calls the admin route, which writes, audits and records events. Then `router.refresh()` runs and the "match moment" overlay plays.
 
 ## External dependencies
 

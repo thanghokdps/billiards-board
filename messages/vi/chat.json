@@ -30,6 +30,7 @@
     "updated": "Đã sửa",
     "deletedDone": "Đã xóa",
     "cancelled": "Đã bỏ, không ghi gì",
+    "superseded": "Đã thay bằng thẻ mới, thẻ này không ghi gì",
     "undo": "Hoàn tác · {seconds}s",
     "undone": "Đã hoàn tác",
     "retry": "Thử lại",
@@ -69,5 +70,6 @@
   },
   "error": "Trợ lý gặp lỗi. Thử lại nhé.",
   "toolFailed": "Không lấy được dữ liệu.",
+  "cardStillOpen": "Thẻ ở trên vẫn đang chờ bạn xác nhận.",
   "unauthorized": "Phiên admin đã hết hạn. Đăng nhập lại."
 }
