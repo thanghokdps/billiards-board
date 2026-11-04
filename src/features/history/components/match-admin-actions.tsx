@@ -56,7 +56,7 @@ export function MatchAdminActions({ matchId, shortId, onDone }: MatchAdminAction
         aria-label={t("confirmTitle")}
         className="space-y-3 rounded-md border border-loss/40 bg-loss/10 p-4"
       >
-        <p className="font-display text-lg font-bold uppercase tracking-wide">{t("confirmTitle")}</p>
+        <p className="font-display text-xl font-bold leading-tight">{t("confirmTitle")}</p>
         <p className="text-sm text-ivory-muted">{t("confirmBody")}</p>
         <div className="flex gap-2">
           <Button variant="danger" disabled={pending} onClick={() => void handleDelete()}>

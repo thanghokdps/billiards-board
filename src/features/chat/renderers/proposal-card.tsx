@@ -107,7 +107,7 @@ export function ProposalCard({ proposal, toolCallId }: { proposal: Proposal; too
   return (
     <Card className={proposal.kind === "delete" ? "my-2 border-ball/40" : "my-2 border-lamp/30"}>
       <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-3">
-        <p className="font-display text-base font-bold uppercase tracking-wide">{title}</p>
+        <p className="font-display text-xl font-bold leading-tight">{title}</p>
         {proposal.kind === "create" && (
           <span className="text-xs text-ivory-muted">
             {t("date", { date: formatDate(proposal.matches[0]?.input.date ?? proposal.date, locale) })}
@@ -115,7 +115,7 @@ export function ProposalCard({ proposal, toolCallId }: { proposal: Proposal; too
         )}
       </div>
 
-      <div className="space-y-2 p-3">
+      <div className="divide-y divide-line px-3 py-1">
         {proposal.kind === "create" &&
           proposal.matches.map((m, i) => (
             <MatchRow
@@ -140,7 +140,7 @@ export function ProposalCard({ proposal, toolCallId }: { proposal: Proposal; too
               <MatchRow match={proposal.before} className="opacity-60" />
             </Labeled>
             <Labeled label={t("after")}>
-              <MatchRow match={proposal.after} className="border-lamp/40" />
+              <MatchRow match={proposal.after} className="rounded-sm bg-lamp/10 px-2" />
             </Labeled>
           </>
         )}
@@ -163,8 +163,8 @@ export function ProposalCard({ proposal, toolCallId }: { proposal: Proposal; too
 
 function Labeled({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div>
-      <p className="mb-1 text-2xs font-bold uppercase tracking-label text-ivory-faint">{label}</p>
+    <div className="py-2">
+      <p className="text-xs font-medium text-ivory-muted">{label}</p>
       {children}
     </div>
   );

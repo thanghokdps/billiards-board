@@ -74,13 +74,10 @@ export function MeetingHistory({ h }: { h: HeadToHead }) {
         <CardTitle>{t("history")}</CardTitle>
       </CardHeader>
       <CardBody>
-        <ol className="space-y-3">
+        <ol className="divide-y divide-line">
           {h.recent.map((match) => (
-            <li key={match.id}>
-              <time
-                dateTime={match.date}
-                className="mb-1 block text-2xs font-semibold uppercase tracking-label text-ivory-faint"
-              >
+            <li key={match.id} className="pt-3 first:pt-0">
+              <time dateTime={match.date} className="block text-xs font-medium text-ivory-muted">
                 {formatDate(match.date, locale)}
               </time>
               <MatchRow match={{ ...match, note: null }} compact />

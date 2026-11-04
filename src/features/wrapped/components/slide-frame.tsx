@@ -29,7 +29,7 @@ export function SlideFrame({ kicker, className, children }: SlideFrameProps) {
 
   return (
     <div ref={ref} className={cn("flex flex-1 flex-col justify-center gap-5 px-6 pb-16 pt-4", className)}>
-      <h2 className="font-display text-sm font-bold uppercase tracking-label text-lamp">{kicker}</h2>
+      <h2 className="font-display text-xl font-bold text-lamp">{kicker}</h2>
       {children}
     </div>
   );

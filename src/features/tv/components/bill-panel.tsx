@@ -34,21 +34,15 @@ export function BillPanel({ data }: { data: TvData }) {
       </div>
       <dl className="mt-4 grid gap-4 md:grid-cols-3 2xl:mt-8 2xl:gap-8">
         <div className="rounded-lg border border-line bg-surface p-4 2xl:p-8">
-          <dt className="text-2xs font-semibold uppercase tracking-label text-ivory-faint 2xl:text-2xl">
-            {t("matches")}
-          </dt>
+          <dt className="text-xs font-medium text-ivory-muted 2xl:text-2xl">{t("matches")}</dt>
           <dd className="digits text-5xl font-bold 2xl:text-8xl">{tc("matches", { count: bill.matchCount })}</dd>
         </div>
         <div className="rounded-lg border border-line bg-surface p-4 2xl:p-8">
-          <dt className="text-2xs font-semibold uppercase tracking-label text-ivory-faint 2xl:text-2xl">
-            {t("average")}
-          </dt>
+          <dt className="text-xs font-medium text-ivory-muted 2xl:text-2xl">{t("average")}</dt>
           <dd className="digits text-5xl font-bold 2xl:text-8xl">{formatVnd(bill.average, locale)}</dd>
         </div>
         <div className="rounded-lg border border-line bg-surface p-4 2xl:p-8">
-          <dt className="text-2xs font-semibold uppercase tracking-label text-ivory-faint 2xl:text-2xl">
-            {t("payers")}
-          </dt>
+          <dt className="text-xs font-medium text-ivory-muted 2xl:text-2xl">{t("payers")}</dt>
           <dd>
             <ul className="mt-2 space-y-2">
               {bill.payers.map((p) => (

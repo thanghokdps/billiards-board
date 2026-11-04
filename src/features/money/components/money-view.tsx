@@ -53,13 +53,13 @@ export async function MoneyView({ money, period, grain }: MoneyViewProps) {
       ) : (
         <>
           <section aria-label={t("total")} className="felt rounded-lg border border-line p-5 shadow-card">
-            <p className="text-2xs font-semibold uppercase tracking-label text-ivory-muted">{t("total")}</p>
+            <p className="text-xs font-medium text-ivory-muted">{t("total")}</p>
             <p className="mt-1 inline-block max-w-full rounded-md bg-night/70 px-3 py-1 digits text-score font-bold text-lamp digits-glow sm:text-hero">
               {formatVnd(money.total, locale)}
             </p>
             <div className="mt-3 flex flex-wrap items-end gap-x-8 gap-y-2">
               <div>
-                <p className="text-2xs font-semibold uppercase tracking-label text-ivory-muted">{t("avg")}</p>
+                <p className="text-xs font-medium text-ivory-muted">{t("avg")}</p>
                 <p className="digits text-xl font-bold">{formatVnd(money.avgPerMatch, locale)}</p>
               </div>
               <p className="text-sm text-ivory-muted">{t("totalHint", { count: money.matchesWithBill })}</p>
