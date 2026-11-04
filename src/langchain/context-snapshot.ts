@@ -1,6 +1,6 @@
 import "server-only";
 
-import { formatTime, localDate } from "@/lib/domain";
+import { formatTime, localDate, matchTitle, scoreLine } from "@/lib/domain";
 import { findMatches } from "@/server/matches/repository";
 import { listPlayers } from "@/server/players/repository";
 import { getSessionByDate } from "@/server/sessions/repository";
@@ -37,9 +37,12 @@ export async function loadContextSnapshot(context: AgentContext, now: Date): Pro
       : null,
     todaysMatches: todays.map((m) => {
       const side = (list: typeof m.sideA) => list.map((p) => p.name).join(" & ");
-      const score = m.scoreA != null && m.scoreB != null ? `${m.scoreA}-${m.scoreB}` : "no score";
       const bill = m.bill != null ? `${m.bill} VND` : "no bill";
-      return `${m.id} · ${formatTime(m.playedAt, "en", context.timeZone)} · ${GAME[m.gameType]} · ${side(m.sideA)} vs ${side(m.sideB)} · ${score} · winner ${m.winnerSide === "a" ? side(m.sideA) : side(m.sideB)} · ${bill}`;
+      const result =
+        m.format === "1v1v1"
+          ? `loser ${side(m.sideB)}`
+          : `winner ${m.winnerSide === "a" ? side(m.sideA) : side(m.sideB)}`;
+      return `${m.id} · ${formatTime(m.playedAt, "en", context.timeZone)} · ${GAME[m.gameType]} · ${matchTitle(m)} · ${scoreLine(m) ?? "no score"} · ${result} · ${bill}`;
     }),
   };
 }

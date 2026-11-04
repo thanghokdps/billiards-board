@@ -9,6 +9,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { Chip } from "@/components/ui/chip";
 import { EmptyState } from "@/components/ui/misc";
 import { useChat } from "@/features/shell";
+import { MATCH_FORMATS, matchTitle, type MatchFormat } from "@/lib/domain";
 import { applyVictim, probabilities, type WheelEntry } from "@/lib/wheel";
 import type { PlayerRef } from "@/server/matches/schema";
 
@@ -18,7 +19,13 @@ import { WheelPanel } from "./wheel-panel";
 import { useHydrated } from "../hooks/use-hydrated";
 
 const MULTIPLIERS = [5, 10] as const;
-const MODES = ["1v1", "2v2"] as const;
+const MODE_LABELS = { "1v1": "mode1v1", "2v2": "mode2v2", "1v1v1": "mode1v1v1" } as const;
+const MODE_HINTS = { "1v1": "modeHint1v1", "2v2": "modeHint2v2", "1v1v1": "modeHint1v1v1" } as const;
+const MODE_SPINNER_HINTS = {
+  "1v1": "modeHintSpinner1v1",
+  "2v2": "modeHintSpinner2v2",
+  "1v1v1": "modeHintSpinner1v1v1",
+} as const;
 
 interface WheelStudioProps {
   /** Every active player. */
@@ -43,7 +50,7 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
   const hintId = useId();
   const [included, setIncluded] = useState<number[]>(defaultIncluded);
   const [weights, setWeights] = useState<Record<number, number>>({});
-  const [mode, setMode] = useState<(typeof MODES)[number]>("2v2");
+  const [mode, setMode] = useState<MatchFormat>("2v2");
   const [spinnerId, setSpinnerId] = useState<number | null>(null);
   const [victimId, setVictimId] = useState<number | null>(null);
   const [multiplier, setMultiplier] = useState<number | null>(null);
@@ -112,7 +119,7 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
     setWeights({});
   }
 
-  function changeMode(next: (typeof MODES)[number]) {
+  function changeMode(next: MatchFormat) {
     setMode(next);
     setPicks([]);
   }
@@ -167,15 +174,7 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
               ? (pairing) => (
                   <Button
                     variant="felt"
-                    onClick={() =>
-                      chat.open(
-                        t("createMatchPrompt", {
-                          sideA: pairing.sideA.map((p) => p.name).join(" & "),
-                          sideB: pairing.sideB.map((p) => p.name).join(" & "),
-                        }),
-                        "prefill",
-                      )
-                    }
+                    onClick={() => chat.open(t("createMatchPrompt", { match: matchTitle(pairing) }), "prefill")}
                   >
                     {t("createMatch")}
                   </Button>
@@ -193,7 +192,7 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
         <section>
           <CardTitle>{t("modeTitle")}</CardTitle>
           <div role="group" aria-label={t("modeTitle")} className="flex gap-2">
-            {MODES.map((m) => (
+            {MATCH_FORMATS.map((m) => (
               <Chip
                 key={m}
                 selected={mode === m}
@@ -201,14 +200,12 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
                 className="h-11 flex-1 justify-center"
                 onClick={() => changeMode(m)}
               >
-                <span className="digits text-xl font-bold">{t(m === "1v1" ? "mode1v1" : "mode2v2")}</span>
+                <span className="digits text-xl font-bold">{t(MODE_LABELS[m])}</span>
               </Chip>
             ))}
           </div>
           <p className="text-sm text-ivory-muted">
-            {spinner
-              ? t(mode === "1v1" ? "modeHintSpinner1v1" : "modeHintSpinner2v2", { name: spinner.name })
-              : t(mode === "1v1" ? "modeHint1v1" : "modeHint2v2")}
+            {spinner ? t(MODE_SPINNER_HINTS[mode], { name: spinner.name }) : t(MODE_HINTS[mode])}
           </p>
         </section>
 

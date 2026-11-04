@@ -48,6 +48,7 @@
   "ask": {
     "game_type": "Thể loại gì?",
     "winner": "Ai thắng?",
+    "loser": "Ai bét?",
     "players": "Ai đánh?",
     "match": "Trận nào?",
     "player": "Người nào?",

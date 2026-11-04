@@ -6,9 +6,9 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { MatchRow } from "@/components/ui/match-row";
-import { formatDate, formatVnd } from "@/lib/domain";
+import { formatDate, formatVnd, matchTitle } from "@/lib/domain";
 
-import type { HighlightItem, HistoryDay, HistoryMatch } from "../types";
+import type { HighlightItem, HistoryDay } from "../types";
 import { MatchSheet } from "./match-sheet";
 
 interface HistoryListProps {
@@ -18,9 +18,6 @@ interface HistoryListProps {
 }
 
 const NO_HIGHLIGHTS: HighlightItem[] = [];
-
-const titleOf = (m: HistoryMatch) =>
-  `${m.sideA.map((p) => p.name).join(" & ")} vs ${m.sideB.map((p) => p.name).join(" & ")}`;
 
 /** Days newest first, each with a sticky header; a tap on a match opens its detail sheet. */
 export function HistoryList({ days, highlights, admin }: HistoryListProps) {
@@ -63,7 +60,7 @@ export function HistoryList({ days, highlights, admin }: HistoryListProps) {
                     <Button
                       variant="ghost"
                       className="absolute inset-0 h-full w-full rounded-md px-0 hover:bg-lamp/5"
-                      aria-label={t("openMatch", { title: titleOf(match) })}
+                      aria-label={t("openMatch", { title: matchTitle(match) })}
                       onClick={() => setSelectedId(match.id)}
                     />
                   </li>

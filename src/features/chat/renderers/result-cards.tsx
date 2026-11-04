@@ -22,6 +22,7 @@ import type {
   StatsResult,
   WheelSetup,
 } from "@/lib/agent-results";
+import { matchTitle } from "@/lib/domain";
 import { formatCompactVnd, formatVnd } from "@/lib/domain";
 
 import { useSend } from "../lib/send-context";
@@ -167,15 +168,7 @@ export function WheelCard({ result }: { result: WheelSetup }) {
           <Button
             variant="felt"
             size="sm"
-            onClick={() =>
-              chat.open(
-                t("createMatchPrompt", {
-                  sideA: pairing.sideA.map((p) => p.name).join(" & "),
-                  sideB: pairing.sideB.map((p) => p.name).join(" & "),
-                }),
-                "prefill",
-              )
-            }
+            onClick={() => chat.open(t("createMatchPrompt", { match: matchTitle(pairing) }), "prefill")}
           >
             {t("createMatch")}
           </Button>

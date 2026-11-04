@@ -2,11 +2,11 @@
 
 import { RotateCcw, SkipForward, Sparkles } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useCallback, useMemo, useRef, useState, type ReactNode } from "react";
+import { Fragment, useCallback, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { PlayerAvatar } from "@/components/ui/player-avatar";
-import { formatPercent } from "@/lib/domain";
+import { formatPercent, PLAYERS_IN_FORMAT, type MatchFormat } from "@/lib/domain";
 import type { WheelEntry } from "@/lib/wheel";
 import type { PlayerRef } from "@/server/matches/schema";
 
@@ -14,6 +14,7 @@ import { SpinWheel, type SpinWheelHandle } from "./spin-wheel";
 import { useHydrated } from "../hooks/use-hydrated";
 
 export interface WheelPairing {
+  format: MatchFormat;
   sideA: PlayerRef[];
   sideB: PlayerRef[];
 }
@@ -22,7 +23,7 @@ interface WheelPanelProps {
   players: PlayerRef[];
   /** Weight per player id; 0 hides a player. */
   weights: Record<number, number>;
-  mode: "1v1" | "2v2";
+  mode: MatchFormat;
   /** Rendered under a finished pairing (e.g. "Tạo trận từ cặp này"). */
   pairingActions?: (pairing: WheelPairing) => ReactNode;
   compact?: boolean;
@@ -38,7 +39,7 @@ interface WheelPanelProps {
 
 /**
  * One tap spins the next pick; each winner is removed for the next spin (requirement: "tự loại người đã trúng").
- * 1v1 = two spins, 2v2 = four spins alternating side A / side B.
+ * 1v1 = two spins, 2v2 = four spins alternating side A / side B, 1v1v1 = three spins, nobody on a side.
  * With a spinner, side A fills first (2v2: the first winner is their partner) and one seat fewer is spun for.
  */
 export function WheelPanel({
@@ -68,7 +69,7 @@ export function WheelPanel({
     [onSpinningChange],
   );
 
-  const needed = mode === "1v1" ? 2 : 4;
+  const needed = PLAYERS_IN_FORMAT[mode];
   const spins = spinnerId === null ? needed : needed - 1;
   const byId = useMemo(() => new Map(players.map((p) => [p.id, p])), [players]);
   const entries = useMemo<WheelEntry[]>(
@@ -94,13 +95,16 @@ export function WheelPanel({
   );
   const seated = spinnerId === null ? picks : [spinnerId, ...picks];
   const toPlayers = (ids: number[]) => ids.map((id) => byId.get(id)!);
+  const threeWay = mode === "1v1v1";
+  const seatsOnA = threeWay ? 2 : needed / 2;
   const pairing: WheelPairing =
-    spinnerId === null
+    spinnerId === null && !threeWay
       ? {
+          format: mode,
           sideA: toPlayers(seated.filter((_, i) => i % 2 === 0)),
           sideB: toPlayers(seated.filter((_, i) => i % 2 === 1)),
         }
-      : { sideA: toPlayers(seated.slice(0, needed / 2)), sideB: toPlayers(seated.slice(needed / 2)) };
+      : { format: mode, sideA: toPlayers(seated.slice(0, seatsOnA)), sideB: toPlayers(seated.slice(seatsOnA)) };
 
   return (
     <div className="space-y-4">
@@ -139,13 +143,23 @@ export function WheelPanel({
           {entries.length + picks.length < spins && (
             <p className="text-center text-sm text-loss">{t("notEnough", { n: needed })}</p>
           )}
-          {seated.length > 0 && (
-            <div className="flex items-center justify-between gap-3">
-              <Team players={pairing.sideA} />
-              <span className="font-display text-xl font-bold text-lamp">VS</span>
-              <Team players={pairing.sideB} align="right" />
-            </div>
-          )}
+          {seated.length > 0 &&
+            (threeWay ? (
+              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
+                {toPlayers(seated).map((p, i) => (
+                  <Fragment key={p.id}>
+                    {i > 0 && <span className="font-display text-xl font-bold text-lamp">VS</span>}
+                    <Team players={[p]} />
+                  </Fragment>
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center justify-between gap-3">
+                <Team players={pairing.sideA} />
+                <span className="font-display text-xl font-bold text-lamp">VS</span>
+                <Team players={pairing.sideB} align="right" />
+              </div>
+            ))}
           {done && pairingActions && (
             <div className="mt-3 flex flex-wrap justify-center gap-2">{pairingActions(pairing)}</div>
           )}

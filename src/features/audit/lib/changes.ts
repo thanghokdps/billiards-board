@@ -24,6 +24,7 @@ function formatValue(key: string, value: unknown, locale: string): string {
   if (key === "bill" && typeof value === "number") return formatVnd(value, locale);
   if (key === "gameType" && typeof value === "string") return GAME_LABEL[value as keyof typeof GAME_LABEL] ?? value; // value is audit JSON, may predate a renamed type
   if (typeof value === "boolean") return value ? "✓" : "✗";
+  if (key === "scores" && Array.isArray(value)) return value.map((v) => (isRow(v) ? String(v.score) : "?")).join(" · ");
   if (Array.isArray(value)) {
     const parts = value.map((v) =>
       isRow(v) && typeof v.name === "string" ? v.name : typeof v === "object" ? JSON.stringify(v) : String(v),
@@ -46,7 +47,8 @@ function headlineOf(entity: string, snapshot: unknown): string | null {
   if (entity === "match") {
     const a = sideNames(snapshot.sideA);
     const b = sideNames(snapshot.sideB);
-    return a && b ? `${a} vs ${b}` : null;
+    if (!a || !b) return null;
+    return snapshot.format === "1v1v1" ? `${a.replace(" & ", " vs ")} vs ${b}` : `${a} vs ${b}`;
   }
   return entity === "player" && typeof snapshot.name === "string" ? snapshot.name : null;
 }

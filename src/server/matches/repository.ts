@@ -41,7 +41,7 @@ export async function findMatches(query: MatchQuery = {}, conn: Conn = db): Prom
   if (rows.length === 0) return [];
 
   const links = await conn
-    .select({ matchId: matchPlayers.matchId, side: matchPlayers.side, player: players })
+    .select({ matchId: matchPlayers.matchId, side: matchPlayers.side, score: matchPlayers.score, player: players })
     .from(matchPlayers)
     .innerJoin(players, eq(matchPlayers.playerId, players.id))
     .where(
@@ -52,10 +52,11 @@ export async function findMatches(query: MatchQuery = {}, conn: Conn = db): Prom
     )
     .orderBy(asc(players.ballNumber));
 
-  const byMatch = new Map<string, { a: MatchView["sideA"]; b: MatchView["sideB"] }>();
+  const byMatch = new Map<string, { a: MatchView["sideA"]; b: MatchView["sideB"]; scores: MatchView["scores"] }>();
   for (const link of links) {
-    const entry = byMatch.get(link.matchId) ?? { a: [], b: [] };
+    const entry = byMatch.get(link.matchId) ?? { a: [], b: [], scores: [] };
     entry[link.side].push(toPlayerRef(link.player));
+    if (link.score !== null) entry.scores.push({ playerId: link.player.id, score: link.score });
     byMatch.set(link.matchId, entry);
   }
 
@@ -70,6 +71,7 @@ export async function findMatches(query: MatchQuery = {}, conn: Conn = db): Prom
     winnerSide: match.winnerSide,
     scoreA: match.scoreA,
     scoreB: match.scoreB,
+    scores: byMatch.get(match.id)?.scores ?? [],
     bill: match.bill,
     note: match.note,
     tags: match.tags,

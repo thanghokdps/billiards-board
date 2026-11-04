@@ -29,6 +29,48 @@ function Side({ players, won, align }: { players: StatPlayer[]; won: boolean; al
   );
 }
 
+/** A 1v1v1 on the TV: three equals, the winners' digits glowing, the loser marked as the one paying. */
+function ThreeWayBoard({ match }: { match: StatMatch }) {
+  const t = useTranslations("common");
+  const seats = [
+    ...match.sideA.map((player) => ({ player, won: true })),
+    ...match.sideB.map((player) => ({ player, won: false })),
+  ];
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      {seats.map(({ player, won }) => {
+        const score = match.scores.find((s) => s.playerId === player.id)?.score;
+        return (
+          <div key={player.id} className="flex min-w-0 flex-col items-center gap-2 text-center">
+            <PlayerAvatar player={player} size="lg" />
+            <p
+              className={cn(
+                "max-w-full truncate text-xl font-bold 2xl:text-4xl",
+                won ? "text-ivory" : "text-ivory-muted",
+              )}
+            >
+              {player.name}
+            </p>
+            {score !== undefined && (
+              <p
+                className={cn(
+                  "digits rounded-md border border-line-strong bg-night px-4 text-5xl font-bold 2xl:text-7xl",
+                  won ? "text-lamp digits-glow" : "text-ivory-faint",
+                )}
+              >
+                {score}
+              </p>
+            )}
+            <p className={cn("font-semibold 2xl:text-2xl", won ? "text-lamp" : "text-loss")}>
+              {won ? t("win") : t("paysBill")}
+            </p>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 /** One match as a big LED scoreboard: names either side of the lit score, the winner's digits glowing. */
 function LedBoard({ match }: { match: StatMatch }) {
   const t = useTranslations("common");
@@ -44,24 +86,28 @@ function LedBoard({ match }: { match: StatMatch }) {
           {match.bill != null ? formatVnd(match.bill, locale) : t("noBill")}
         </span>
       </div>
-      <div className="flex items-center gap-4">
-        <Side players={match.sideA} won={aWon} align="left" />
-        <div
-          className="digits flex shrink-0 items-baseline gap-2 rounded-md border border-line-strong bg-night px-4 py-1 text-6xl font-bold 2xl:gap-4 2xl:px-8 2xl:text-8xl"
-          aria-label={hasScore ? `${match.scoreA}–${match.scoreB}` : t("noScore")}
-        >
-          {hasScore ? (
-            <>
-              <span className={aWon ? "text-lamp digits-glow" : "text-ivory-faint"}>{match.scoreA}</span>
-              <span className="text-ivory-faint">:</span>
-              <span className={aWon ? "text-ivory-faint" : "text-lamp digits-glow"}>{match.scoreB}</span>
-            </>
-          ) : (
-            <span className="text-4xl text-ivory-faint 2xl:text-7xl">{t("vs")}</span>
-          )}
+      {match.format === "1v1v1" ? (
+        <ThreeWayBoard match={match} />
+      ) : (
+        <div className="flex items-center gap-4">
+          <Side players={match.sideA} won={aWon} align="left" />
+          <div
+            className="digits flex shrink-0 items-baseline gap-2 rounded-md border border-line-strong bg-night px-4 py-1 text-6xl font-bold 2xl:gap-4 2xl:px-8 2xl:text-8xl"
+            aria-label={hasScore ? `${match.scoreA}–${match.scoreB}` : t("noScore")}
+          >
+            {hasScore ? (
+              <>
+                <span className={aWon ? "text-lamp digits-glow" : "text-ivory-faint"}>{match.scoreA}</span>
+                <span className="text-ivory-faint">:</span>
+                <span className={aWon ? "text-ivory-faint" : "text-lamp digits-glow"}>{match.scoreB}</span>
+              </>
+            ) : (
+              <span className="text-4xl text-ivory-faint 2xl:text-7xl">{t("vs")}</span>
+            )}
+          </div>
+          <Side players={match.sideB} won={!aWon} align="right" />
         </div>
-        <Side players={match.sideB} won={!aWon} align="right" />
-      </div>
+      )}
     </article>
   );
 }
