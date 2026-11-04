@@ -13,11 +13,11 @@ import { isActive, NAV_ITEMS, WHEEL_ITEM, type NavItem } from "../nav-items";
 
 const SHORT_LABEL: Record<string, string> = { home: "homeShort", leaderboard: "leaderboardShort" };
 
-/** The active tab gets a filled pill, so it does not rely on colour alone. */
+/** The active tab is a key held down, so it does not rely on colour alone. */
 function tabClass(active: boolean) {
   return cn(
-    "mx-auto flex h-14 w-full max-w-20 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-full text-2xs font-semibold transition-colors",
-    active ? "bg-lamp/15 text-lamp" : "text-ivory-muted hover:text-ivory",
+    "dock-key mx-auto flex h-14 w-full max-w-20 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl text-2xs font-semibold",
+    active ? "text-lamp" : "text-ivory-muted hover:text-ivory",
   );
 }
 
@@ -43,9 +43,9 @@ export function FloatingDock({ admin, onOpenChat }: { admin: boolean; onOpenChat
     <>
       <nav
         aria-label={t("mainNav")}
-        className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 mx-auto max-w-md rounded-full border border-line-strong bg-surface/85 p-1 shadow-pop backdrop-blur-lg"
+        className="dock fixed inset-x-3 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 mx-auto max-w-md p-1.5"
       >
-        <ul className="grid grid-cols-5 items-center">
+        <ul className="grid grid-cols-5 items-center gap-1">
           {home && <DockLink item={home} />}
           {history && <DockLink item={history} />}
           <li className="flex justify-center">
@@ -54,7 +54,7 @@ export function FloatingDock({ admin, onOpenChat }: { admin: boolean; onOpenChat
               onClick={() => setRackOpen(true)}
               aria-label={t("openRack")}
               aria-haspopup="dialog"
-              className="-mt-6 flex size-16 cursor-pointer items-center justify-center rounded-full bg-night shadow-lamp transition-transform hover:-translate-y-0.5 hover:rotate-12 active:scale-95"
+              className="dock-pocket -mt-6 flex size-16 cursor-pointer items-center justify-center rounded-full bg-night transition-transform hover:-translate-y-0.5 hover:rotate-12 active:scale-95"
             >
               <Ball className="size-14" />
             </button>

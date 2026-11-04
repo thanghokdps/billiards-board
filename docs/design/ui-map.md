@@ -21,6 +21,8 @@ One navigation at every width, no sidebar: `FloatingDock` holds Today, History, 
 | Match plates | `.match-tiles` on home and history lists | CSS thick edge, stand up on entry (scroll-driven in history), tip on hover |
 | Score wire | `components/ui/filter-links.tsx`, `.score-*` | The bead is one DOM node kept across navigation, so it slides to the new stop |
 | Table frame | `features/home/components/table-frame.tsx`, `.pool-*` | CSS pocket table: rails, cushions, sights, six pockets |
+| Dock | `features/shell/components/floating-dock.tsx`, `.dock*` | Wooden rail tilted by a pseudo-element behind upright keys; the current page is a key held down |
+| Pixel pet | `features/shell` (`pixel-pet`, `lib/pet-brain`, `lib/pet-sprites`) | Canvas sprite. Roams; a click makes it leap there, cheer on a control, go dizzy after four quick clicks; it tumbles on scroll, cheers on a new page, sleeps after 25 s idle. Absent under reduced motion, never takes a click |
 
 WebGL failure or a lost context falls back to the flat table or chart. A new `.digit-reel`-style delayed animation must also go in the reduced-motion block of `globals.css`, or its delay holds back the first frame.
 

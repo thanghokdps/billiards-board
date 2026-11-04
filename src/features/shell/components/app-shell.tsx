@@ -11,6 +11,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 
 import { FloatingDock } from "./floating-dock";
 import { LanguageSwitch } from "./language-switch";
+import { PixelPet } from "./pixel-pet";
 import { ChatContext, type ChatControls, type PendingChatMessage } from "../chat-context";
 
 // The chat (CopilotKit) is loaded for the admin only; viewers never download it.
@@ -98,6 +99,7 @@ export function AppShell({ admin, children }: AppShellProps) {
       </main>
 
       <FloatingDock admin={admin} onOpenChat={open} />
+      <PixelPet />
 
       {admin && (
         <>
