@@ -82,11 +82,7 @@ if (process.argv.includes("--demo")) {
     const dow = day.getUTCDay();
     if (dow === 0 || dow === 6) continue;
     const dateStr = day.toISOString().slice(0, 10);
-    const [session] = await db
-      .insert(sessions)
-      .values({ date: dateStr, venue: "Bida Hoàng Gia", tableLabel: "Bàn 3" })
-      .onConflictDoNothing()
-      .returning();
+    const [session] = await db.insert(sessions).values({ date: dateStr }).onConflictDoNothing().returning();
     if (!session) continue;
     const count = 2 + Math.floor(rand() * 3);
     for (let i = 0; i < count; i++) {

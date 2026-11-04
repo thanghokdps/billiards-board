@@ -29,6 +29,13 @@
       "when": 1793777468571,
       "tag": "0003_three_way_match",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793795898321,
+      "tag": "0004_drop_unused_session_features",
+      "breakpoints": true
     }
   ]
 }

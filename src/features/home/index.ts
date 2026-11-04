@@ -1,10 +1,7 @@
 export { ChatButton } from "./components/chat-button";
-export { PairingCard } from "./components/pairing-card";
 export { RecapCard } from "./components/recap-card";
 export { Scoreboard } from "./components/scoreboard";
 export { Section } from "./components/section";
-export { SessionEditor } from "./components/session-editor";
 export { TableHero } from "./components/table-hero";
 export { WantedStrip } from "./components/wanted-strip";
 export { localHour, RECAP_FROM_HOUR, summarizeDay } from "./lib/day-summary";
-export { suggestPairings } from "./lib/pairing";

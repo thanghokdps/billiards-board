@@ -50,8 +50,6 @@ export const adminApi = {
   updatePlayer: (id: number, input: PlayerInput) =>
     adminCall<Record<string, unknown>>(`/api/admin/players/${id}`, { method: "PATCH", body: JSON.stringify(input) }),
   deletePlayer: (id: number) => adminCall<{ archived: boolean }>(`/api/admin/players/${id}`, { method: "DELETE" }),
-  saveSession: (date: string, patch: { venue: string | null; tableLabel: string | null }) =>
-    adminCall<Record<string, unknown>>(`/api/admin/sessions/${date}`, { method: "PUT", body: JSON.stringify(patch) }),
   /** Multipart upload (field `file`); `adminCall` leaves the content type to the browser for FormData. */
   uploadAvatar: async (file: File): Promise<string> => {
     const form = new FormData();

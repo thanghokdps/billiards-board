@@ -8,7 +8,6 @@
   "notEnough": "Needs at least {n} players",
   "createMatch": "Log a match for this pairing",
   "createMatchPrompt": "Just finished {match}: ",
-  "createPrediction": "Open predictions for this pairing",
   "wheelSection": "Wheel",
   "controlsSection": "Wheel setup",
   "participantsTitle": "Who is playing?",

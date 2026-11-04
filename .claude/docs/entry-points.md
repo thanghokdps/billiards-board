@@ -8,7 +8,7 @@
 
 ## Pages (`src/app/[locale]/`, public unless noted)
 
-`/` today's table · `/history` · `/leaderboard` · `/players/[slug]` (FIFA card) · `/money` · `/hall-of-fame` · `/rivalry` · `/wheel` · `/predictions` · `/wrapped`, `/wrapped/[slug]` · `/tv` · `/audit` · `/admin` (login; players and settings for the admin)
+`/` today's table · `/history` · `/leaderboard` · `/players/[slug]` (FIFA card) · `/money` · `/hall-of-fame` · `/rivalry` · `/wheel` · `/wrapped`, `/wrapped/[slug]` · `/tv` · `/audit` · `/admin` (login; players and settings for the admin)
 
 ## API routes (`src/app/api/`)
 
@@ -17,7 +17,7 @@
 | `POST /api/admin/login`, `POST /api/admin/logout` | password; 429 + `retry-after` after 5 failures / 15 min | admin cookie |
 | `POST /api/admin/matches`, `PATCH`/`DELETE /api/admin/matches/[id]`, `POST …/[id]/restore` | admin cookie | match writes (create takes an idempotency key), audited |
 | `POST`/`DELETE /api/admin/matches/[id]/highlights[/hid]` | admin cookie | highlight photos |
-| `/api/admin/players[/id]`, `/api/admin/sessions/[date]`, `/api/admin/predictions[/id][/votes]`, `POST /api/admin/media` | admin cookie | players, attendance, predictions, uploads (bytea) |
+| `/api/admin/players[/id]`, `POST /api/admin/media` | admin cookie | players, uploads (bytea) |
 | `POST /api/admin/recap` | admin cookie | day bulletin from `MODEL_CHEAP` (`src/langchain/recap.ts`); 404 when no matches |
 | `GET/POST /api/copilotkit/*` | admin cookie (401 otherwise) | CopilotKit v2 runtime → `LangChainGraphAgent` |
 | `GET /api/media/[id]` | public | stored image |

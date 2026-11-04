@@ -8,12 +8,11 @@ import { PageHeader } from "@/components/ui/misc";
 
 import { PlayersPanel } from "./players-panel";
 import { QuickLinks } from "./quick-links";
-import { SessionCard } from "./session-card";
 import { adminApi } from "../api";
 import { useAdminAction } from "../hooks/use-admin-action";
-import type { AdminPlayer, AdminSession } from "../types";
+import type { AdminPlayer } from "../types";
 
-export function AdminDashboard({ players, session }: { players: AdminPlayer[]; session: AdminSession }) {
+export function AdminDashboard({ players }: { players: AdminPlayer[] }) {
   const t = useTranslations("admin");
   const { pending, run } = useAdminAction();
 
@@ -39,10 +38,7 @@ export function AdminDashboard({ players, session }: { players: AdminPlayer[]; s
         <div className="lg:col-span-2">
           <PlayersPanel players={players} />
         </div>
-        <div className="space-y-6">
-          <SessionCard session={session} />
-          <QuickLinks />
-        </div>
+        <QuickLinks />
       </div>
     </div>
   );
