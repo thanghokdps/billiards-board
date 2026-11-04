@@ -14,7 +14,7 @@ import {
   type ToolFailure,
   type UpdateProposal,
 } from "@/lib/agent-results";
-import { formatOfSides, formatTime, GAME_TYPES, MATCH_TAGS, type MatchFormat } from "@/lib/domain";
+import { formatOfSides, formatTime, GAME_TYPES, GUEST_SEAT, MATCH_TAGS, type MatchFormat } from "@/lib/domain";
 import { findMatches } from "@/server/matches/repository";
 import { matchInputSchema, type MatchPatch, type MatchView } from "@/server/matches/schema";
 import { listPlayers } from "@/server/players/repository";
@@ -32,7 +32,7 @@ const matchRef = z
 
 const draftSchema = z.object({
   gameType: z.enum(GAME_TYPES).nullable().describe("null when the user did not say it; never guess"),
-  sideA: names.nullable().describe("player names exactly as the user wrote them; null for a 1v1v1"),
+  sideA: names.nullable().describe("player names exactly as the user wrote them; null for a 1v1v1 or a guest match"),
   sideB: names.nullable(),
   threeWay: z
     .object({
@@ -46,7 +46,21 @@ const draftSchema = z.object({
     })
     .nullable()
     .describe("only for a 1v1v1, three players each on their own; otherwise null"),
-  winnerSide: z.enum(["a", "b"]).nullable().describe("null when the user did not say who won; null for a 1v1v1"),
+  guest: z
+    .object({
+      player: name.describe("the one player against the guest, exactly as the user wrote it"),
+      loser: name
+        .nullable()
+        .describe(
+          `that player's name, or "${GUEST_SEAT.name}" when the player won ("Dũ thắng guest"); null only when the user said neither`,
+        ),
+    })
+    .nullable()
+    .describe("only for a guest match (du đấu); otherwise null"),
+  winnerSide: z
+    .enum(["a", "b"])
+    .nullable()
+    .describe("null when the user did not say who won; null for a 1v1v1 or a guest match"),
   scoreA: z.number().int().min(0).max(999).nullable(),
   scoreB: z.number().int().min(0).max(999).nullable(),
   bill: z.number().int().min(0).max(10_000_000).nullable().describe('VND; "45k" = 45000'),
@@ -100,8 +114,41 @@ function seatThreeWay(draft: NonNullable<Draft["threeWay"]>, roster: Roster): Se
   };
 }
 
+/** Who won a guest match given who lost: "a" is the player, "b" the guest. */
+function guestWinnerSide(loser: string, playerId: number, roster: Roster): "a" | "b" | NameProblem | ToolFailure {
+  if (loser.trim().toLowerCase() === GUEST_SEAT.name.toLowerCase()) return "a";
+  const resolved = resolveNames([loser], roster);
+  if (!resolved.ok) return resolved.problem;
+  if (resolved.ids[0] !== playerId)
+    return { status: "error", message: `The loser must be the player or ${GUEST_SEAT.name}.` };
+  return "b";
+}
+
+function seatGuest(draft: NonNullable<Draft["guest"]>, roster: Roster): Seating {
+  const player = resolveNames([draft.player], roster);
+  if (!player.ok) return player.problem;
+  const { name: playerName } = player.refs[0]!;
+  if (!draft.loser)
+    return needs("guest_loser", [
+      { label: playerName, value: playerName },
+      { label: GUEST_SEAT.name, value: GUEST_SEAT.name },
+    ]);
+  const winnerSide = guestWinnerSide(draft.loser, player.ids[0]!, roster);
+  if (typeof winnerSide !== "string") return winnerSide;
+  return {
+    format: "guest",
+    sideA: player.refs,
+    sideB: [],
+    winnerSide,
+    scoreA: null,
+    scoreB: null,
+    scores: [],
+  };
+}
+
 function seatDraft(draft: Draft, roster: Roster): Seating {
   if (draft.threeWay) return seatThreeWay(draft.threeWay, roster);
+  if (draft.guest) return seatGuest(draft.guest, roster);
   if (!draft.sideA || !draft.sideB) return needs("players");
   const a = resolveNames(draft.sideA, roster);
   if (!a.ok) return a.problem;
@@ -169,7 +216,7 @@ export const proposeMatchesTool = tool(
         scoreA: seated.scoreA,
         scoreB: seated.scoreB,
         scores: seated.scores,
-        bill: draft.bill,
+        bill: seated.format === "guest" ? null : draft.bill,
         note: draft.note,
         tags: (draft.tags ?? []).filter((t) => (MATCH_TAGS as readonly string[]).includes(t)),
         date: draft.date ?? today,
@@ -188,6 +235,7 @@ export const proposeMatchesTool = tool(
       "- Returns a proposal (the chat shows a confirm card with Save) or what is missing / which name is unclear.",
       "- One entry per match, in the order the user listed them. 1v1 = one name per side, 2v2 = two.",
       "- 1v1v1 = threeWay with the three names and the loser; sideA, sideB and winnerSide stay null.",
+      "- Guest match = guest with the player and the loser, one entry per match; sideA, sideB and winnerSide stay null.",
     ].join("\n"),
     schema: z.object({ matches: z.array(draftSchema).min(1).max(10) }),
   },
@@ -199,8 +247,10 @@ const patchSchema = z
     gameType: z.enum(GAME_TYPES).nullable(),
     sideA: names.nullable().describe("in a 1v1v1, the two winners"),
     sideB: names.nullable().describe("in a 1v1v1, the loser"),
-    winnerSide: z.enum(["a", "b"]).nullable().describe("never for a 1v1v1: use loser"),
-    loser: name.nullable().describe("1v1v1 only: which of the three came last"),
+    winnerSide: z.enum(["a", "b"]).nullable().describe("never for a 1v1v1 or a guest match: use loser"),
+    loser: name
+      .nullable()
+      .describe(`1v1v1: which of the three came last. Guest match: the player's name or "${GUEST_SEAT.name}"`),
     scoreA: z.number().int().min(0).max(999).nullable(),
     scoreB: z.number().int().min(0).max(999).nullable(),
     scores: z
@@ -252,6 +302,24 @@ function applyThreeWayChanges(
   return null;
 }
 
+/** Applies a new loser of a guest match to `patch`, or returns what stops it. */
+function applyGuestLoser(
+  target: MatchView,
+  changes: z.infer<typeof patchSchema>,
+  roster: Roster,
+  patch: MatchPatch,
+): NameProblem | ToolFailure | null {
+  if (!changes.loser) return null;
+  const playerId = patch.sideA?.[0] ?? target.sideA[0]?.id;
+  if (playerId === undefined) return { status: "error", message: "This guest match has no player." };
+  const winnerSide = guestWinnerSide(changes.loser, playerId, roster);
+  if (typeof winnerSide !== "string") return winnerSide;
+  patch.winnerSide = winnerSide;
+  return null;
+}
+
+const hasFixedSeats = (format: MatchFormat | null) => format === "1v1v1" || format === "guest";
+
 /** Merges the requested change onto the match for the before → after preview. */
 function preview(before: MatchView, patch: MatchPatch, refs: Refs): MatchView {
   return {
@@ -288,14 +356,17 @@ export const proposeUpdateTool = tool(
       patch[side] = resolved.ids;
       refs[side === "sideA" ? "a" : "b"] = resolved.refs;
     }
-    const stopped = applyThreeWayChanges(target, changes, roster, patch, refs);
+    const stopped =
+      target.format === "guest"
+        ? applyGuestLoser(target, changes, roster, patch)
+        : applyThreeWayChanges(target, changes, roster, patch, refs);
     if (stopped) return json(stopped);
     if (patch.sideA || patch.sideB) {
       const format = formatOfSides((patch.sideA ?? target.sideA).length, (patch.sideB ?? target.sideB).length);
-      if ((format === "1v1v1") !== (target.format === "1v1v1"))
+      if (format !== target.format && (hasFixedSeats(format) || hasFixedSeats(target.format)))
         return json({
           status: "error",
-          message: "A match cannot switch to or from 1v1v1: delete it and log it again.",
+          message: "A match cannot switch to or from 1v1v1 or guest: delete it and log it again.",
         });
       if (format) patch.format = format;
     }
@@ -328,6 +399,7 @@ export const proposeUpdateTool = tool(
       "- Prepares a change to one recorded match (score, winner, players, game type, bill, note, tags); saves nothing.",
       '- Also sets a bill: "trận vừa rồi bill 45k" → changes.bill = 45000.',
       "- In a 1v1v1, change who lost with changes.loser and the score with changes.scores.",
+      "- In a guest match, change who lost with changes.loser; it has no score and no bill to change.",
       "- Returns a before → after proposal the admin confirms in the chat. Only fields the user changes are non-null.",
     ].join("\n"),
     schema: z.object({ match: matchRef, changes: patchSchema }),

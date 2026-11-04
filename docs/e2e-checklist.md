@@ -24,6 +24,9 @@ Run on the live app, in /vi and /en, at 375 px and desktop. The console must sta
 - [ ] "libre 1v1v1 Thén, Dũ, Bổ: Bổ bét, Thén 40 Dũ 32 Bổ 18, bill 60k" → card with three columns, each score under its player, Bổ marked "Trả bill" → Save → Undo works. On Elo 1200 each: +6, +6, −12.
 - [ ] 1v1v1 without a loser → "Ai bét?" chips with the three names; tapping one gives the card.
 - [ ] "trận vừa rồi Dũ mới là người bét" on a 1v1v1 → before/after card → Save → Undo restores the players and scores.
+- [ ] "du đấu 3c real, Thén thua guest" → card with "Du đấu" instead of a bill, Thén marked "Thua", Guest "Thắng" → Save → row on Home. Elo unchanged; win rate and streak change.
+- [ ] Guest match without a loser → chips with the player and Guest. A score or bill in the sentence is not saved.
+- [ ] "trận vừa rồi Thén thắng guest" on a guest match → before/after card → Save → Undo.
 - [ ] Batch of 2 matches in one sentence → one card, Save all.
 - [ ] Missing game type → one question with chips; tapping a chip continues.
 - [ ] Unknown or ambiguous name → chips of candidates.

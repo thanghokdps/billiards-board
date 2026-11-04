@@ -28,6 +28,7 @@ export const GET = route(async (request: Request, { params }: { params: Promise<
       winnerSide: match.winnerSide,
       winLabel: t("win"),
       threeWay: match.format === "1v1v1" ? { scores: match.scores, loserLabel: t("paysBill") } : null,
+      scoreless: match.format === "guest",
     }),
   );
 });

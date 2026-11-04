@@ -1,4 +1,4 @@
-import { formatVnd, GAME_LABEL } from "@/lib/domain";
+import { formatVnd, GAME_LABEL, GUEST_SEAT } from "@/lib/domain";
 
 import type { AuditChange, AuditItem } from "../types";
 
@@ -46,7 +46,7 @@ function headlineOf(entity: string, snapshot: unknown): string | null {
   if (!isRow(snapshot)) return null;
   if (entity === "match") {
     const a = sideNames(snapshot.sideA);
-    const b = sideNames(snapshot.sideB);
+    const b = snapshot.format === "guest" ? GUEST_SEAT.name : sideNames(snapshot.sideB);
     if (!a || !b) return null;
     return snapshot.format === "1v1v1" ? `${a.replace(" & ", " vs ")} vs ${b}` : `${a} vs ${b}`;
   }
