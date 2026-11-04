@@ -1,0 +1,104 @@
+{
+  "title": "Quản trị",
+  "kicker": "Chỉ admin",
+  "login": {
+    "title": "Đăng nhập admin",
+    "hint": "Nhập mật khẩu để ghi, sửa và xóa dữ liệu.",
+    "password": "Mật khẩu",
+    "submit": "Đăng nhập",
+    "submitting": "Đang kiểm tra…",
+    "wrong": "Sai mật khẩu, thử lại nhé.",
+    "rateLimited": "Sai quá nhiều lần. Thử lại sau {minutes, plural, other {# phút}}.",
+    "rateLimitedUnknown": "Sai quá nhiều lần. Thử lại sau ít phút.",
+    "failed": "Không đăng nhập được, thử lại nhé."
+  },
+  "logout": {
+    "button": "Đăng xuất",
+    "done": "Đã đăng xuất"
+  },
+  "players": {
+    "title": "Người chơi",
+    "add": "Thêm người",
+    "empty": "Chưa có người chơi nào",
+    "emptyBody": "Thêm người đầu tiên để bắt đầu ghi trận.",
+    "inactive": "Đã nghỉ",
+    "edit": "Sửa {name}",
+    "remove": "Xóa {name}"
+  },
+  "form": {
+    "addTitle": "Thêm người chơi",
+    "editTitle": "Sửa người chơi",
+    "avatar": "Ảnh đại diện",
+    "avatarHint": "JPEG, PNG hoặc WebP, tối đa 1,5 MB. Không có ảnh thì dùng bi hoạt hình.",
+    "avatarBadType": "Chỉ nhận ảnh JPEG, PNG hoặc WebP.",
+    "avatarTooBig": "Ảnh lớn hơn 1,5 MB, chọn ảnh nhỏ hơn.",
+    "avatarUploading": "Đang tải ảnh lên…",
+    "avatarRemove": "Bỏ ảnh",
+    "name": "Tên",
+    "slug": "Slug (đường dẫn)",
+    "slugHint": "Tự tạo từ tên, sửa được. Chỉ gồm a–z, số và dấu gạch ngang.",
+    "nickname": "Biệt danh",
+    "aliases": "Tên gọi khác",
+    "aliasesHint": "Cách nhau bằng dấu phẩy, để trợ lý nhận ra (vd: thằng hi, hí).",
+    "colour": "Màu bi",
+    "colourCustom": "Mã màu tùy chọn",
+    "colours": {
+      "yellow": "Vàng",
+      "blue": "Xanh dương",
+      "red": "Đỏ",
+      "purple": "Tím",
+      "orange": "Cam"
+    },
+    "ballNumber": "Số bi (1–15)",
+    "catchphrase": "Câu cửa miệng",
+    "status": "Trạng thái",
+    "activeOn": "Đang chơi",
+    "activeOff": "Đã nghỉ",
+    "save": "Lưu",
+    "saving": "Đang lưu…",
+    "cancel": "Hủy",
+    "errors": {
+      "name": "Tên từ 1 đến 40 ký tự.",
+      "slug": "Slug gồm a–z, số, dấu gạch ngang, tối đa 24 ký tự.",
+      "nickname": "Biệt danh tối đa 40 ký tự.",
+      "aliases": "Tối đa 10 tên, mỗi tên không quá 40 ký tự.",
+      "avatarUrl": "Ảnh không hợp lệ.",
+      "ballColor": "Màu phải có dạng #RRGGBB.",
+      "ballNumber": "Số bi là số nguyên từ 1 đến 15.",
+      "catchphrase": "Câu cửa miệng tối đa 120 ký tự.",
+      "active": "Trạng thái không hợp lệ."
+    }
+  },
+  "delete": {
+    "title": "Xóa {name}?",
+    "body": "Người đã có trận sẽ được lưu trữ (ẩn khỏi danh sách) để lịch sử không mất. Người chưa có trận sẽ bị xóa hẳn.",
+    "confirm": "Xóa",
+    "cancel": "Hủy"
+  },
+  "session": {
+    "title": "Buổi hôm nay",
+    "venue": "Quán",
+    "table": "Bàn",
+    "save": "Lưu buổi",
+    "saved": "Đã lưu thông tin buổi"
+  },
+  "links": {
+    "title": "Lối tắt",
+    "assistant": "Mở trợ lý ghi trận",
+    "audit": "Nhật ký sửa",
+    "tv": "Chế độ TV"
+  },
+  "toast": {
+    "created": "Đã thêm {name}",
+    "updated": "Đã lưu {name}",
+    "deleted": "Đã xóa {name}",
+    "archived": "{name} đã có trận nên được lưu trữ, không xóa hẳn"
+  },
+  "errors": {
+    "unauthenticated": "Phiên đăng nhập đã hết, đăng nhập lại nhé.",
+    "invalid_body": "Dữ liệu chưa hợp lệ, kiểm tra lại các ô.",
+    "conflict": "Slug này đã có người dùng, chọn slug khác.",
+    "not_found": "Không tìm thấy, có thể đã bị xóa.",
+    "internal": "Có lỗi, thử lại nhé."
+  }
+}

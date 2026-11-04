@@ -1,0 +1,85 @@
+{
+  "back": "Leaderboard",
+  "card": {
+    "overall": "Overall {value}",
+    "overallShort": "Overall",
+    "eloRank": "Elo {elo} · rank #{rank}",
+    "ball": "Ball {number}",
+    "games": "{count, plural, one {# game} other {# games}}",
+    "noData": "Not enough data",
+    "attributes": {
+      "accuracy": "Accuracy",
+      "nerve": "Nerve",
+      "luck": "Luck"
+    },
+    "formula": {
+      "accuracy": "the player's share of all points in a game, averaged over scored games.",
+      "nerve": "win rate in close games (margin ≤ {close}% of the winning score) and games tagged #comeback.",
+      "luck": "win rate against the side with the higher average Elo before the game.",
+      "overall": "{base} + (Elo − {start}) ÷ {per}, kept within 1–99."
+    }
+  },
+  "form": {
+    "title": "Form",
+    "last": "Last 10 games, newest first",
+    "empty": "No games played yet.",
+    "avgPoints": "Avg points",
+    "current": "Current streak",
+    "longestWin": "Longest win streak",
+    "longestLoss": "Longest loss streak",
+    "sessions": "Sessions attended"
+  },
+  "types": {
+    "title": "Win rate by game type",
+    "empty": "No games to split by type yet."
+  },
+  "money": {
+    "title": "Table money",
+    "paid": "Paid for losses",
+    "share": "Share of the club's bills",
+    "shareHint": "of everything the club paid",
+    "collector": "Collected the most from this player: <who>{name}</who> ({amount}).",
+    "none": "Has not paid a thing yet.",
+    "wanted": "Download WANTED poster"
+  },
+  "rivals": {
+    "title": "Rivals",
+    "nemesis": "Nemesis",
+    "nemesisBody": "Lost {count} of {played}",
+    "prey": "Prey",
+    "preyBody": "Won {count} of {played}",
+    "none": "Not enough games to tell yet."
+  },
+  "badges": {
+    "title": "Badges",
+    "locked": "Locked",
+    "unlocked": "Unlocked",
+    "items": {
+      "sniper_3c": {
+        "name": "3C Sniper",
+        "description": "Win at least 10 three-cushion games at a 60% win rate or better."
+      },
+      "atm": { "name": "The ATM", "description": "Pays the most bills in the club." },
+      "phoenix": { "name": "Phoenix", "description": "Win a game tagged #comeback." },
+      "clock": { "name": "Clockwork", "description": "Show up for 20 sessions." },
+      "unstoppable": { "name": "Unstoppable", "description": "Reach a win streak of 5 or more." },
+      "upset_king": { "name": "Upset King", "description": "Win a game tagged #lật-kèo." }
+    }
+  },
+  "elo": {
+    "title": "Elo over time",
+    "current": "Current",
+    "peak": "Peak",
+    "low": "Low",
+    "empty": "Elo needs match days on at least two different dates to draw a line."
+  },
+  "recent": {
+    "title": "Recent matches",
+    "empty": "No matches yet."
+  },
+  "notFound": {
+    "title": "Player not found",
+    "body": "The link may be wrong, or the player has stopped playing.",
+    "action": "Back to the leaderboard"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "title": "Trợ lý ghi trận",
+  "placeholder": "VD: 3c real Thén thắng Dũ 15-11, bill 45k",
+  "disclaimer": "Trợ lý có thể nhầm. Xem kỹ thẻ trước khi bấm Lưu.",
+  "welcomeTitle": "Ghi trận trong 10 giây",
+  "welcomeBody": "Gõ hoặc bấm mic, nói như đang ở quán. Mọi lệnh ghi đều có thẻ xác nhận.",
+  "suggestions": {
+    "log": "3c real Thén thắng Dũ 15-11, bill 45k",
+    "batch": "trưa nay: libre Bổ > Hi 40-32 bill 50k, 3c fake Lâm thắng Thén bill 30k",
+    "money": "tháng này ai đóng tiền nhiều nhất?",
+    "h2h": "Thén vs Lâm từ trước tới giờ",
+    "wheel": "quay cặp đấu 1v1",
+    "roast": "cà khịa Bổ đi"
+  },
+  "mic": "Nói để ghi trận",
+  "micStop": "Dừng nghe",
+  "micUnsupported": "Trình duyệt này chưa hỗ trợ nhập giọng nói",
+  "listening": "Đang nghe…",
+  "working": "Đang tính…",
+  "card": {
+    "createTitle": "{count, plural, other {Ghi # trận}}",
+    "updateTitle": "Sửa trận",
+    "deleteTitle": "Xóa trận này?",
+    "save": "Lưu",
+    "saveAll": "Lưu tất cả",
+    "confirmDelete": "Xóa",
+    "cancel": "Bỏ",
+    "saving": "Đang lưu…",
+    "saved": "Đã lưu",
+    "updated": "Đã sửa",
+    "deletedDone": "Đã xóa",
+    "cancelled": "Đã bỏ, không ghi gì",
+    "undo": "Hoàn tác · {seconds}s",
+    "undone": "Đã hoàn tác",
+    "retry": "Thử lại",
+    "failed": "Không lưu được: {reason}",
+    "before": "Cũ",
+    "after": "Mới",
+    "date": "Ngày {date}",
+    "streakBroken": "STREAK BROKEN",
+    "special": {
+      "streak_broken": "Phá chuỗi thắng!",
+      "comeback": "Lội ngược dòng!",
+      "derby": "Đại chiến cuối tháng!",
+      "blowout": "Hủy diệt!"
+    }
+  },
+  "ask": {
+    "game_type": "Thể loại gì?",
+    "winner": "Ai thắng?",
+    "players": "Ai đánh?",
+    "match": "Trận nào?",
+    "player": "Người nào?",
+    "ambiguous": "“{name}” là ai?",
+    "unknown": "Không thấy “{name}” trong hội. Ý là ai?"
+  },
+  "stats": {
+    "matches": "{count, plural, other {# trận}}"
+  },
+  "h2h": {
+    "title": "Đối đầu",
+    "meetings": "{count, plural, other {# lần gặp}}"
+  },
+  "poster": {
+    "open": "Mở ảnh",
+    "loading": "Đang vẽ poster…"
+  },
+  "error": "Trợ lý gặp lỗi. Thử lại nhé.",
+  "toolFailed": "Không lấy được dữ liệu.",
+  "unauthorized": "Phiên admin đã hết hạn. Đăng nhập lại."
+}

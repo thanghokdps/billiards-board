@@ -1,0 +1,23 @@
+{
+  "brand": "ĂN BILL · FIGHT NIGHT",
+  "headline": {
+    "streak_broken": "Streak broken",
+    "comeback": "Comeback",
+    "derby": "Month-end derby",
+    "blowout": "Blowout",
+    "default": "Fight night"
+  },
+  "win": "Winner",
+  "bill": "Bill {amount}",
+  "wanted": {
+    "title": "WANTED",
+    "subtitle": "BY THE WHOLE GROUP",
+    "crime": "{count, plural, =0 {Charge: far too confident with a cue} one {Charge: # loss in a row} other {Charge: # losses in a row}}",
+    "reward": "REWARD",
+    "footer": "Beat this player and your next table is free"
+  },
+  "rivalry": {
+    "title": "RIVALRY",
+    "meetings": "{count, plural, one {# meeting} other {# meetings}} · the closest rivalry in the group"
+  }
+}

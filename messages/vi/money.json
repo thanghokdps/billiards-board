@@ -1,0 +1,23 @@
+{
+  "title": "Tiền bàn",
+  "kicker": "Ai chịu bill",
+  "periodLabel": "Khoảng thời gian",
+  "grainLabel": "Nhóm theo",
+  "grain": { "day": "Ngày", "week": "Tuần", "month": "Tháng" },
+  "total": "Tổng tiền bàn",
+  "totalHint": "{count, plural, other {# trận có bill}}",
+  "avg": "Trung bình mỗi trận",
+  "chartTitle": { "day": "Tiền bàn theo ngày", "week": "Tiền bàn theo tuần", "month": "Tiền bàn theo tháng" },
+  "chartAria": "Biểu đồ cột tiền bàn",
+  "weekLabel": "Tuần {week}",
+  "contributors": "Ai đóng góp nhiều nhất",
+  "contributorsHint": "Bên thua trả cả bill, chia đều theo đầu người.",
+  "atm": "Cây ATM",
+  "atmLine": "Nhả tiền nhiều nhất hội",
+  "byType": "Trung bình mỗi trận theo loại bàn",
+  "byTypeEmpty": "Chưa có bill",
+  "empty": {
+    "title": "Chưa có tiền bàn",
+    "body": "Ghi vài trận có bill, mọi con số sẽ hiện ở đây."
+  }
+}

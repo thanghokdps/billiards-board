@@ -1,0 +1,80 @@
+{
+  "title": "Today's table",
+  "recap": {
+    "title": "Lunch recap",
+    "matches": "Matches",
+    "topWinner": "Most wins",
+    "topWinnerHint": "{count, plural, one {# win} other {# wins}}",
+    "topPayer": "Paid the most",
+    "noPayer": "Nobody paid yet",
+    "totalBill": "Total bill",
+    "ai": "Write the recap with AI",
+    "rewrite": "Rewrite the recap",
+    "writing": "Writing the recap, hang on (up to 20 seconds)…",
+    "failed": "Could not write the recap, try again",
+    "noMatches": "No matches today to write about",
+    "unauthenticated": "Admin session expired, sign in again",
+    "textLabel": "AI-written recap",
+    "copyPost": "Copy post",
+    "copied": "Post copied, paste it into Slack",
+    "copyFailed": "Could not copy, select the text and copy it by hand"
+  },
+  "session": {
+    "title": "Lunch session",
+    "noVenue": "No venue yet",
+    "table": "Table {label}",
+    "noTable": "No table yet",
+    "totalBill": "Today's total bill",
+    "attendees": "Here at lunch",
+    "noAttendees": "Nobody marked as coming yet",
+    "edit": "Edit session",
+    "editTitle": "Edit lunch session",
+    "attendeesLabel": "Who is coming today?",
+    "venue": "Venue",
+    "venuePlaceholder": "Venue name",
+    "tableLabel": "Table",
+    "tablePlaceholder": "For example: no. 3",
+    "saved": "Session saved",
+    "saveFailed": "Could not save, try again"
+  },
+  "pairing": {
+    "title": "Elo-balanced matchups",
+    "gap": "{gap} Elo apart",
+    "elo": "Elo {value}",
+    "record": "Record this match",
+    "prompt": "Just finished {sideA} vs {sideB}: ",
+    "hint": "Mark who is coming today to get Elo-balanced matchups."
+  },
+  "scoreboard": {
+    "title": "Scoreboard",
+    "lastSession": "Last session · {date}",
+    "empty": "No matches today yet",
+    "emptyBody": "The balls are still on the rack. Record the first match when it's done.",
+    "emptyViewerBody": "Waiting for the admin to record today's first match.",
+    "openAssistant": "Open the assistant",
+    "delete": "Delete this match",
+    "deleted": "Match deleted",
+    "deleteFailed": "Could not delete the match",
+    "restored": "Match restored",
+    "restoreFailed": "Could not restore the match",
+    "poster": "View poster",
+    "special": {
+      "streak_broken": "Streak broken",
+      "comeback": "Comeback",
+      "derby": "End-of-month derby",
+      "blowout": "Blowout"
+    }
+  },
+  "wanted": {
+    "title": "Wanted",
+    "badge": "Wanted",
+    "line": "{count, plural, one {# loss in a row} other {# losses in a row}}",
+    "bounty": "Bounty {amount}",
+    "posterOf": "Wanted poster of {name}"
+  },
+  "predictions": {
+    "title": "Today's picks",
+    "seeAll": "All picks",
+    "empty": "No open picks today."
+  }
+}

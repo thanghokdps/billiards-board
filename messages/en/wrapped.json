@@ -1,0 +1,98 @@
+{
+  "title": "Wrapped",
+  "kicker": "Year in review",
+  "metaTitle": "{name}'s Wrapped {year}",
+  "yearFilter": "Pick a year",
+  "index": {
+    "intro": "Everyone's year on the felt. Pick a player to watch their story.",
+    "card": "{matches} · {winRate} won",
+    "open": "Open {name}'s Wrapped {year}",
+    "emptyTitle": "No matches in {year} yet",
+    "emptyBody": "Log a few matches and come back, Wrapped builds itself."
+  },
+  "story": {
+    "heading": "{name}'s Wrapped {year}",
+    "close": "Close story",
+    "prev": "Previous slide",
+    "next": "Next slide",
+    "position": "Slide {current} of {total}",
+    "emptyTitle": "{name} has no matches in {year}",
+    "emptyBody": "Nothing to wrap up yet. Play a few matches and come back.",
+    "back": "Back to Wrapped",
+    "intro": {
+      "kicker": "Wrapped {year}",
+      "lead": "The year of",
+      "hint": "Tap the right side to start"
+    },
+    "matches": {
+      "kicker": "You hit the table",
+      "caption": "{count, plural, one {match} other {matches}} in {year}",
+      "record": "Won – lost",
+      "rate": "Win rate",
+      "sessions": "{count, plural, one {Showed up for # lunch} other {Showed up for # lunches}}",
+      "high": "A proper sharp.",
+      "mid": "Balanced and hard to read.",
+      "low": "Keep playing, it will click."
+    },
+    "favourite": {
+      "kicker": "Your go-to game",
+      "caption": "{played} played · {winRate} won"
+    },
+    "streak": {
+      "kicker": "Longest win streak",
+      "unit": "{count, plural, one {win in a row} other {wins in a row}}",
+      "high": "Nobody could stop you.",
+      "mid": "Properly on fire.",
+      "low": "Just a warm-up, stretch it next year.",
+      "none": "No win to build a streak on."
+    },
+    "rivals": {
+      "kicker": "Your table fate",
+      "nemesis": "Nemesis",
+      "nemesisLine": "Lost {losses} of {played} against them",
+      "noNemesis": "Nobody has your number.",
+      "prey": "Prey",
+      "preyLine": "Won {wins} of {played} against them",
+      "noPrey": "No prey yet."
+    },
+    "money": {
+      "kicker": "The ATM?",
+      "caption": "paid for the table",
+      "top": "Certified. The whole crew ate on you.",
+      "ranked": "#{rank} of {total} on money paid.",
+      "none": "Never paid a thing. Lucky!",
+      "collector": "Who collected most from you: {name} ({amount})"
+    },
+    "bestDay": {
+      "kicker": "Your best day",
+      "line": "{wins} wins in {played} matches",
+      "none": "No winning day yet. A whole year ahead!"
+    },
+    "badges": {
+      "kicker": "Your badges",
+      "none": "No badges yet. Next year!",
+      "sniper_3c": "3C Sniper",
+      "sniper_3c_hint": "At least 10 wins in 3C at 60% or better",
+      "atm": "The ATM",
+      "atm_hint": "Paid the most in the group",
+      "phoenix": "Phoenix",
+      "phoenix_hint": "Won a #comeback match",
+      "clock": "Clockwork",
+      "clock_hint": "Showed up for 20 sessions this year",
+      "unstoppable": "Unstoppable",
+      "unstoppable_hint": "A win streak of 5 or more",
+      "upset_king": "Upset king",
+      "upset_king_hint": "Won a #lật-kèo match"
+    },
+    "share": {
+      "title": "Show the crew",
+      "button": "Share",
+      "copyLink": "Copy link",
+      "text": "{name}'s Wrapped {year}: {matches} matches, {winRate} won.",
+      "copied": "Link copied",
+      "failed": "Could not share, try copying the link",
+      "profile": "View profile",
+      "replay": "Watch again"
+    }
+  }
+}

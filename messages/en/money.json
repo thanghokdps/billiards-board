@@ -1,0 +1,23 @@
+{
+  "title": "Table money",
+  "kicker": "Who picks up the bill",
+  "periodLabel": "Time range",
+  "grainLabel": "Group by",
+  "grain": { "day": "Day", "week": "Week", "month": "Month" },
+  "total": "Total table money",
+  "totalHint": "{count, plural, one {# match with a bill} other {# matches with a bill}}",
+  "avg": "Average per match",
+  "chartTitle": { "day": "Table money by day", "week": "Table money by week", "month": "Table money by month" },
+  "chartAria": "Bar chart of table money",
+  "weekLabel": "Wk {week}",
+  "contributors": "Biggest contributors",
+  "contributorsHint": "The losing side pays the whole bill, split per head.",
+  "atm": "The ATM",
+  "atmLine": "Pays out the most in the club",
+  "byType": "Average per match by table type",
+  "byTypeEmpty": "No bills yet",
+  "empty": {
+    "title": "No table money yet",
+    "body": "Log a few matches with a bill and the numbers show up here."
+  }
+}

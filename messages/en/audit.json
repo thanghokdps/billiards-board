@@ -1,0 +1,55 @@
+{
+  "title": "Edit log",
+  "kicker": "Who did what, and when",
+  "intro": "Every change is recorded and visible to everyone, so nobody has to argue about what was edited.",
+  "filter": "Filter by entity",
+  "all": "All",
+  "count": "{count, plural, one {# change} other {# changes}}",
+  "empty": {
+    "title": "No changes yet",
+    "body": "Every create, edit or delete will show up here."
+  },
+  "limit": "Showing the latest 100 changes at most.",
+  "shortId": "ID {id}",
+  "by": "by {actor}",
+  "actor": {
+    "admin": "Admin"
+  },
+  "via": {
+    "chat": "Chat",
+    "ui": "Interface"
+  },
+  "action": {
+    "create": "Created",
+    "update": "Edited",
+    "delete": "Deleted",
+    "restore": "Restored"
+  },
+  "entity": {
+    "match": "Match",
+    "player": "Player",
+    "session": "Session",
+    "prediction": "Prediction",
+    "highlight": "Highlight"
+  },
+  "fields": {
+    "date": "Date",
+    "gameType": "Game type",
+    "format": "Format",
+    "sideA": "Side A",
+    "sideB": "Side B",
+    "winnerSide": "Winner",
+    "scoreA": "Score A",
+    "scoreB": "Score B",
+    "bill": "Bill",
+    "note": "Note",
+    "tags": "Tags",
+    "name": "Name",
+    "nickname": "Nickname",
+    "slug": "Slug",
+    "ballColor": "Ball colour",
+    "ballNumber": "Ball number",
+    "avatarUrl": "Avatar",
+    "active": "Active"
+  }
+}

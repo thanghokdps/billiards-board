@@ -1,0 +1,55 @@
+{
+  "title": "Nhật ký sửa",
+  "kicker": "Ai làm gì, lúc nào",
+  "intro": "Mọi thay đổi đều được ghi lại và ai cũng xem được, để không ai phải cãi nhau về chuyện đã sửa.",
+  "filter": "Lọc theo đối tượng",
+  "all": "Tất cả",
+  "count": "{count, plural, other {# thay đổi}}",
+  "empty": {
+    "title": "Chưa có thay đổi nào",
+    "body": "Mỗi lần ghi, sửa hay xóa dữ liệu sẽ hiện ở đây."
+  },
+  "limit": "Hiển thị tối đa 100 thay đổi gần nhất.",
+  "shortId": "Mã {id}",
+  "by": "bởi {actor}",
+  "actor": {
+    "admin": "Admin"
+  },
+  "via": {
+    "chat": "Chat",
+    "ui": "Giao diện"
+  },
+  "action": {
+    "create": "Tạo",
+    "update": "Sửa",
+    "delete": "Xóa",
+    "restore": "Khôi phục"
+  },
+  "entity": {
+    "match": "Trận",
+    "player": "Người chơi",
+    "session": "Buổi chơi",
+    "prediction": "Kèo",
+    "highlight": "Khoảnh khắc"
+  },
+  "fields": {
+    "date": "Ngày",
+    "gameType": "Thể loại",
+    "format": "Kiểu",
+    "sideA": "Bên A",
+    "sideB": "Bên B",
+    "winnerSide": "Bên thắng",
+    "scoreA": "Điểm A",
+    "scoreB": "Điểm B",
+    "bill": "Bill",
+    "note": "Ghi chú",
+    "tags": "Thẻ",
+    "name": "Tên",
+    "nickname": "Biệt danh",
+    "slug": "Đường dẫn",
+    "ballColor": "Màu bi",
+    "ballNumber": "Số bi",
+    "avatarUrl": "Ảnh đại diện",
+    "active": "Đang chơi"
+  }
+}

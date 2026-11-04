@@ -1,0 +1,55 @@
+{
+  "title": "Kèo vui",
+  "kicker": "Đoán trận, không tiền thật",
+  "open": "Đang mở",
+  "settled": "Đã chốt",
+  "noOpen": "Chưa có kèo nào đang mở.",
+  "emptyTitle": "Chưa có kèo nào",
+  "emptyBody": "Mở một kèo để cả hội đoán ai thắng. Kèo tự chốt khi trận tương ứng được ghi.",
+  "emptyViewerBody": "Chờ admin mở kèo đầu tiên nhé.",
+  "card": {
+    "status": {
+      "open": "Đang mở",
+      "settled": "Đã chốt",
+      "cancelled": "Đã hủy"
+    },
+    "votes": "{count, plural, other {phiếu}}",
+    "winner": "Thắng",
+    "voters": "Người đã chọn",
+    "enterVotes": "Nhập phiếu",
+    "votesTitle": "Phiếu bầu",
+    "votesHint": "Chọn đội mà mỗi người đoán sẽ thắng.",
+    "voteFailed": "Chưa lưu được phiếu, thử lại nhé",
+    "cancel": "Hủy kèo",
+    "cancelled": "Đã hủy kèo",
+    "cancelFailed": "Chưa hủy được kèo"
+  },
+  "create": {
+    "open": "Mở kèo mới",
+    "title": "Mở kèo mới",
+    "hint": "Chọn đội A và đội B, mỗi đội 1–2 người và hai đội bằng nhau.",
+    "forDate": "Kèo cho ngày {date}",
+    "gameType": "Thể loại",
+    "anyGame": "Bất kỳ",
+    "players": "Hai đội",
+    "sideA": "Đội A",
+    "sideB": "Đội B",
+    "sizeMismatch": "Hai đội cần số người bằng nhau (1–2 người mỗi đội).",
+    "submit": "Mở kèo",
+    "created": "Đã mở kèo",
+    "failed": "Chưa mở được kèo, thử lại nhé"
+  },
+  "oracle": {
+    "title": "Nhà tiên tri",
+    "caption": "Bảng xếp hạng nhà tiên tri",
+    "empty": "Chưa có phiếu nào được chốt",
+    "emptyBody": "Khi một kèo được chốt, ai đoán đúng sẽ lên bục ở đây.",
+    "rank": "Hạng",
+    "player": "Người chơi",
+    "correct": "Đúng",
+    "total": "Phiếu",
+    "accuracy": "Chính xác",
+    "record": "{correct}/{total}",
+    "podium": "Bục nhà tiên tri"
+  }
+}

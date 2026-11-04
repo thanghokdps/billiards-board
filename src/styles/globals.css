@@ -1,0 +1,240 @@
+@import "tailwindcss";
+
+/*
+ * "Bàn nỉ xanh về đêm": a dark billiards room, green felt accents, warm lamp light from above,
+ * scoreboard numerals. Components use these tokens (bg-felt, text-lamp …), never raw values.
+ */
+@theme {
+  --color-night: #0b1410;
+  --color-surface: #101c17;
+  --color-surface-2: #152620;
+  --color-surface-3: #1c3229;
+  --color-line: rgb(243 238 220 / 0.09);
+  --color-line-strong: rgb(243 238 220 / 0.18);
+
+  --color-felt: #1f6b4a;
+  --color-felt-bright: #2a8a60;
+  --color-felt-deep: #134430;
+  --color-lamp: #f5c451;
+  --color-lamp-soft: #f8d98a;
+  --color-ball: #d7263d;
+  --color-ivory: #f3eedc;
+  --color-ivory-muted: rgb(243 238 220 / 0.64);
+  --color-ivory-faint: rgb(243 238 220 / 0.38);
+  --color-eight: #121212;
+  --color-wood: #4a2c1a;
+  --color-win: #3ccf8e;
+  --color-loss: #ff6b7d;
+  --color-cold: #7cc7ff;
+
+  --font-sans: var(--font-nunito), ui-rounded, system-ui, sans-serif;
+  --font-display: var(--font-barlow), "Arial Narrow", system-ui, sans-serif;
+
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+  --text-score: 2.75rem;
+  --text-score--line-height: 1;
+  --text-hero: 4.5rem;
+  --text-hero--line-height: 0.9;
+  --tracking-label: 0.14em;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
+
+  --shadow-card: 0 1px 0 rgb(243 238 220 / 0.05) inset, 0 12px 32px -16px rgb(0 0 0 / 0.7);
+  --shadow-lamp: 0 0 0 1px rgb(245 196 81 / 0.35), 0 8px 30px -8px rgb(245 196 81 / 0.35);
+  --shadow-pop: 0 24px 60px -20px rgb(0 0 0 / 0.85);
+
+  --animate-roll: roll 1.1s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-flicker: flicker 4s ease-in-out infinite;
+  --animate-pulse-ring: pulse-ring 2s ease-out infinite;
+
+  @keyframes roll {
+    0% {
+      transform: translateX(-120%) rotate(0deg);
+    }
+    100% {
+      transform: translateX(120%) rotate(360deg);
+    }
+  }
+  @keyframes sheet-up {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  @keyframes sheet-left {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: -200% 0;
+    }
+    to {
+      background-position: 200% 0;
+    }
+  }
+  @keyframes flicker {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.86;
+    }
+  }
+  @keyframes pulse-ring {
+    0% {
+      box-shadow: 0 0 0 0 rgb(245 196 81 / 0.5);
+    }
+    100% {
+      box-shadow: 0 0 0 14px rgb(245 196 81 / 0);
+    }
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --nav-h: 4.5rem;
+    --header-h: 3.75rem;
+  }
+  /* A grid item's min-width defaults to its content, so one nowrap row or wide chart widens the whole page at 375px. */
+  .grid > * {
+    min-width: 0;
+  }
+
+  html {
+    background: var(--color-night);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    min-height: 100dvh;
+    background-color: var(--color-night);
+    /* Lamp light from above + a faint felt glow at the bottom. */
+    background-image:
+      radial-gradient(ellipse 80% 42% at 50% -8%, rgb(245 196 81 / 0.13), transparent 70%),
+      radial-gradient(ellipse 120% 60% at 50% 115%, rgb(31 107 74 / 0.22), transparent 70%);
+    background-attachment: fixed;
+    color: var(--color-ivory);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-lamp);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: rgb(245 196 81 / 0.35);
+  }
+}
+
+@layer utilities {
+  /* Scoreboard numerals: condensed, tabular, slightly glowing. */
+  .digits {
+    font-family: var(--font-display);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+  }
+  .digits-glow {
+    text-shadow: 0 0 18px rgb(245 196 81 / 0.45);
+  }
+  .felt {
+    background-color: var(--color-felt-deep);
+    background-image:
+      radial-gradient(circle at 50% 40%, rgb(42 138 96 / 0.55), transparent 70%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-surface-2) 0%,
+      var(--color-surface-3) 50%,
+      var(--color-surface-2) 100%
+    );
+    background-size: 200% 100%;
+    animation: var(--animate-shimmer);
+  }
+  .sheet-up[data-state="open"] {
+    animation: sheet-up 0.32s cubic-bezier(0.2, 0.9, 0.25, 1);
+  }
+  .sheet-left[data-state="open"] {
+    animation: sheet-left 0.28s cubic-bezier(0.2, 0.9, 0.25, 1);
+  }
+  .sheet-responsive[data-state="open"] {
+    animation: sheet-up 0.32s cubic-bezier(0.2, 0.9, 0.25, 1);
+  }
+  @media (width >= 48rem) {
+    .sheet-responsive[data-state="open"] {
+      animation: sheet-left 0.28s cubic-bezier(0.2, 0.9, 0.25, 1);
+    }
+  }
+  .overlay-fade[data-state="open"] {
+    animation: fade-in 0.2s ease-out;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/*
+ * CopilotKit chat inside the bottom sheet, themed from the same tokens. `.dark` on the wrapper turns on
+ * CopilotKit's own dark variants; the extra classes outrank its `[data-copilotkit]` and `.dark [data-copilotkit]` blocks.
+ */
+.chat-theme.dark [data-copilotkit] {
+  --background: var(--color-surface);
+  --foreground: var(--color-ivory);
+  --card: var(--color-surface-2);
+  --card-foreground: var(--color-ivory);
+  --primary: var(--color-lamp);
+  --primary-foreground: var(--color-night);
+  --secondary: var(--color-surface-3);
+  --secondary-foreground: var(--color-ivory);
+  --muted: var(--color-surface-2);
+  --muted-foreground: var(--color-ivory-muted);
+  --accent: var(--color-surface-3);
+  --accent-foreground: var(--color-ivory);
+  --border: var(--color-line);
+  --input: var(--color-line-strong);
+  --ring: var(--color-lamp);
+  --radius: var(--radius-md);
+  --cpk-default-font-family: var(--font-sans);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

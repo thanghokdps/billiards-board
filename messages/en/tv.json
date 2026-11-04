@@ -1,0 +1,46 @@
+{
+  "title": "TV mode",
+  "exit": "Exit",
+  "exitLabel": "Exit TV mode",
+  "prev": "Previous board",
+  "next": "Next board",
+  "pause": "Pause automatic rotation",
+  "play": "Resume automatic rotation",
+  "shortcutHint": "← → switch board",
+  "panelsLabel": "Boards on screen",
+  "panel": {
+    "scoreboard": "Scoreboard",
+    "streaks": "Streaks",
+    "leaderboard": "Top 5",
+    "bill": "Table bill"
+  },
+  "scoreboard": {
+    "title": "Today's scoreboard",
+    "latestTitle": "Latest session",
+    "empty": "No matches yet",
+    "emptyBody": "The first match shows up here as soon as it is logged.",
+    "more": "{count, plural, one {+# more match} other {+# more matches}}"
+  },
+  "streaks": {
+    "title": "Streaks right now",
+    "hot": "Winning streaks",
+    "cold": "Losing streaks",
+    "wins": "{count, plural, one {# win in a row} other {# wins in a row}}",
+    "losses": "{count, plural, one {# loss in a row} other {# losses in a row}}",
+    "empty": "No streaks right now",
+    "emptyBody": "Win or lose two in a row to get on the board."
+  },
+  "leaderboard": {
+    "title": "Leaderboard top 5",
+    "empty": "No ranking yet",
+    "emptyBody": "One logged match is enough to get started."
+  },
+  "bill": {
+    "title": "Total table bill",
+    "matches": "Matches",
+    "average": "Average per match",
+    "payers": "Paid the most",
+    "empty": "No bill yet",
+    "emptyBody": "The total adds up as matches are logged with a bill."
+  }
+}

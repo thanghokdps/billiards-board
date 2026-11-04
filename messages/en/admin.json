@@ -1,0 +1,104 @@
+{
+  "title": "Admin",
+  "kicker": "Admin only",
+  "login": {
+    "title": "Admin login",
+    "hint": "Enter the password to add, edit and delete data.",
+    "password": "Password",
+    "submit": "Log in",
+    "submitting": "Checking…",
+    "wrong": "Wrong password, try again.",
+    "rateLimited": "Too many wrong tries. Try again in {minutes, plural, one {# minute} other {# minutes}}.",
+    "rateLimitedUnknown": "Too many wrong tries. Try again in a few minutes.",
+    "failed": "Could not log in, please try again."
+  },
+  "logout": {
+    "button": "Log out",
+    "done": "Logged out"
+  },
+  "players": {
+    "title": "Players",
+    "add": "Add player",
+    "empty": "No players yet",
+    "emptyBody": "Add the first player to start logging matches.",
+    "inactive": "Inactive",
+    "edit": "Edit {name}",
+    "remove": "Delete {name}"
+  },
+  "form": {
+    "addTitle": "Add player",
+    "editTitle": "Edit player",
+    "avatar": "Avatar",
+    "avatarHint": "JPEG, PNG or WebP, up to 1.5 MB. Without a photo the cartoon ball is used.",
+    "avatarBadType": "Only JPEG, PNG or WebP images.",
+    "avatarTooBig": "That image is over 1.5 MB, pick a smaller one.",
+    "avatarUploading": "Uploading…",
+    "avatarRemove": "Remove photo",
+    "name": "Name",
+    "slug": "Slug (URL)",
+    "slugHint": "Made from the name, editable. Only a–z, digits and dashes.",
+    "nickname": "Nickname",
+    "aliases": "Other names",
+    "aliasesHint": "Comma separated, so the assistant recognises them (e.g. thằng hi, hí).",
+    "colour": "Ball colour",
+    "colourCustom": "Custom colour code",
+    "colours": {
+      "yellow": "Yellow",
+      "blue": "Blue",
+      "red": "Red",
+      "purple": "Purple",
+      "orange": "Orange"
+    },
+    "ballNumber": "Ball number (1–15)",
+    "catchphrase": "Catchphrase",
+    "status": "Status",
+    "activeOn": "Playing",
+    "activeOff": "Inactive",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "errors": {
+      "name": "Name must be 1 to 40 characters.",
+      "slug": "Slug is a–z, digits and dashes, up to 24 characters.",
+      "nickname": "Nickname is at most 40 characters.",
+      "aliases": "At most 10 names, each up to 40 characters.",
+      "avatarUrl": "Invalid image.",
+      "ballColor": "Colour must look like #RRGGBB.",
+      "ballNumber": "Ball number is a whole number from 1 to 15.",
+      "catchphrase": "Catchphrase is at most 120 characters.",
+      "active": "Invalid status."
+    }
+  },
+  "delete": {
+    "title": "Delete {name}?",
+    "body": "A player with matches is archived (hidden from the list) so history stays intact. A player without matches is removed for good.",
+    "confirm": "Delete",
+    "cancel": "Cancel"
+  },
+  "session": {
+    "title": "Today's session",
+    "venue": "Venue",
+    "table": "Table",
+    "save": "Save session",
+    "saved": "Session saved"
+  },
+  "links": {
+    "title": "Shortcuts",
+    "assistant": "Open the match assistant",
+    "audit": "Audit log",
+    "tv": "TV mode"
+  },
+  "toast": {
+    "created": "Added {name}",
+    "updated": "Saved {name}",
+    "deleted": "Deleted {name}",
+    "archived": "{name} has matches, so they were archived instead of deleted"
+  },
+  "errors": {
+    "unauthenticated": "Your session expired, please log in again.",
+    "invalid_body": "Some fields are not valid, check them.",
+    "conflict": "That slug is already taken, pick another.",
+    "not_found": "Not found, it may have been deleted.",
+    "internal": "Something went wrong, try again."
+  }
+}

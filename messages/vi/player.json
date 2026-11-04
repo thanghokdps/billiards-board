@@ -1,0 +1,82 @@
+{
+  "back": "Bảng xếp hạng",
+  "card": {
+    "overall": "Chỉ số tổng {value}",
+    "overallShort": "Tổng",
+    "eloRank": "Elo {elo} · hạng #{rank}",
+    "ball": "Bi số {number}",
+    "games": "{count, plural, other {# trận}}",
+    "noData": "Chưa đủ dữ liệu",
+    "attributes": {
+      "accuracy": "Chính xác",
+      "nerve": "Bản lĩnh",
+      "luck": "May mắn"
+    },
+    "formula": {
+      "accuracy": "phần trăm điểm của người này trên tổng điểm hai bên, trung bình các trận có ghi điểm.",
+      "nerve": "tỉ lệ thắng ở các trận sát nút (cách biệt ≤ {close}% điểm thắng) và trận gắn #comeback.",
+      "luck": "tỉ lệ thắng khi đấu với phía có Elo trung bình cao hơn lúc bắt đầu trận.",
+      "overall": "{base} + (Elo − {start}) ÷ {per}, giới hạn 1–99."
+    }
+  },
+  "form": {
+    "title": "Phong độ",
+    "last": "10 trận gần nhất, mới nhất bên trái",
+    "empty": "Chưa chơi trận nào.",
+    "avgPoints": "Điểm TB",
+    "current": "Chuỗi hiện tại",
+    "longestWin": "Thắng liền dài nhất",
+    "longestLoss": "Thua liền dài nhất",
+    "sessions": "Số buổi có mặt"
+  },
+  "types": {
+    "title": "Tỉ lệ thắng theo thể loại",
+    "empty": "Chưa có trận nào để chia theo thể loại."
+  },
+  "money": {
+    "title": "Tiền bàn",
+    "paid": "Đã đóng vì thua",
+    "share": "Đóng góp cho hội",
+    "shareHint": "trên tổng tiền cả hội đã đóng",
+    "collector": "Người nhận nhiều nhất từ bạn này: <who>{name}</who> ({amount}).",
+    "none": "Chưa phải đóng đồng nào.",
+    "wanted": "Tải poster truy nã"
+  },
+  "rivals": {
+    "title": "Đối thủ",
+    "nemesis": "Khắc tinh",
+    "nemesisBody": "Thua {count}/{played} trận",
+    "prey": "Con mồi",
+    "preyBody": "Thắng {count}/{played} trận",
+    "none": "Chưa đủ trận để xác định."
+  },
+  "badges": {
+    "title": "Huy hiệu",
+    "locked": "Chưa mở khóa",
+    "unlocked": "Đã mở khóa",
+    "items": {
+      "sniper_3c": { "name": "Sát thủ 3C", "description": "Thắng ít nhất 10 trận 3C với tỉ lệ thắng từ 60%." },
+      "atm": { "name": "Cây ATM", "description": "Là người đóng bill nhiều nhất hội." },
+      "phoenix": { "name": "Phượng hoàng", "description": "Thắng một trận được gắn #comeback." },
+      "clock": { "name": "Đồng hồ", "description": "Có mặt đủ 20 buổi." },
+      "unstoppable": { "name": "Không thể cản", "description": "Có chuỗi thắng liền từ 5 trận trở lên." },
+      "upset_king": { "name": "Vua lật kèo", "description": "Thắng một trận được gắn #lật-kèo." }
+    }
+  },
+  "elo": {
+    "title": "Elo theo thời gian",
+    "current": "Hiện tại",
+    "peak": "Cao nhất",
+    "low": "Thấp nhất",
+    "empty": "Cần ít nhất hai ngày có trận để vẽ đường Elo."
+  },
+  "recent": {
+    "title": "Trận gần đây",
+    "empty": "Chưa có trận nào."
+  },
+  "notFound": {
+    "title": "Không thấy người chơi này",
+    "body": "Đường dẫn có thể sai, hoặc người chơi đã nghỉ chơi.",
+    "action": "Về bảng xếp hạng"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "title": "Hall of Fame",
+  "kicker": "Bảng vàng",
+  "records": "Kỷ lục toàn hội",
+  "recordsEmpty": {
+    "title": "Chưa có kỷ lục",
+    "body": "Ghi vài trận có tỉ số để lập bảng vàng."
+  },
+  "record": {
+    "biggestMargin": { "title": "Cách biệt lớn nhất", "unit": "điểm cách biệt" },
+    "closest": { "title": "Trận sát nút nhất", "unit": "điểm cách biệt" },
+    "longest": { "title": "Trận dài nhất", "unit": "tổng điểm hai bên" },
+    "busiestDay": { "title": "Ngày đông vui nhất", "unit": "trận trong một ngày" },
+    "priciestDay": { "title": "Buổi tốn tiền nhất", "unit": "tổng bill một buổi" },
+    "comeback": { "title": "Comeback gần nhất", "unit": "lội ngược dòng" }
+  },
+  "posters": "Poster trận đặc biệt",
+  "postersEmpty": {
+    "title": "Chưa có trận đặc biệt",
+    "body": "Phá streak, comeback, derby hay thắng đậm sẽ được lên poster ở đây."
+  },
+  "reason": {
+    "streak_broken": "Phá streak",
+    "comeback": "Comeback",
+    "derby": "Derby tháng",
+    "blowout": "Thắng đậm"
+  },
+  "posterAlt": "Poster trận {sides}",
+  "posterOpen": "Xem poster trận {sides}",
+  "posterSheet": "Poster trận ngày {date}",
+  "posterError": "Không tải được poster",
+  "achievements": "Huy hiệu",
+  "nobody": "Chưa ai giữ",
+  "badge": {
+    "sniper_3c": { "name": "Sát thủ 3C", "hint": "Thắng từ 10 trận 3 băng, tỉ lệ thắng từ 60%" },
+    "atm": { "name": "Cây ATM", "hint": "Trả bill nhiều nhất hội" },
+    "phoenix": { "name": "Phượng hoàng", "hint": "Thắng một trận comeback" },
+    "clock": { "name": "Đồng hồ", "hint": "Đi đủ 20 buổi" },
+    "unstoppable": { "name": "Không thể cản", "hint": "Chuỗi thắng từ 5 trận" },
+    "upset_king": { "name": "Vua lật kèo", "hint": "Thắng một trận lật kèo" }
+  },
+  "wrapped": {
+    "title": "Wrapped",
+    "body": "Nhìn lại cả mùa chơi của hội: ai thắng, ai trả, ai gáy.",
+    "cta": "Xem Wrapped"
+  }
+}

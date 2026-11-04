@@ -1,0 +1,98 @@
+{
+  "title": "Wrapped",
+  "kicker": "Tổng kết cả năm",
+  "metaTitle": "Wrapped {year} của {name}",
+  "yearFilter": "Chọn năm",
+  "index": {
+    "intro": "Một năm trên bàn nỉ của từng người. Chọn một người để xem story.",
+    "card": "{matches} · thắng {winRate}",
+    "open": "Xem Wrapped {year} của {name}",
+    "emptyTitle": "Năm {year} chưa có trận nào",
+    "emptyBody": "Ghi vài trận rồi quay lại nhé, Wrapped sẽ tự dựng."
+  },
+  "story": {
+    "heading": "Wrapped {year} của {name}",
+    "close": "Đóng story",
+    "prev": "Slide trước",
+    "next": "Slide sau",
+    "position": "Slide {current} trên {total}",
+    "emptyTitle": "{name} chưa có trận nào trong năm {year}",
+    "emptyBody": "Chưa có gì để tổng kết. Đánh vài trận rồi quay lại nhé.",
+    "back": "Về danh sách Wrapped",
+    "intro": {
+      "kicker": "Wrapped {year}",
+      "lead": "Năm vừa rồi của",
+      "hint": "Chạm bên phải để bắt đầu"
+    },
+    "matches": {
+      "kicker": "Bạn đã ra bàn",
+      "caption": "{count, plural, other {trận}} trong năm {year}",
+      "record": "Thắng – thua",
+      "rate": "Tỉ lệ thắng",
+      "sessions": "{count, plural, other {Có mặt # buổi trưa}}",
+      "high": "Cao thủ chính hiệu.",
+      "mid": "Cân bằng, khó đoán.",
+      "low": "Cứ đánh rồi sẽ lên tay."
+    },
+    "favourite": {
+      "kicker": "Thể loại ruột",
+      "caption": "{played} trận · thắng {winRate}"
+    },
+    "streak": {
+      "kicker": "Chuỗi thắng dài nhất",
+      "unit": "{count, plural, other {trận liền}}",
+      "high": "Không ai cản nổi.",
+      "mid": "Lên đồng thật sự.",
+      "low": "Mới chớm thôi, năm sau nối dài nhé.",
+      "none": "Chưa có chiến thắng nào để nối chuỗi."
+    },
+    "rivals": {
+      "kicker": "Duyên nợ trên bàn",
+      "nemesis": "Khắc tinh",
+      "nemesisLine": "Thua {losses}/{played} trận trước người này",
+      "noNemesis": "Chưa ai khắc chế được bạn.",
+      "prey": "Con mồi",
+      "preyLine": "Thắng {wins}/{played} trận trước người này",
+      "noPrey": "Chưa có con mồi nào."
+    },
+    "money": {
+      "kicker": "Cây ATM?",
+      "caption": "tiền bàn bạn đã đóng",
+      "top": "Chính hiệu. Cả hội ăn nhờ bạn.",
+      "ranked": "Hạng {rank}/{total} về tiền đóng.",
+      "none": "Chưa phải đóng đồng nào. May thật!",
+      "collector": "Người ăn tiền bạn nhiều nhất: {name} ({amount})"
+    },
+    "bestDay": {
+      "kicker": "Ngày đỉnh nhất",
+      "line": "{wins} thắng trong {played} trận",
+      "none": "Chưa có ngày nào thắng. Còn cả năm sau!"
+    },
+    "badges": {
+      "kicker": "Huy hiệu của bạn",
+      "none": "Chưa có huy hiệu nào. Năm sau nhé!",
+      "sniper_3c": "Sát thủ 3C",
+      "sniper_3c_hint": "Thắng ít nhất 10 trận 3C với tỉ lệ từ 60%",
+      "atm": "Cây ATM",
+      "atm_hint": "Đóng tiền nhiều nhất hội",
+      "phoenix": "Phượng hoàng",
+      "phoenix_hint": "Thắng một trận #comeback",
+      "clock": "Đồng hồ",
+      "clock_hint": "Đi đủ 20 buổi trong năm",
+      "unstoppable": "Không thể cản",
+      "unstoppable_hint": "Chuỗi thắng từ 5 trận",
+      "upset_king": "Vua lật kèo",
+      "upset_king_hint": "Thắng một trận #lật-kèo"
+    },
+    "share": {
+      "title": "Khoe với hội",
+      "button": "Chia sẻ",
+      "copyLink": "Sao chép liên kết",
+      "text": "Wrapped {year} của {name}: {matches} trận, thắng {winRate}.",
+      "copied": "Đã chép liên kết",
+      "failed": "Không chia sẻ được, thử sao chép liên kết nhé",
+      "profile": "Xem hồ sơ",
+      "replay": "Xem lại"
+    }
+  }
+}
