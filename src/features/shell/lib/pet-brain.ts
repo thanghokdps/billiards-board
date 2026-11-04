@@ -17,19 +17,23 @@ export interface PetPose {
   asleep: boolean;
 }
 
-export interface PetBounds {
-  width: number;
-  top: number;
-  bottom: number;
+/** The pet's walk, corner to corner: along the floor, up and over the dock's outline, down, along the floor. */
+export interface PetTrack {
+  left: number;
+  right: number;
+  floor: number;
+  dockLeft: number;
+  dockRight: number;
+  dockTop: number;
 }
 
 const RUN_SPEED = 110;
+const CORNER_PX = 120;
 const STEP_MS = 110;
 const LEAP_MS = 480;
 const LEAP_MIN_HEIGHT = 56;
 const LEAP_HEIGHT_PER_PX = 0.22;
 const SQUASH_MS = 170;
-const SIDE_MARGIN = 28;
 const SIT_MS = [1800, 4500] as const;
 const SLEEP_AFTER_MS = 25_000;
 const BLINK_MS = 500;
@@ -47,10 +51,15 @@ const clamp = (value: number, low: number, high: number) => Math.min(Math.max(va
 
 /** What the pet is doing, free of the DOM: page events go in, one pose per frame comes out. */
 export class PetBrain {
+  /** Distance walked from the left corner. */
+  private along = 0;
+  private targetAlong = 0;
+  /** Off the track on a dock key, so the next rest is a leap out to a corner. */
+  private perched = false;
   private x: number;
   private y: number;
-  private targetX: number;
-  private targetY: number;
+  private targetX = 0;
+  private targetY = 0;
   private fromX = 0;
   private fromY = 0;
   private leapHeight = 0;
@@ -65,12 +74,11 @@ export class PetBrain {
   private clicks: number[] = [];
 
   constructor(
-    private bounds: PetBounds,
+    private track: PetTrack,
     private readonly onLand: (x: number, y: number) => void,
     now: number,
   ) {
-    this.x = this.targetX = between(SIDE_MARGIN, bounds.width - SIDE_MARGIN);
-    this.y = this.targetY = bounds.bottom;
+    ({ x: this.x, y: this.y } = this.pointAt(0));
     this.lastActionAt = now;
   }
 
@@ -78,33 +86,61 @@ export class PetBrain {
     return this.mode === "sleep";
   }
 
-  resize(bounds: PetBounds) {
-    this.bounds = bounds;
-    this.x = clamp(this.x, SIDE_MARGIN, bounds.width - SIDE_MARGIN);
-    this.y = clamp(this.y, bounds.top, bounds.bottom);
+  private get trackLength() {
+    const { left, right, floor, dockTop } = this.track;
+    return right - left + 2 * (floor - dockTop);
   }
 
-  /** Jumps to the click. Landing on a control cheers it; a burst of clicks leaves the pet dizzy. */
-  click(x: number, y: number, onControl: boolean, now: number) {
+  private pointAt(along: number) {
+    const { left, floor, dockLeft, dockRight, dockTop } = this.track;
+    const climb = floor - dockTop;
+    const overDock = dockRight - dockLeft;
+    let walked = along;
+    if (walked < dockLeft - left) return { x: left + walked, y: floor };
+    walked -= dockLeft - left;
+    if (walked < climb) return { x: dockLeft, y: floor - walked };
+    walked -= climb;
+    if (walked < overDock) return { x: dockLeft + walked, y: dockTop };
+    walked -= overDock;
+    if (walked < climb) return { x: dockRight, y: dockTop + walked };
+    return { x: dockRight + walked - climb, y: floor };
+  }
+
+  resize(track: PetTrack) {
+    const oldLength = this.trackLength;
+    this.track = track;
+    const stretch = this.trackLength / oldLength;
+    this.along *= stretch;
+    this.targetAlong *= stretch;
+    if (!this.perched) ({ x: this.x, y: this.y } = this.pointAt(this.along));
+  }
+
+  /** Hops onto a dock key and cheers; a burst of clicks leaves the pet dizzy. Either way it leaps out to a corner. */
+  click(x: number, y: number, now: number) {
     this.lastActionAt = now;
     this.clicks = [...this.clicks.filter((at) => now - at < COMBO_WINDOW_MS), now];
     const dizzy = this.clicks.length >= COMBO_CLICKS;
     if (dizzy) this.clicks = [];
-    this.afterLanding = dizzy ? "dizzy" : onControl ? "cheer" : "sit";
+    this.perched = true;
+    this.leapTo(x, y, dizzy ? "dizzy" : "cheer", now);
+  }
 
+  private leapTo(x: number, y: number, afterLanding: PetMode, now: number) {
+    this.afterLanding = afterLanding;
     this.fromX = this.x;
     this.fromY = this.y;
-    this.targetX = clamp(x, SIDE_MARGIN, this.bounds.width - SIDE_MARGIN);
-    this.targetY = clamp(y, this.bounds.top, this.bounds.bottom);
-    this.flip = this.targetX < this.x;
-    this.leapHeight = LEAP_MIN_HEIGHT + Math.hypot(this.targetX - this.x, this.targetY - this.y) * LEAP_HEIGHT_PER_PX;
+    this.targetX = x;
+    this.targetY = y;
+    this.flip = x < this.x;
+    this.leapHeight = LEAP_MIN_HEIGHT + Math.hypot(x - this.x, y - this.y) * LEAP_HEIGHT_PER_PX;
     this.enter("leap", LEAP_MS, now);
   }
 
   /** Rolls with the page: the ball turns the way the content moves. */
   scroll(deltaY: number, now: number) {
     this.lastActionAt = now;
-    if (this.mode === "leap") return;
+    // Steady scrolling would re-enter tumble forever and strand a perched pet on the dock.
+    if (this.mode === "leap" || this.perched) return;
     this.rotate += deltaY * TUMBLE_DEGREES_PER_PX;
     this.enter("tumble", TUMBLE_HOLD_MS, now);
   }
@@ -127,6 +163,13 @@ export class PetBrain {
 
   private sit(now: number) {
     this.rotate = 0;
+    if (this.perched) {
+      this.perched = false;
+      this.along = this.targetAlong = Math.random() < 0.5 ? 0 : this.trackLength;
+      const corner = this.pointAt(this.along);
+      this.leapTo(corner.x, corner.y, "sit", now);
+      return;
+    }
     this.enter("sit", between(...SIT_MS), now);
   }
 
@@ -135,9 +178,8 @@ export class PetBrain {
       this.enter("sleep", Infinity, now);
       return;
     }
-    this.targetX = between(SIDE_MARGIN, this.bounds.width - SIDE_MARGIN);
-    this.targetY = between(this.bounds.top, this.bounds.bottom);
-    this.flip = this.targetX < this.x;
+    const reach = between(0, CORNER_PX);
+    this.targetAlong = this.along < this.trackLength / 2 ? this.trackLength - reach : reach;
     this.enter("run", Infinity, now);
   }
 
@@ -151,16 +193,17 @@ export class PetBrain {
     else this.sit(now);
   }
 
-  /** Moves toward the target; true on arrival. */
+  /** Moves along the track toward the target; true on arrival. */
   private step(elapsedMs: number) {
-    const dx = this.targetX - this.x;
-    const dy = this.targetY - this.y;
-    const left = Math.hypot(dx, dy);
+    const left = this.targetAlong - this.along;
     const stride = (RUN_SPEED * elapsedMs) / 1000;
-    if (left <= stride) return true;
-    this.x += (dx / left) * stride;
-    this.y += (dy / left) * stride;
-    return false;
+    const arrived = Math.abs(left) <= stride;
+    this.along = arrived ? this.targetAlong : this.along + Math.sign(left) * stride;
+    const { x, y } = this.pointAt(this.along);
+    if (x !== this.x) this.flip = x < this.x;
+    this.x = x;
+    this.y = y;
+    return arrived;
   }
 
   update(now: number, elapsedMs: number): PetPose {

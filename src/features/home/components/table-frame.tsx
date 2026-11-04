@@ -28,7 +28,7 @@ export function TableFrame({ labelledBy, children }: { labelledBy: string; child
       {POCKETS.map((spot) => (
         <span key={spot} aria-hidden className={`pool-pocket pool-pocket-${spot}`} />
       ))}
-      <div className="relative">{children}</div>
+      <div className="pool-field relative">{children}</div>
     </section>
   );
 }

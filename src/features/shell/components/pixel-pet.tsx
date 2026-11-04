@@ -5,17 +5,28 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "@/i18n/navigation";
 import { prefersReducedMotion } from "@/lib/motion";
 
-import { PetBrain, type PetBounds, type PetPose } from "../lib/pet-brain";
+import { PetBrain, type PetPose, type PetTrack } from "../lib/pet-brain";
 import { drawSprite, readPixelColors, SPRITE_HEIGHT, SPRITE_WIDTH } from "../lib/pet-sprites";
 
 const MAX_FRAME_MS = 50;
 const SLEEP_FRAME_MS = 500;
 const SHADOW_FADE_PX = 120;
-const CONTROLS = "a, button, [role='button'], input, select, textarea, label";
+const EDGE_GAP_PX = 2;
+const FLOOR_GAP_PX = 6;
+// A phone's dock spans the screen, leaving no floor to walk on.
+const WIDE_SCREEN = "(min-width: 40rem)";
 
-/** Keeps the pet between the sticky header and the dock, where it can be seen. */
-function readBounds(): PetBounds {
-  return { width: window.innerWidth, top: 96, bottom: window.innerHeight - 112 };
+function readTrack(sprite: HTMLCanvasElement, dock: Element): PetTrack {
+  const { left, right, top } = dock.getBoundingClientRect();
+  const half = sprite.offsetWidth / 2;
+  return {
+    left: half + EDGE_GAP_PX,
+    right: window.innerWidth - half - EDGE_GAP_PX,
+    floor: window.innerHeight - FLOOR_GAP_PX,
+    dockLeft: left - half,
+    dockRight: right + half,
+    dockTop: top,
+  };
 }
 
 function puffDust(x: number, y: number) {
@@ -27,7 +38,7 @@ function puffDust(x: number, y: number) {
   document.body.append(dust);
 }
 
-/** A pixel 8-ball that runs around the page and reacts to what you do. Decoration: hidden from readers, never clickable. */
+/** A pixel 8-ball that walks along the screen's foot and over the dock, and hops onto the key you press. Decoration: hidden from readers, never clickable. */
 export function PixelPet() {
   const rootRef = useRef<HTMLDivElement>(null);
   const spriteRef = useRef<HTMLCanvasElement>(null);
@@ -39,11 +50,13 @@ export function PixelPet() {
   useEffect(() => {
     const [root, sprite, shadow] = [rootRef.current, spriteRef.current, shadowRef.current];
     const ctx = sprite?.getContext("2d");
-    if (!root || !sprite || !shadow || !ctx || prefersReducedMotion()) return;
+    const dock = document.querySelector(".dock");
+    if (!root || !sprite || !shadow || !ctx || !dock) return;
+    if (prefersReducedMotion() || !window.matchMedia(WIDE_SCREEN).matches) return;
 
     root.hidden = false;
     const colors = readPixelColors(root);
-    const brain = new PetBrain(readBounds(), puffDust, performance.now());
+    const brain = new PetBrain(readTrack(sprite, dock), puffDust, performance.now());
     brainRef.current = brain;
 
     let drawn = "";
@@ -77,9 +90,14 @@ export function PixelPet() {
 
     const onClick = (e: MouseEvent) => {
       // A keyboard "click" has no position, so there is nowhere to jump to.
-      if (e.detail === 0) return;
-      const onControl = e.target instanceof Element && e.target.closest(CONTROLS) !== null;
-      brain.click(e.clientX, e.clientY, onControl, performance.now());
+      if (e.detail === 0 || !(e.target instanceof Element)) return;
+      const key = e.target.closest(".dock a, .dock button");
+      const dock = key?.closest(".dock");
+      if (!key || !dock) return;
+      const spot = key.getBoundingClientRect();
+      // The dock stacks above the pet, so it stands on the rail, or on the 8-ball that rises past it.
+      const top = Math.min(spot.top, dock.getBoundingClientRect().top);
+      brain.click(spot.left + spot.width / 2, top, performance.now());
       wake();
     };
     let lastScrollY = window.scrollY;
@@ -89,7 +107,7 @@ export function PixelPet() {
       wake();
     };
     const onPointerMove = (e: PointerEvent) => brain.lookAt(e.clientX);
-    const onResize = () => brain.resize(readBounds());
+    const onResize = () => brain.resize(readTrack(sprite, dock));
 
     window.addEventListener("click", onClick, { capture: true });
     window.addEventListener("scroll", onScroll, { passive: true });
