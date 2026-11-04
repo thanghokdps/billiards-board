@@ -1,0 +1,42 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/eslint-on-edit.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"/Users/hothuyduong/.claude/plugins/cache/harness/core/1.0.0/scripts/statusline.sh\""
+  },
+  "enabledPlugins": {
+    "ai@harness": true,
+    "progress@harness": true,
+    "dev@harness": true,
+    "frontend@harness": true,
+    "backend@harness": true,
+    "core@harness": true,
+    "plan@harness": true,
+    "review@harness": true,
+    "ship@harness": true,
+    "harness@harness": true,
+    "lead@harness": true,
+    "guards@harness": true,
+    "devops@harness": true
+  },
+  "extraKnownMarketplaces": {
+    "harness": {
+      "source": {
+        "source": "github",
+        "repo": "thanghokdps/claude-root"
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.next/
+.vercel/
+.env
+.env.*
+!.env.example
+.langgraph_api/
+evals/results/*
+!evals/results/.gitkeep
+coverage/
+*.tsbuildinfo
+.DS_Store
+.claude/memory/user.md
