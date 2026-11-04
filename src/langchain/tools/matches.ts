@@ -30,34 +30,38 @@ const matchRef = z
   .string()
   .describe('"latest" for the most recent match ("trận vừa rồi"), or a match id from list_matches');
 
-const draftSchema = z.object({
-  gameType: z.enum(GAME_TYPES).nullable().describe("null when the user did not say it; never guess"),
-  sideA: names.nullable().describe("player names exactly as the user wrote them; null for a 1v1v1"),
-  sideB: names.nullable(),
-  threeWay: z
-    .object({
-      players: z.array(name).length(3).describe("the three names exactly as the user wrote them"),
-      loser: name.nullable().describe("who came last and pays; null when the user did not say"),
-      scores: z
-        .array(z.number().int().min(0).max(999))
-        .length(3)
-        .nullable()
-        .describe("each player's score, in the order of players; null unless all three were said"),
-    })
-    .nullable()
-    .describe("only for a 1v1v1, three players each on their own; otherwise null"),
-  winnerSide: z.enum(["a", "b"]).nullable().describe("null when the user did not say who won; null for a 1v1v1"),
-  scoreA: z.number().int().min(0).max(999).nullable(),
-  scoreB: z.number().int().min(0).max(999).nullable(),
-  bill: z.number().int().min(0).max(10_000_000).nullable().describe('VND; "45k" = 45000'),
-  note: z.string().max(280).nullable(),
-  tags: z
-    .array(z.string())
-    .max(6)
-    .nullable()
-    .describe(`only from: ${MATCH_TAGS.join(", ")}`),
-  date: date.nullable().describe("YYYY-MM-DD; null = today"),
-});
+// partial: the model drops null keys on threads with history, and a missing key must mean null, not fail the tool.
+const draftSchema = z
+  .object({
+    gameType: z.enum(GAME_TYPES).nullable().describe("null when the user did not say it; never guess"),
+    sideA: names.nullable().describe("player names exactly as the user wrote them; null for a 1v1v1"),
+    sideB: names.nullable(),
+    threeWay: z
+      .object({
+        players: z.array(name).length(3).describe("the three names exactly as the user wrote them"),
+        loser: name.nullable().describe("who came last and pays; null when the user did not say"),
+        scores: z
+          .array(z.number().int().min(0).max(999))
+          .length(3)
+          .nullable()
+          .describe("each player's score, in the order of players; null unless all three were said"),
+      })
+      .partial({ loser: true, scores: true })
+      .nullable()
+      .describe("only for a 1v1v1, three players each on their own; otherwise null"),
+    winnerSide: z.enum(["a", "b"]).nullable().describe("null when the user did not say who won; null for a 1v1v1"),
+    scoreA: z.number().int().min(0).max(999).nullable(),
+    scoreB: z.number().int().min(0).max(999).nullable(),
+    bill: z.number().int().min(0).max(10_000_000).nullable().describe('VND; "45k" = 45000'),
+    note: z.string().max(280).nullable(),
+    tags: z
+      .array(z.string())
+      .max(6)
+      .nullable()
+      .describe(`only from: ${MATCH_TAGS.join(", ")}`),
+    date: date.nullable().describe("YYYY-MM-DD; null = today"),
+  })
+  .partial();
 
 function needs(question: NeedsInput["question"], options?: NeedsInput["options"]): NeedsInput {
   return { status: "needs_input", question, ...(options ? { options } : {}) };
@@ -118,8 +122,8 @@ function seatDraft(draft: Draft, roster: Roster): Seating {
     sideA: a.refs,
     sideB: b.refs,
     winnerSide: draft.winnerSide,
-    scoreA: draft.scoreA,
-    scoreB: draft.scoreB,
+    scoreA: draft.scoreA ?? null,
+    scoreB: draft.scoreB ?? null,
     scores: [],
   };
 }
