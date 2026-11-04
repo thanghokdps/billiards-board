@@ -43,7 +43,8 @@ function Side({
         ))}
       </div>
       <div className="min-w-0">
-        <p className={cn("truncate font-bold leading-tight", won ? "text-ivory" : "text-ivory-muted")}>
+        {/* A 2v2 side wraps: truncating two names on a phone left only initials next to the avatars. */}
+        <p className={cn("font-bold leading-tight wrap-anywhere", won ? "text-ivory" : "text-ivory-muted")}>
           {players.map((p) => p.name).join(" & ")}
         </p>
         {won && <p className="text-2xs font-semibold text-lamp">{winLabel}</p>}
