@@ -19,9 +19,7 @@
     "rule": "Xếp theo tỉ lệ thắng, cần tối thiểu {min} trận; chưa đủ thì xếp theo số trận thắng."
   },
   "table": {
-    "title": "Bảng chi tiết",
-    "caption": "Thống kê từng người chơi, xếp theo hạng",
-    "player": "Người chơi",
+    "title": "Bàn sáu lỗ",
     "played": "Trận",
     "record": "T – B",
     "winRate": "Tỉ lệ thắng",
@@ -33,7 +31,18 @@
     "paid": "Đã đóng",
     "strongest": "Mạnh nhất",
     "weakest": "Yếu nhất",
-    "hint": "Thể loại mạnh/yếu cần ít nhất 3 trận mỗi loại. Vuốt ngang để xem hết các cột."
+    "pocketBestWin": "Thắng dài",
+    "pocketBestLoss": "Thua dài",
+    "streakWins": "{count} thắng",
+    "streakLosses": "{count} thua",
+    "leads": "{name} dẫn đầu {metric}: {value}",
+    "rankOf": "Hạng {rank} theo {metric}",
+    "ballLabel": "{name}, hạng {rank}, {metric} {value}",
+    "notPlayed": "Chưa đánh trận nào",
+    "showGroup": "Xem cả nhóm",
+    "showPlayer": "Xem từng người",
+    "groupTitle": "Cả nhóm",
+    "hint": "Bấm một lỗ để xếp hạng, bấm một viên bi để xem hết chỉ số. Thể loại mạnh/yếu cần ít nhất 3 trận mỗi loại."
   },
   "elo": {
     "title": "Elo (tham khảo)",

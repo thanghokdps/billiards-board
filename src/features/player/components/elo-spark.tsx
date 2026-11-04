@@ -36,7 +36,7 @@ export function EloSpark({ history, color }: EloSparkProps) {
       <dl className="grid flex-1 grid-cols-3 gap-2">
         {stats.map(({ key, value }) => (
           <div key={key}>
-            <dt className="text-2xs font-semibold uppercase tracking-label text-ivory-faint">{t(key)}</dt>
+            <dt className="text-xs font-medium text-ivory-muted">{t(key)}</dt>
             <dd
               className={
                 key === "current" ? "digits text-3xl font-bold text-lamp digits-glow" : "digits text-3xl font-bold"

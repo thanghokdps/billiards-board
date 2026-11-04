@@ -22,7 +22,7 @@ export function RivalryHero({ h }: { h: HeadToHead }) {
 
   return (
     <section aria-labelledby="rivalry-hero" className="felt rounded-lg border border-line p-5 shadow-card">
-      <h2 id="rivalry-hero" className="text-center font-display text-sm font-bold uppercase tracking-label text-lamp">
+      <h2 id="rivalry-hero" className="text-center font-display text-3xl font-extrabold text-lamp">
         {t("hero")}
       </h2>
       <div className="mt-4 flex items-center gap-2">
@@ -45,7 +45,7 @@ export function RivalryHero({ h }: { h: HeadToHead }) {
           <div style={{ width: `${(h.bWins / h.played) * 100}%`, backgroundColor: h.b.ballColor }} />
         </div>
       )}
-      <p className="mt-2 text-center text-sm text-ivory-muted">{t("meetings", { count: h.played })}</p>
+      <p className="mt-2 text-center text-sm">{t("meetings", { count: h.played })}</p>
     </section>
   );
 }

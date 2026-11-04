@@ -2,6 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
 import { EmptyState, PageHeader } from "@/components/ui/misc";
+import { matchTitle } from "@/lib/domain";
 import type { getHallOfFame } from "@/server/stats/service";
 
 import { Achievements } from "./achievements";
@@ -12,7 +13,7 @@ import { WrappedCard } from "./wrapped-card";
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="space-y-3">
-      <h2 className="font-display text-xl font-bold uppercase tracking-wide">{title}</h2>
+      <h2 className="font-display text-2xl font-bold leading-tight">{title}</h2>
       {children}
     </section>
   );
@@ -25,7 +26,7 @@ export async function FameView({ data }: { data: Awaited<ReturnType<typeof getHa
     matchId: match.id,
     reason: reason!,
     date: match.date,
-    sides: `${match.sideA.map((p) => p.name).join(" & ")} ${common("vs")} ${match.sideB.map((p) => p.name).join(" & ")}`,
+    sides: matchTitle(match, common("vs")),
     src: `/api/poster/match/${match.id}?locale=${locale}`,
   }));
 

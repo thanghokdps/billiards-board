@@ -52,6 +52,7 @@ export function revertPatch(before: MatchView): MatchPatch {
     winnerSide: before.winnerSide,
     scoreA: before.scoreA,
     scoreB: before.scoreB,
+    scores: before.scores,
     bill: before.bill,
     note: before.note,
     tags: before.tags,

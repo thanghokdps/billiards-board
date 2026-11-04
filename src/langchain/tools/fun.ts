@@ -4,31 +4,28 @@ import { tool } from "langchain";
 import { z } from "zod";
 
 import { TOOL_NAMES, type PosterResult, type WheelSetup } from "@/lib/agent-results";
+import { matchTitle, PAIRING_FORMATS, PLAYERS_IN_FORMAT } from "@/lib/domain";
 import { computePlayerStats, wanted } from "@/lib/stats";
 import { toPlayerRef } from "@/server/players/repository";
-import { getSessionByDate } from "@/server/sessions/repository";
 
-import { findTargetMatch, json, loadBoard, requireContext, resolveNames, todayIn } from "./shared";
+import { findTargetMatch, json, loadBoard, requireContext, resolveNames } from "./shared";
 
 export const spinWheelTool = tool(
   async (input, runtime) => {
-    const context = requireContext(runtime);
+    requireContext(runtime);
     const { roster } = await loadBoard();
     let pool = roster;
     if (input.include?.length) {
       const resolved = resolveNames(input.include, roster);
       if (!resolved.ok) return json(resolved.problem);
       pool = roster.filter((p) => resolved.ids.includes(p.id));
-    } else {
-      const session = await getSessionByDate(todayIn(context));
-      if (session && session.attendees.length >= 2) pool = roster.filter((p) => session.attendees.includes(p.id));
     }
     if (input.exclude?.length) {
       const resolved = resolveNames(input.exclude, roster);
       if (!resolved.ok) return json(resolved.problem);
       pool = pool.filter((p) => !resolved.ids.includes(p.id));
     }
-    const needed = input.mode === "2v2" ? 4 : 2;
+    const needed = PLAYERS_IN_FORMAT[input.mode];
     if (pool.length < needed)
       return json({ status: "error", message: `Need at least ${needed} players for ${input.mode}.` });
     let target = null;
@@ -54,16 +51,12 @@ export const spinWheelTool = tool(
   {
     name: TOOL_NAMES.spinWheel,
     description: [
-      "- Sets up the random wheel in the chat to pick a 1v1 or 2v2 pairing; the browser spins it (fair random), nothing is saved.",
-      '- "bỏ Lâm" → exclude. "Bổ x5" → target Bổ, multiplier 5 (everyone else weighs 5× Bổ). Default players: today\'s attendees.',
+      "- Sets up the random wheel in the chat to pick a 1v1, 2v2 or 1v1v1 pairing; the browser spins it (fair random), nothing is saved.",
+      '- "bỏ Lâm" → exclude. "Bổ x5" → target Bổ, multiplier 5 (everyone else weighs 5× Bổ). Default players: everyone.',
     ].join("\n"),
     schema: z.object({
-      mode: z.enum(["1v1", "2v2"]),
-      include: z
-        .array(z.string())
-        .max(8)
-        .nullable()
-        .describe("only these players; null = today's attendees or everyone"),
+      mode: z.enum(PAIRING_FORMATS),
+      include: z.array(z.string()).max(8).nullable().describe("only these players; null = everyone"),
       exclude: z.array(z.string()).max(8).nullable(),
       target: z.string().nullable().describe("the 'victim' whose slice shrinks"),
       multiplier: z.union([z.literal(2), z.literal(3), z.literal(5), z.literal(6)]).nullable(),
@@ -103,7 +96,7 @@ export const generatePosterTool = tool(
     }
     const match = await findTargetMatch(input.match ?? "latest");
     if ("status" in match) return json(match);
-    const title = `${match.sideA.map((p) => p.name).join(" & ")} vs ${match.sideB.map((p) => p.name).join(" & ")}`;
+    const title = matchTitle(match);
     return json({
       status: "ok",
       kind: "match",

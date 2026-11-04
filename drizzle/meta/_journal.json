@@ -22,6 +22,27 @@
       "when": 1793728638228,
       "tag": "0002_match_client_key",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793777468571,
+      "tag": "0003_three_way_match",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793795953250,
+      "tag": "0004_guest_match",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793797509000,
+      "tag": "0005_drop_unused_session_features",
+      "breakpoints": true
     }
   ]
 }

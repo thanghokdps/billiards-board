@@ -30,7 +30,7 @@ function Attribute({ label, attr }: { label: string; attr: CardAttribute }) {
       <p className="digits text-score font-bold text-lamp digits-glow">
         {attr.value ?? <span aria-label={t("noData")}>—</span>}
       </p>
-      <p className="truncate font-display text-sm font-semibold uppercase tracking-label">{label}</p>
+      <p className="truncate text-sm font-medium">{label}</p>
       <p className="text-2xs text-ivory-muted">{t("games", { count: attr.games })}</p>
     </div>
   );
@@ -55,12 +55,8 @@ export function PlayerCard({ player, catchphrase, elo, rank, streak, stats }: Pl
               >
                 {stats.overall}
               </p>
-              <p className="font-display text-xs font-semibold uppercase tracking-label text-ivory-muted">
-                {t("overallShort")}
-              </p>
-              <p className="mt-2 text-2xs font-semibold uppercase tracking-label text-ivory-muted">
-                {t("eloRank", { elo, rank })}
-              </p>
+              <p className="text-xs font-medium text-ivory-muted">{t("overallShort")}</p>
+              <p className="mt-2 text-xs font-medium text-ivory-muted">{t("eloRank", { elo, rank })}</p>
             </div>
             <div className="flex flex-col items-center gap-2">
               <PlayerAvatar player={player} size="xl" streak={streak} />
@@ -72,10 +68,8 @@ export function PlayerCard({ player, catchphrase, elo, rank, streak, stats }: Pl
           </div>
 
           <div className="space-y-1 border-y border-ivory-faint/30 py-3">
-            <h1 className="font-display text-3xl font-bold uppercase leading-none tracking-wide">{player.name}</h1>
-            {player.nickname && (
-              <p className="font-display text-sm font-semibold uppercase tracking-label text-lamp">{player.nickname}</p>
-            )}
+            <h1 className="font-display text-4xl font-extrabold leading-none">{player.name}</h1>
+            {player.nickname && <p className="text-sm font-semibold text-lamp">{player.nickname}</p>}
             {catchphrase && <p className="text-sm italic text-ivory-muted">“{catchphrase}”</p>}
           </div>
 

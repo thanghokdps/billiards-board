@@ -12,7 +12,7 @@ export function GameTypeBadge({ gameType, className }: { gameType: GameType; cla
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-sm border px-1.5 py-0.5 font-display text-2xs font-bold uppercase tracking-wider",
+        "inline-flex items-center rounded-sm border px-1.5 py-0.5 text-2xs font-semibold",
         TONE[gameType],
         className,
       )}

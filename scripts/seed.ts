@@ -2,6 +2,7 @@
  * Seeds the five players. With `--demo`, also adds two weeks of sample matches for a
  * local/preview database. Never run `--demo` against production data.
  */
+import { desc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 
@@ -81,11 +82,7 @@ if (process.argv.includes("--demo")) {
     const dow = day.getUTCDay();
     if (dow === 0 || dow === 6) continue;
     const dateStr = day.toISOString().slice(0, 10);
-    const [session] = await db
-      .insert(sessions)
-      .values({ date: dateStr, venue: "Bida Hoàng Gia", tableLabel: "Bàn 3" })
-      .onConflictDoNothing()
-      .returning();
+    const [session] = await db.insert(sessions).values({ date: dateStr }).onConflictDoNothing().returning();
     if (!session) continue;
     const count = 2 + Math.floor(rand() * 3);
     for (let i = 0; i < count; i++) {
@@ -120,6 +117,40 @@ if (process.argv.includes("--demo")) {
           ...sideB.map((playerId) => ({ matchId: match.id, playerId, side: "b" as const })),
         ]);
     }
+  }
+  const [latest] = await db.select({ id: sessions.id }).from(sessions).orderBy(desc(sessions.date)).limit(1);
+  const [threeWay] = latest
+    ? await db
+        .insert(matches)
+        .values({
+          sessionId: latest.id,
+          playedAt: new Date(),
+          gameType: "libre",
+          format: "1v1v1",
+          winnerSide: "a",
+          bill: 60_000,
+        })
+        .returning()
+    : [];
+  const [first, second, third] = ids;
+  if (threeWay && first && second && third) {
+    await db.insert(matchPlayers).values([
+      { matchId: threeWay.id, playerId: first, side: "a", score: 40 },
+      { matchId: threeWay.id, playerId: second, side: "a", score: 32 },
+      { matchId: threeWay.id, playerId: third, side: "b", score: 18 },
+    ]);
+  }
+  if (latest && first && second) {
+    const guestMatches = await db
+      .insert(matches)
+      .values([
+        { sessionId: latest.id, playedAt: new Date(), gameType: "3c_real", format: "guest", winnerSide: "b" },
+        { sessionId: latest.id, playedAt: new Date(), gameType: "libre", format: "guest", winnerSide: "a" },
+      ])
+      .returning();
+    await db
+      .insert(matchPlayers)
+      .values([first, second].map((playerId, i) => ({ matchId: guestMatches[i]!.id, playerId, side: "a" as const })));
   }
   console.log("demo matches seeded");
 }

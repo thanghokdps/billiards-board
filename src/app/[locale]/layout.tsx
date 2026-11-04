@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 
 import type { Metadata, Viewport } from "next";
-import { Barlow_Condensed, Nunito } from "next/font/google";
+import { Be_Vietnam_Pro, Big_Shoulders } from "next/font/google";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
@@ -12,17 +12,17 @@ import { AppShell } from "@/features/shell";
 import { routing } from "@/i18n/routing";
 import { isAdmin } from "@/server/auth/session";
 
-const barlow = Barlow_Condensed({
+const shoulders = Big_Shoulders({
   subsets: ["latin", "vietnamese"],
-  weight: ["500", "600", "700"],
-  variable: "--font-barlow",
+  weight: ["600", "700", "800"],
+  variable: "--font-shoulders",
   display: "swap",
 });
 
-const nunito = Nunito({
+const beVietnam = Be_Vietnam_Pro({
   subsets: ["latin", "vietnamese"],
-  weight: ["400", "600", "700", "800"],
-  variable: "--font-nunito",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-be-vietnam",
   display: "swap",
 });
 
@@ -61,7 +61,7 @@ export default async function LocaleLayout({
   const admin = await isAdmin();
 
   return (
-    <html lang={locale} className={`${barlow.variable} ${nunito.variable}`}>
+    <html lang={locale} className={`${shoulders.variable} ${beVietnam.variable}`}>
       <body>
         <NextIntlClientProvider>
           <AppShell admin={admin}>{children}</AppShell>

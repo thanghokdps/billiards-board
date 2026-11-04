@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 
 import { FilterLinks } from "@/components/ui/filter-links";
 import { EmptyState, PageHeader } from "@/components/ui/misc";
-import { EloSection, H2hHeatmap, Podium, rankPlayers, StandingsTable } from "@/features/leaderboard";
+import { EloSection, H2hHeatmap, PocketTable, Podium, rankPlayers } from "@/features/leaderboard";
 import { GAME_LABEL, GAME_TYPES, periodStart, type GameType, type Period } from "@/lib/domain";
 import { getOverview } from "@/server/stats/service";
 
@@ -81,7 +81,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
       ) : (
         <>
           <Podium top={top} />
-          <StandingsTable ranked={ranked} />
+          <PocketTable ranked={ranked} />
           <EloSection players={overview.players} history={eloHistory} />
           <H2hHeatmap players={overview.players} matrix={overview.matrix} />
         </>

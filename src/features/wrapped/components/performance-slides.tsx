@@ -17,7 +17,7 @@ export function IntroSlide({ story }: SlideProps) {
       <PlayerAvatar player={player} size="xl" />
       <div>
         <p className="text-sm text-ivory-muted">{t("lead")}</p>
-        <p className="font-display text-hero font-bold uppercase tracking-wide">{player.name}</p>
+        <p className="font-display text-hero font-extrabold">{player.name}</p>
         {player.nickname && <p className="text-sm text-ivory-muted">{player.nickname}</p>}
       </div>
       {player.catchphrase && <p className="max-w-xs text-sm italic text-ivory-muted">“{player.catchphrase}”</p>}
@@ -61,7 +61,7 @@ export function FavouriteSlide({ story }: SlideProps) {
   if (!favourite) return null;
   return (
     <SlideFrame kicker={t("kicker")}>
-      <p className="font-display text-7xl font-bold uppercase leading-none tracking-wide text-lamp digits-glow">
+      <p className="font-display text-7xl font-extrabold leading-none text-lamp digits-glow">
         {GAME_LABEL[favourite.gameType]}
       </p>
       <p className="text-lg font-semibold">
@@ -99,7 +99,7 @@ export function BestDaySlide({ story }: SlideProps) {
     <SlideFrame kicker={t("kicker")}>
       {bestDay ? (
         <>
-          <p className="font-display text-5xl font-bold uppercase leading-tight tracking-wide text-lamp digits-glow">
+          <p className="font-display text-5xl font-extrabold leading-tight text-lamp digits-glow">
             {formatDate(bestDay.date, locale, "long")}
           </p>
           <p className="text-lg font-semibold">{t("line", { wins: bestDay.wins, played: bestDay.played })}</p>

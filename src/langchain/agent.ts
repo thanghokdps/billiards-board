@@ -10,6 +10,7 @@ import {
   SystemMessage,
   toolCallLimitMiddleware,
   toolErrorMiddleware,
+  ToolInvocationError,
   ToolMessage,
   toolRetryMiddleware,
   type AgentMiddleware,
@@ -35,6 +36,8 @@ export const RECURSION_LIMIT = 60;
 export const THREAD_RETENTION_DAYS = 30;
 
 const TOOL_FAILURE_REPLY = "The database did not answer. Tell the admin to try again in a moment.";
+const TOOL_BAD_INPUT_NOTE =
+  "Never change a value the admin gave to fit a limit: tell them which value is not accepted and ask for another.";
 
 const DECIDING_TOOLS = new Set<string>([
   TOOL_NAMES.proposeMatches,
@@ -60,7 +63,11 @@ function buildMiddleware(models: ReturnType<typeof createModels>, piiOn: boolean
     ...createPiiMiddleware(piiOn),
     toolCallLimitMiddleware({ runLimit: 12 }) as unknown as AgentMiddleware,
     toolRetryMiddleware({ maxRetries: 1, tools: TOOLS }) as unknown as AgentMiddleware,
-    toolErrorMiddleware({ onError: () => TOOL_FAILURE_REPLY }) as unknown as AgentMiddleware,
+    // Bad arguments are the model's to fix or explain; only a real tool failure is "try again later".
+    toolErrorMiddleware({
+      onError: (error) =>
+        ToolInvocationError.isInstance(error) ? `${error.message}\n${TOOL_BAD_INPUT_NOTE}` : TOOL_FAILURE_REPLY,
+    }) as unknown as AgentMiddleware,
     modelFallbackMiddleware(models.fallback) as unknown as AgentMiddleware,
     openCardReminder as unknown as AgentMiddleware,
     dynamicSystemPromptMiddleware(async (_state, runtime) => {

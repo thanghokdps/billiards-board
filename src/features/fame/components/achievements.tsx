@@ -35,9 +35,7 @@ export function Achievements({ players, achievements }: AchievementsProps) {
                   <Icon className="size-5" aria-hidden />
                 </span>
                 <div className="min-w-0">
-                  <h3 className="font-display text-lg font-bold uppercase leading-tight tracking-wide">
-                    {t(`badge.${id}.name`)}
-                  </h3>
+                  <h3 className="font-display text-xl font-bold leading-tight">{t(`badge.${id}.name`)}</h3>
                   <p className="text-xs text-ivory-muted">{t(`badge.${id}.hint`)}</p>
                 </div>
               </div>

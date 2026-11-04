@@ -57,7 +57,7 @@ export function Scoreboard({ matches, streaks, specials, admin }: ScoreboardProp
   }
 
   return (
-    <ul className="space-y-2">
+    <ul className="divide-y divide-line">
       {matches.map((m) => {
         const reason = specials[m.id];
         const footer =

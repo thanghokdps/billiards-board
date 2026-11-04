@@ -20,38 +20,16 @@
     "copyFailed": "Không chép được, hãy bôi đen và sao chép tay"
   },
   "session": {
-    "title": "Buổi trưa",
-    "noVenue": "Chưa nhập quán",
-    "table": "Bàn {label}",
-    "noTable": "Chưa nhập bàn",
-    "totalBill": "Tổng bill hôm nay",
-    "attendees": "Có mặt trưa nay",
-    "noAttendees": "Chưa điểm danh ai đi trưa nay",
-    "edit": "Sửa buổi",
-    "editTitle": "Sửa buổi trưa",
-    "attendeesLabel": "Ai đi trưa nay?",
-    "venue": "Quán",
-    "venuePlaceholder": "Tên quán",
-    "tableLabel": "Bàn",
-    "tablePlaceholder": "Ví dụ: số 3",
-    "saved": "Đã lưu buổi trưa",
-    "saveFailed": "Chưa lưu được, thử lại nhé"
-  },
-  "pairing": {
-    "title": "Gợi ý cặp đấu cân Elo",
-    "gap": "Lệch {gap} Elo",
-    "elo": "Elo {value}",
-    "record": "Ghi trận này",
-    "prompt": "Vừa đánh xong {sideA} vs {sideB}: ",
-    "hint": "Điểm danh người đi trưa nay để có gợi ý cặp đấu cân Elo."
+    "totalBill": "Tổng bill hôm nay"
   },
   "scoreboard": {
     "title": "Bảng điểm",
     "lastSession": "Buổi gần nhất · {date}",
     "empty": "Hôm nay chưa có trận nào",
     "emptyBody": "Bi còn nằm yên trên bàn. Đánh xong thì ghi lại nhé.",
-    "emptyViewerBody": "Chờ admin ghi trận đầu tiên của hôm nay nhé.",
+    "emptyViewerBody": "Trận đầu tiên sẽ hiện ở đây. Chưa biết ai đấu ai thì quay thử một vòng.",
     "openAssistant": "Mở trợ lý",
+    "pickPairing": "Quay cặp đấu",
     "delete": "Xóa trận này",
     "deleted": "Đã xóa trận",
     "deleteFailed": "Chưa xóa được trận",
@@ -71,10 +49,5 @@
     "line": "{count, plural, other {Thua # trận liền}}",
     "bounty": "Tiền thưởng {amount}",
     "posterOf": "Poster truy nã của {name}"
-  },
-  "predictions": {
-    "title": "Kèo hôm nay",
-    "seeAll": "Tất cả kèo",
-    "empty": "Hôm nay chưa có kèo nào đang mở."
   }
 }

@@ -5,12 +5,12 @@
   "welcomeTitle": "Ghi trận trong 10 giây",
   "welcomeBody": "Gõ hoặc bấm mic, nói như đang ở quán. Mọi lệnh ghi đều có thẻ xác nhận.",
   "suggestions": {
-    "log": "3c real Thén thắng Dũ 15-11, bill 45k",
-    "batch": "trưa nay: libre Bổ > Hi 40-32 bill 50k, 3c fake Lâm thắng Thén bill 30k",
-    "money": "tháng này ai đóng tiền nhiều nhất?",
-    "h2h": "Thén vs Lâm từ trước tới giờ",
-    "wheel": "quay cặp đấu 1v1",
-    "roast": "cà khịa Bổ đi"
+    "log": "Ghi kèo mới",
+    "today": "Hôm nay đã ghi những kèo nào?",
+    "money": "Tháng này ai đóng tiền nhiều nhất?",
+    "leader": "Ai đang dẫn đầu bảng Elo?",
+    "wheel": "Quay cặp đấu",
+    "roast": "Cà khịa người đóng nhiều nhất tháng này"
   },
   "mic": "Nói để ghi trận",
   "micStop": "Dừng nghe",
@@ -49,6 +49,8 @@
   "ask": {
     "game_type": "Thể loại gì?",
     "winner": "Ai thắng?",
+    "loser": "Ai bét?",
+    "guest_loser": "Ai thua?",
     "players": "Ai đánh?",
     "match": "Trận nào?",
     "player": "Người nào?",

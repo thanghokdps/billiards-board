@@ -47,9 +47,7 @@ export function LeaderboardPanel({ data }: { data: TvData }) {
               </div>
               <div className="text-right">
                 <p className="digits text-4xl font-bold text-lamp digits-glow 2xl:text-8xl">{Math.round(row.elo)}</p>
-                <p className="text-2xs font-semibold uppercase tracking-label text-ivory-faint 2xl:text-xl">
-                  {tc("elo")}
-                </p>
+                <p className="text-xs font-medium text-ivory-muted 2xl:text-xl">{tc("elo")}</p>
               </div>
             </li>
           ))}

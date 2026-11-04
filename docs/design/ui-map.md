@@ -1,6 +1,10 @@
 # UI map — admin chat (Ăn Bill)
 
-No Figma: the design is the requirement's concept "Bàn nỉ xanh về đêm" (night billiards hall, felt green, lamp yellow, LED digits). The tokens are in `src/styles/globals.css` (`@theme`). Viewports: 375 px phone and desktop ≥ 1024 px (ADR 0002 Q2v).
+No Figma: the design concept is "Bàn đã bật đèn", a real table from above (wood rail, six pockets, felt under a lamp, scoreboard numerals in Big Shoulders, body text in Be Vietnam Pro). The tokens are in `src/styles/globals.css` (`@theme`). Viewports: 375 px phone and desktop ≥ 1024 px (ADR 0002 Q2v).
+
+## Navigation
+
+One navigation at every width, no sidebar: `FloatingDock` holds Today, History, the 8-ball, Board, and Wheel (viewer) or the assistant (admin). The 8-ball opens `RackMenu`: ten pages racked 1-2-3-4 as balls on the felt, with Change log and Admin as plain links under the rack.
 
 ## Chat states
 
@@ -23,17 +27,17 @@ No Figma: the design is the requirement's concept "Bàn nỉ xanh về đêm" (n
 
 ## Primitives used in the chat
 
-| Element               | Class             | Source                                   |
-| --------------------- | ----------------- | ---------------------------------------- |
-| Send / stop, composer | library primitive | CopilotChat input (stock), themed        |
-| Buttons on cards      | design primitive  | `components/ui/button.tsx`               |
-| Chips                 | design primitive  | `components/ui/chip.tsx`                 |
-| Card shell            | design primitive  | `components/ui/card.tsx`                 |
-| Scoreboard row        | design primitive  | `components/ui/match-row.tsx`            |
-| Avatar with streak    | design primitive  | `components/ui/player-avatar.tsx`        |
-| Sheet                 | design primitive  | `components/ui/sheet.tsx` (radix Dialog) |
-| Wheel                 | feature component | `features/wheel` (shared with `/wheel`)  |
-| Icons                 | library           | lucide-react, size-4/5                   |
+| Element               | Class             | Source                                                                                                                                                                                                                                    |
+| --------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Send / stop, composer | library primitive | CopilotChat input (stock), themed                                                                                                                                                                                                         |
+| Buttons on cards      | design primitive  | `components/ui/button.tsx`                                                                                                                                                                                                                |
+| Chips                 | design primitive  | `components/ui/chip.tsx`                                                                                                                                                                                                                  |
+| Card shell            | design primitive  | `components/ui/card.tsx`                                                                                                                                                                                                                  |
+| Scoreboard row        | design primitive  | `components/ui/match-row.tsx` (a 1v1v1 is three columns of the same seat, each score under its player; the loser reads "Trả bill" when the match has a bill; a guest match shows "Du đấu" in the bill's place and the loser reads "Thua") |
+| Avatar with streak    | design primitive  | `components/ui/player-avatar.tsx`                                                                                                                                                                                                         |
+| Sheet                 | design primitive  | `components/ui/sheet.tsx` (radix Dialog)                                                                                                                                                                                                  |
+| Wheel                 | feature component | `features/wheel` (shared with `/wheel`)                                                                                                                                                                                                   |
+| Icons                 | library           | lucide-react, size-4/5                                                                                                                                                                                                                    |
 
 ## Ladder
 

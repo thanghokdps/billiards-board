@@ -11,10 +11,3 @@ export interface AdminPlayer {
   catchphrase: string | null;
   active: boolean;
 }
-
-/** Today's lunch session, as far as the admin edits it. */
-export interface AdminSession {
-  date: string;
-  venue: string | null;
-  tableLabel: string | null;
-}

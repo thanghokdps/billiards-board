@@ -4,7 +4,7 @@
  */
 import type { MatchInput, MatchPatch, MatchView, PlayerRef } from "@/server/matches/schema";
 
-import type { GameType, Period, Side } from "./domain";
+import type { GameType, PairingFormat, Period, Side } from "./domain";
 
 /** The one agent id: the runtime's agents map, the emitter and the client `agentId` all use it. */
 export const AGENT_ID = "assistant";
@@ -32,7 +32,7 @@ export const CHAT_PAGE_CONTEXT = "Chat page id";
 /** Something the model must ask the user, in exactly one question (chips when options exist). */
 export interface NeedsInput {
   status: "needs_input";
-  question: "game_type" | "players" | "winner" | "match" | "player";
+  question: "game_type" | "players" | "winner" | "loser" | "guest_loser" | "match" | "player";
   options?: { label: string; value: string }[];
   hint?: string;
 }
@@ -139,7 +139,7 @@ export interface HeadToHeadResult {
 
 export interface WheelSetup {
   status: "ok";
-  mode: "1v1" | "2v2";
+  mode: PairingFormat;
   participants: { player: PlayerRef; weight: number }[];
   target: PlayerRef | null;
   multiplier: number | null;

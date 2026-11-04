@@ -6,9 +6,9 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { MatchRow } from "@/components/ui/match-row";
-import { formatDate, formatVnd } from "@/lib/domain";
+import { formatDate, formatVnd, matchTitle } from "@/lib/domain";
 
-import type { HighlightItem, HistoryDay, HistoryMatch } from "../types";
+import type { HighlightItem, HistoryDay } from "../types";
 import { MatchSheet } from "./match-sheet";
 
 interface HistoryListProps {
@@ -18,9 +18,6 @@ interface HistoryListProps {
 }
 
 const NO_HIGHLIGHTS: HighlightItem[] = [];
-
-const titleOf = (m: HistoryMatch) =>
-  `${m.sideA.map((p) => p.name).join(" & ")} vs ${m.sideB.map((p) => p.name).join(" & ")}`;
 
 /** Days newest first, each with a sticky header; a tap on a match opens its detail sheet. */
 export function HistoryList({ days, highlights, admin }: HistoryListProps) {
@@ -36,7 +33,7 @@ export function HistoryList({ days, highlights, admin }: HistoryListProps) {
         {days.map((day) => (
           <section key={day.date} aria-labelledby={`day-${day.date}`}>
             <header className="sticky top-(--header-h) z-10 -mx-4 flex items-baseline justify-between gap-3 border-b border-line bg-night/90 px-4 py-2 backdrop-blur-md">
-              <h2 id={`day-${day.date}`} className="font-display text-lg font-bold uppercase tracking-wide">
+              <h2 id={`day-${day.date}`} className="font-display text-xl font-bold leading-tight">
                 {formatDate(day.date, locale, "long")}
               </h2>
               <p className="shrink-0 text-xs text-ivory-muted">
@@ -44,7 +41,7 @@ export function HistoryList({ days, highlights, admin }: HistoryListProps) {
                 <span className="digits font-bold text-lamp">{formatVnd(day.bill, locale)}</span>
               </p>
             </header>
-            <ul className="mt-3 space-y-3">
+            <ul className="divide-y divide-line">
               {day.matches.map((match) => {
                 const count = highlights[match.id]?.length ?? 0;
                 return (
@@ -63,7 +60,7 @@ export function HistoryList({ days, highlights, admin }: HistoryListProps) {
                     <Button
                       variant="ghost"
                       className="absolute inset-0 h-full w-full rounded-md px-0 hover:bg-lamp/5"
-                      aria-label={t("openMatch", { title: titleOf(match) })}
+                      aria-label={t("openMatch", { title: matchTitle(match) })}
                       onClick={() => setSelectedId(match.id)}
                     />
                   </li>

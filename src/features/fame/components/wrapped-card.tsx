@@ -14,9 +14,7 @@ export function WrappedCard() {
         <Gift className="size-6" aria-hidden />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block font-display text-2xl font-bold uppercase leading-tight tracking-wide">
-          {t("title")}
-        </span>
+        <span className="block font-display text-3xl font-bold leading-tight">{t("title")}</span>
         <span className="block text-sm text-ivory-muted">{t("body")}</span>
       </span>
       <span className="flex shrink-0 items-center gap-1 text-sm font-semibold text-lamp">

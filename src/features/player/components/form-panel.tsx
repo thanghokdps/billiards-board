@@ -1,3 +1,4 @@
+import { Flame, Snowflake } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
@@ -35,7 +36,20 @@ export function FormPanel({ stats }: { stats: PlayerStats }) {
                 <Stat label={t("avgPoints")} value={stats.avgPoints == null ? "—" : stats.avgPoints.toFixed(1)} />
                 <Stat
                   label={t("current")}
-                  value={streak ? `${streak.result === "W" ? "🔥" : "🧊"} ${streak.length}` : "—"}
+                  value={
+                    streak ? (
+                      <span className="inline-flex items-center gap-1">
+                        {streak.result === "W" ? (
+                          <Flame className="size-6 text-lamp" aria-hidden />
+                        ) : (
+                          <Snowflake className="size-6 text-cold" aria-hidden />
+                        )}
+                        {streak.length}
+                      </span>
+                    ) : (
+                      "—"
+                    )
+                  }
                   hint={
                     streak
                       ? common(streak.result === "W" ? "streakHot" : "streakCold", { count: streak.length })

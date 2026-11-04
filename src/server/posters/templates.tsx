@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { ReactElement, ReactNode } from "react";
+import { Fragment, type ReactElement, type ReactNode } from "react";
 
 import type { PosterPlayer } from "./data";
 
@@ -99,6 +99,10 @@ export interface MatchPosterProps {
   scoreB: number | null;
   winnerSide: "a" | "b";
   winLabel: string;
+  /** Set for a 1v1v1: every player's score, and the loser's label; sideA and sideB then hold winners and loser. */
+  threeWay: { scores: { playerId: number; score: number }[]; loserLabel: string } | null;
+  /** A guest match keeps no score, so the scoreboard is left out. */
+  scoreless: boolean;
 }
 
 /** Barlow has no ★ glyph, so the winner mark is drawn. */
@@ -112,17 +116,20 @@ function Star({ size }: { size: number }) {
 
 /** Fight-night card: headline from the special reason, both sides, the score as a scoreboard. */
 export function MatchPoster(p: MatchPosterProps): ReactElement {
+  const threeWay = p.threeWay;
   const side = (players: PosterPlayer[], won: boolean) => (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 420, gap: 20 }}>
+    <div
+      style={{ display: "flex", flexDirection: "column", alignItems: "center", width: threeWay ? 310 : 420, gap: 20 }}
+    >
       <div style={{ display: "flex", gap: 16 }}>
         {players.map((pl) => (
-          <Avatar key={pl.id} player={pl} size={players.length > 1 ? 180 : 280} grey={!won} />
+          <Avatar key={pl.id} player={pl} size={threeWay ? 220 : players.length > 1 ? 180 : 280} grey={!won} />
         ))}
       </div>
       <div
         style={{
           display: "flex",
-          fontSize: 64,
+          fontSize: threeWay ? 52 : 64,
           textTransform: "uppercase",
           color: won ? C.ivory : C.muted,
           textAlign: "center",
@@ -147,8 +154,19 @@ export function MatchPoster(p: MatchPosterProps): ReactElement {
           {p.winLabel}
         </div>
       )}
+      {threeWay && !won && (
+        <div style={{ display: "flex", fontSize: 30, color: C.ball, letterSpacing: 6, ...DISPLAY }}>
+          {threeWay.loserLabel}
+        </div>
+      )}
     </div>
   );
+  const seated = [...p.sideA, ...p.sideB];
+  const threeWayScores = threeWay
+    ? seated.flatMap((pl) => threeWay.scores.filter((s) => s.playerId === pl.id).map((s) => s.score))
+    : [];
+  const pairScores = p.scoreless ? [] : [p.scoreA ?? "–", p.scoreB ?? "–"];
+  const scores = threeWay ? threeWayScores : pairScores;
   return (
     <Frame>
       <Brand label={p.brand} />
@@ -170,28 +188,39 @@ export function MatchPoster(p: MatchPosterProps): ReactElement {
         {p.gameLabel} · {p.dateLabel}
       </div>
       <div style={{ display: "flex", flex: 1, alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-        {side(p.sideA, p.winnerSide === "a")}
-        <div style={{ display: "flex", fontSize: 72, color: C.ball, ...DISPLAY }}>VS</div>
-        {side(p.sideB, p.winnerSide === "b")}
+        {threeWay ? (
+          seated.map((pl) => <Fragment key={pl.id}>{side([pl], p.sideA.includes(pl))}</Fragment>)
+        ) : (
+          <>
+            {side(p.sideA, p.winnerSide === "a")}
+            <div style={{ display: "flex", fontSize: 72, color: C.ball, ...DISPLAY }}>VS</div>
+            {side(p.sideB, p.winnerSide === "b")}
+          </>
+        )}
       </div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 40,
-          padding: "20px 56px",
-          borderRadius: 28,
-          background: "rgba(0,0,0,0.55)",
-          border: `3px solid rgba(245,196,81,0.4)`,
-          fontSize: 140,
-          color: C.lamp,
-          ...DISPLAY,
-        }}
-      >
-        <span>{p.scoreA ?? "–"}</span>
-        <span style={{ fontSize: 80, color: C.muted }}>:</span>
-        <span>{p.scoreB ?? "–"}</span>
-      </div>
+      {scores.length > 0 && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 40,
+            padding: "20px 56px",
+            borderRadius: 28,
+            background: "rgba(0,0,0,0.55)",
+            border: `3px solid rgba(245,196,81,0.4)`,
+            fontSize: 140,
+            color: C.lamp,
+            ...DISPLAY,
+          }}
+        >
+          {scores.map((score, i) => (
+            <Fragment key={i}>
+              {i > 0 && <span style={{ fontSize: 80, color: C.muted }}>:</span>}
+              <span>{score}</span>
+            </Fragment>
+          ))}
+        </div>
+      )}
       {p.billLabel && <div style={{ display: "flex", marginTop: 28, fontSize: 36, color: C.ivory }}>{p.billLabel}</div>}
     </Frame>
   );

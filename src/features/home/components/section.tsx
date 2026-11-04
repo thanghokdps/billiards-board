@@ -16,7 +16,7 @@ export function Section({
   return (
     <section aria-labelledby={id} className={className}>
       <div className="mb-2.5 flex min-h-8 items-center justify-between gap-3">
-        <h2 id={id} className="font-display text-sm font-semibold uppercase tracking-label text-ivory-muted">
+        <h2 id={id} className="font-display text-2xl font-bold leading-tight">
           {title}
         </h2>
         {action}

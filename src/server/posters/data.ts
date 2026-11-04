@@ -1,6 +1,6 @@
 import "server-only";
 
-import { periodStart } from "@/lib/domain";
+import { periodStart, shownSideB } from "@/lib/domain";
 import { computePlayerStats, rivalry, specialReason, type SpecialReason, type StatPlayer } from "@/lib/stats";
 import type { MatchView } from "@/server/matches/schema";
 import { loadBoard } from "@/server/stats/service";
@@ -25,7 +25,7 @@ export async function matchPosterData(id: string): Promise<MatchPosterData | nul
   const index = all.findIndex((m) => m.id === id);
   const match = all[index];
   if (!match) return null;
-  const [sideA, sideB] = await Promise.all([withAvatars(match.sideA), withAvatars(match.sideB)]);
+  const [sideA, sideB] = await Promise.all([withAvatars(match.sideA), withAvatars(shownSideB(match))]);
   return { match, sideA, sideB, reason: specialReason(match, all.slice(0, index)) };
 }
 

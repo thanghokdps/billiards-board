@@ -22,11 +22,7 @@ function RivalCard({ kind, rival }: { kind: "nemesis" | "prey"; rival: Rival | n
         kind === "nemesis" ? "border-loss/30 bg-loss/5" : "border-win/30 bg-win/5",
       )}
     >
-      <p
-        className={cn("text-2xs font-semibold uppercase tracking-label", kind === "nemesis" ? "text-loss" : "text-win")}
-      >
-        {t(kind)}
-      </p>
+      <p className={cn("text-xs font-semibold", kind === "nemesis" ? "text-loss" : "text-win")}>{t(kind)}</p>
       {rival ? (
         <Link
           href={`/players/${rival.player.slug}`}

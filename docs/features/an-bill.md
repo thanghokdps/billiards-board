@@ -8,28 +8,29 @@ Source: requirement "Ăn Bill — Requirement & UI/UX" (claude.ai artifact HLWU6
 
 Card rows used: Q4 **user writes** (tools propose, the confirm card calls `/api/admin/*` as the admin, undo 30 s) · Q5 admin password cookie, viewers anonymous · Q6 `PostgresSaver`, thread per day, 30 days · Q7 `gpt-5.4-mini` / `gpt-5.4-nano` / `gpt-5-nano` · Q9 evals deferred by the user.
 
-| Task            | Example message                                                           | Agent     | Tool(s)                                                             |
-| --------------- | ------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------- |
-| create_match    | "3c real Thén thắng Dũ 15-11, bill 45k"                                   | assistant | `propose_matches` → card → `POST /api/admin/matches`                |
-| create_matches  | "trưa nay: libre Bổ > Hi 40-32 bill 50k, 3c fake Lâm thắng Thén bill 30k" | assistant | `propose_matches` (array)                                           |
-| update_match    | "sửa trận vừa rồi thành 15-13"                                            | assistant | `list_matches` → `propose_update` → `PATCH /api/admin/matches/:id`  |
-| set_bill        | "trận vừa rồi bill 45k"                                                   | assistant | `propose_update` (bill only)                                        |
-| delete_match    | "xóa trận libre lúc 12h20"                                                | assistant | `list_matches` → `propose_delete` → `DELETE /api/admin/matches/:id` |
-| query_stats     | "tháng này ai đóng tiền nhiều nhất?"                                      | assistant | `query_stats` (rows + chart spec)                                   |
-| head_to_head    | "Thén vs Lâm từ trước tới giờ"                                            | assistant | `head_to_head`                                                      |
-| spin_wheel      | "quay cặp đấu, bỏ Lâm, Bổ x5"                                             | assistant | `spin_wheel` (frontend tool, browser)                               |
-| generate_poster | "làm poster trận vừa rồi"                                                 | assistant | `generate_poster` (returns `/api/poster/:id` URL)                   |
-| trash_talk      | "cà khịa Bổ đi"                                                           | assistant | `trash_talk` (stat facts; the model writes the line)                |
-| out of scope    | "viết giúp tôi email xin nghỉ phép"                                       | assistant | none — declined by OUT OF SCOPE                                     |
+| Task            | Example message                                                           | Agent     | Tool(s)                                                                             |
+| --------------- | ------------------------------------------------------------------------- | --------- | ----------------------------------------------------------------------------------- |
+| create_match    | "3c real Thén thắng Dũ 15-11, bill 45k"                                   | assistant | `propose_matches` → card → `POST /api/admin/matches`                                |
+| create_matches  | "trưa nay: libre Bổ > Hi 40-32 bill 50k, 3c fake Lâm thắng Thén bill 30k" | assistant | `propose_matches` (array)                                                           |
+| create_1v1v1    | "libre 1v1v1 Thén, Dũ, Bổ: Bổ bét, bill 60k"                              | assistant | `propose_matches` (`threeWay`); winners on sideA, loser on sideB                    |
+| create_guest    | "du đấu 3c real, Thén thua guest"                                         | assistant | `propose_matches` (`guest`); player on sideA, sideB empty, no score or bill, no Elo |
+| update_match    | "sửa trận vừa rồi thành 15-13"                                            | assistant | `list_matches` → `propose_update` → `PATCH /api/admin/matches/:id`                  |
+| set_bill        | "trận vừa rồi bill 45k"                                                   | assistant | `propose_update` (bill only)                                                        |
+| delete_match    | "xóa trận libre lúc 12h20"                                                | assistant | `list_matches` → `propose_delete` → `DELETE /api/admin/matches/:id`                 |
+| query_stats     | "tháng này ai đóng tiền nhiều nhất?"                                      | assistant | `query_stats` (rows + chart spec)                                                   |
+| head_to_head    | "Thén vs Lâm từ trước tới giờ"                                            | assistant | `head_to_head`                                                                      |
+| spin_wheel      | "quay cặp đấu, bỏ Lâm, Bổ x5"                                             | assistant | `spin_wheel` (frontend tool, browser)                                               |
+| generate_poster | "làm poster trận vừa rồi"                                                 | assistant | `generate_poster` (returns `/api/poster/:id` URL)                                   |
+| trash_talk      | "cà khịa Bổ đi"                                                           | assistant | `trash_talk` (stat facts; the model writes the line)                                |
+| out of scope    | "viết giúp tôi email xin nghỉ phép"                                       | assistant | none — declined by OUT OF SCOPE                                                     |
 
 ## 2 · Fit check
 
 Fits the ADR. Additions decided here, none widen it:
 
-- **Predictions** (v3 "dự đoán"): viewers have no login, and `security.md` requires every mutating endpoint to be authenticated, so votes are entered by the admin on the prediction card (one tap per voter). No viewer write path.
 - **Uploads** (avatar, highlight photo): stored in Postgres (`media`, bytea, ≤ 1.5 MB after client-side resize to 640 px), admin-only. No new system or credential (no Supabase Storage key). Clips are links.
-- **Attendance** ("trưa nay ai đi?"): `sessions.attendees int[]`, admin toggles; feeds wheel defaults and Elo-balanced pairing.
 - **Events**: `createMatches` writes `events` rows for special matches (streak broken, comeback, derby, blowout) and returns them so the UI plays the micro-moment.
+- **Removed later**: predictions, attendance, venue, table label and the Elo pairing card were unused. Their tables and columns are dropped by `drizzle/0005_drop_unused_session_features.sql`; slice 1 and 2 below keep the original plan.
 
 ## 3 · Inventory (before this feature)
 

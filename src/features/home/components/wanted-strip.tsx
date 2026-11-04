@@ -17,7 +17,7 @@ export function WantedStrip({ entries }: { entries: WantedEntry[] }) {
   const t = useTranslations("home.wanted");
   const locale = useLocale();
   return (
-    <ul className="grid gap-3 sm:grid-cols-2">
+    <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
       {entries.map(({ player, streak, bounty }) => (
         <li key={player.id}>
           <Card className="flex overflow-hidden border-loss/40">
@@ -39,10 +39,10 @@ export function WantedStrip({ entries }: { entries: WantedEntry[] }) {
               />
             </a>
             <div className="min-w-0 space-y-1 p-3">
-              <p className="font-display text-xs font-bold uppercase tracking-label text-loss">{t("badge")}</p>
+              <p className="text-xs font-semibold text-loss">{t("badge")}</p>
               <Link
                 href={`/players/${player.slug}`}
-                className="block truncate font-display text-2xl font-bold uppercase leading-none hover:text-lamp"
+                className="block truncate font-display text-3xl font-bold leading-none hover:text-lamp"
               >
                 {player.name}
               </Link>

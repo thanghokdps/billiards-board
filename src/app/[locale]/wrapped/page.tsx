@@ -56,7 +56,7 @@ export default async function WrappedIndexPage({
                   <CardBody className="flex items-center gap-4">
                     <PlayerAvatar player={player} size="lg" />
                     <div className="min-w-0">
-                      <p className="truncate font-display text-xl font-bold uppercase tracking-wide">{player.name}</p>
+                      <p className="truncate font-display text-2xl font-bold">{player.name}</p>
                       {player.nickname && <p className="truncate text-xs text-ivory-muted">{player.nickname}</p>}
                       <p className="mt-1 text-sm text-ivory-muted">
                         {t("index.card", {

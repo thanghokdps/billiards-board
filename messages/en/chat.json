@@ -5,12 +5,12 @@
   "welcomeTitle": "Log a match in 10 seconds",
   "welcomeBody": "Type or tap the mic and say it like at the table. Every write shows a confirm card.",
   "suggestions": {
-    "log": "3c real Thén beat Dũ 15-11, bill 45k",
-    "batch": "lunch: libre Bổ > Hi 40-32 bill 50k, 3c fake Lâm beat Thén bill 30k",
-    "money": "who paid the most this month?",
-    "h2h": "Thén vs Lâm all time",
-    "wheel": "spin a 1v1 pairing",
-    "roast": "roast Bổ"
+    "log": "Log a new match",
+    "today": "Which matches were logged today?",
+    "money": "Who paid the most this month?",
+    "leader": "Who leads the Elo table?",
+    "wheel": "Spin a pairing",
+    "roast": "Roast this month's biggest payer"
   },
   "mic": "Speak to log a match",
   "micStop": "Stop listening",
@@ -49,6 +49,8 @@
   "ask": {
     "game_type": "Which game?",
     "winner": "Who won?",
+    "loser": "Who came last?",
+    "guest_loser": "Who lost?",
     "players": "Who played?",
     "match": "Which match?",
     "player": "Which player?",

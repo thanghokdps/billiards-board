@@ -5,25 +5,31 @@ import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Chip } from "@/components/ui/chip";
 import { EmptyState } from "@/components/ui/misc";
 import { useChat } from "@/features/shell";
+import { matchTitle, PAIRING_FORMATS, type PairingFormat } from "@/lib/domain";
 import { applyVictim, probabilities, type WheelEntry } from "@/lib/wheel";
 import type { PlayerRef } from "@/server/matches/schema";
 
 import { ChanceList } from "./chance-list";
 import { ParticipantChip } from "./participant-chip";
 import { WheelPanel } from "./wheel-panel";
+import { useHydrated } from "../hooks/use-hydrated";
 
 const MULTIPLIERS = [5, 10] as const;
-const MODES = ["1v1", "2v2"] as const;
+const MODE_LABELS = { "1v1": "mode1v1", "2v2": "mode2v2", "1v1v1": "mode1v1v1" } as const;
+const MODE_HINTS = { "1v1": "modeHint1v1", "2v2": "modeHint2v2", "1v1v1": "modeHint1v1v1" } as const;
+const MODE_SPINNER_HINTS = {
+  "1v1": "modeHintSpinner1v1",
+  "2v2": "modeHintSpinner2v2",
+  "1v1v1": "modeHintSpinner1v1v1",
+} as const;
 
 interface WheelStudioProps {
   /** Every active player. */
   players: PlayerRef[];
-  /** Who is in at the start: today's attendees, else everyone. */
-  defaultIncluded: number[];
   /** Only the admin sees "create a match from this pairing". */
   admin: boolean;
 }
@@ -36,19 +42,21 @@ const toEntry = (player: PlayerRef, weights: Record<number, number>): WheelEntry
 });
 
 /** The Random Wheel screen: wheel on the left (desktop), setup on the right; stacked on phones. Results are never saved. */
-export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProps) {
+export function WheelStudio({ players, admin }: WheelStudioProps) {
   const t = useTranslations("wheel");
   const chat = useChat();
   const hintId = useId();
-  const [included, setIncluded] = useState<number[]>(defaultIncluded);
+  const [included, setIncluded] = useState<number[]>(() => players.map((p) => p.id));
   const [weights, setWeights] = useState<Record<number, number>>({});
-  const [mode, setMode] = useState<(typeof MODES)[number]>("2v2");
+  const [mode, setMode] = useState<PairingFormat>("2v2");
   const [spinnerId, setSpinnerId] = useState<number | null>(null);
   const [victimId, setVictimId] = useState<number | null>(null);
   const [multiplier, setMultiplier] = useState<number | null>(null);
   const [picks, setPicks] = useState<number[]>([]);
-  const [spinning, setSpinning] = useState(false);
+  const [isSpinning, setSpinning] = useState(false);
   const [advanced, setAdvanced] = useState(false);
+  const hydrated = useHydrated();
+  const spinning = isSpinning || !hydrated;
 
   if (players.length === 0) return <EmptyState title={t("emptyTitle")} body={t("emptyBody")} />;
 
@@ -109,7 +117,7 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
     setWeights({});
   }
 
-  function changeMode(next: (typeof MODES)[number]) {
+  function changeMode(next: PairingFormat) {
     setMode(next);
     setPicks([]);
   }
@@ -149,144 +157,124 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
 
   return (
     <div className="grid gap-6 lg:grid-cols-5 lg:items-start">
-      <Card className="lg:col-span-3">
-        <CardBody>
-          <WheelPanel
-            players={participants}
-            weights={weights}
-            mode={mode}
-            spinnerId={spinner?.id ?? null}
-            picks={picks}
-            onPicksChange={setPicks}
-            onSpinningChange={setSpinning}
-            belowWheel={shortcuts}
-            pairingActions={
-              admin
-                ? (pairing) => (
-                    <Button
-                      variant="felt"
-                      onClick={() =>
-                        chat.open(
-                          t("createMatchPrompt", {
-                            sideA: pairing.sideA.map((p) => p.name).join(" & "),
-                            sideB: pairing.sideB.map((p) => p.name).join(" & "),
-                          }),
-                          "prefill",
-                        )
-                      }
-                    >
-                      {t("createMatch")}
-                    </Button>
-                  )
-                : undefined
-            }
-          />
-        </CardBody>
-      </Card>
-
-      <div aria-label={t("controlsSection")} role="group" className="space-y-4 lg:col-span-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("modeTitle")}</CardTitle>
-          </CardHeader>
-          <CardBody className="space-y-2">
-            <div role="group" aria-label={t("modeTitle")} className="flex gap-2">
-              {MODES.map((m) => (
-                <Chip
-                  key={m}
-                  selected={mode === m}
-                  disabled={spinning}
-                  className="h-11 flex-1 justify-center"
-                  onClick={() => changeMode(m)}
-                >
-                  <span className="digits text-lg font-bold">{t(m === "1v1" ? "mode1v1" : "mode2v2")}</span>
-                </Chip>
-              ))}
-            </div>
-            <p className="text-sm text-ivory-muted">
-              {spinner
-                ? t(mode === "1v1" ? "modeHintSpinner1v1" : "modeHintSpinner2v2", { name: spinner.name })
-                : t(mode === "1v1" ? "modeHint1v1" : "modeHint2v2")}
-            </p>
-          </CardBody>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("spinnerTitle")}</CardTitle>
-          </CardHeader>
-          <CardBody className="space-y-3">
-            <div role="group" aria-label={t("spinnerTitle")} className="flex flex-wrap gap-2">
-              {participants.map((player) => {
-                const isSpinner = spinner?.id === player.id;
-                return (
-                  <Chip
-                    key={player.id}
-                    selected={isSpinner}
-                    disabled={spinning}
-                    onClick={() => changeSpinner(isSpinner ? null : player.id)}
+      <div className="lg:col-span-3">
+        <WheelPanel
+          players={participants}
+          weights={weights}
+          mode={mode}
+          spinnerId={spinner?.id ?? null}
+          picks={picks}
+          onPicksChange={setPicks}
+          onSpinningChange={setSpinning}
+          belowWheel={shortcuts}
+          pairingActions={
+            admin
+              ? (pairing) => (
+                  <Button
+                    variant="felt"
+                    onClick={() => chat.open(t("createMatchPrompt", { match: matchTitle(pairing) }), "prefill")}
                   >
-                    {player.name}
-                  </Chip>
-                );
-              })}
-            </div>
-            <p className="text-sm text-ivory-muted">{t("spinnerHint")}</p>
-          </CardBody>
-        </Card>
+                    {t("createMatch")}
+                  </Button>
+                )
+              : undefined
+          }
+        />
+      </div>
 
-        <Card>
-          <CardHeader>
+      <Card
+        aria-label={t("controlsSection")}
+        role="group"
+        className="divide-y divide-line lg:col-span-2 [&>section]:space-y-3 [&>section]:p-4"
+      >
+        <section>
+          <CardTitle>{t("modeTitle")}</CardTitle>
+          <div role="group" aria-label={t("modeTitle")} className="flex gap-2">
+            {PAIRING_FORMATS.map((m) => (
+              <Chip
+                key={m}
+                selected={mode === m}
+                disabled={spinning}
+                className="h-11 flex-1 justify-center"
+                onClick={() => changeMode(m)}
+              >
+                <span className="digits text-xl font-bold">{t(MODE_LABELS[m])}</span>
+              </Chip>
+            ))}
+          </div>
+          <p className="text-sm text-ivory-muted">
+            {spinner ? t(MODE_SPINNER_HINTS[mode], { name: spinner.name }) : t(MODE_HINTS[mode])}
+          </p>
+        </section>
+
+        <section>
+          <div className="flex items-center justify-between gap-3">
             <CardTitle>{t("participantsTitle")}</CardTitle>
-            <span className="digits text-sm font-semibold text-ivory-muted">
+            <span className="digits text-base font-semibold text-ivory-muted">
               {t("participantsCount", { selected: participants.length, total: players.length })}
             </span>
-          </CardHeader>
-          <CardBody className="space-y-3">
-            <div className="flex flex-wrap gap-2">
-              {players.map((player) => (
-                <ParticipantChip
-                  key={player.id}
-                  player={player}
-                  included={included.includes(player.id)}
-                  victim={victimId === player.id}
-                  disabled={spinning}
-                  describedBy={hintId}
-                  onToggle={() => toggleParticipant(player.id)}
-                  onMakeVictim={() => changeVictim(player.id)}
-                />
-              ))}
-            </div>
-            <p id={hintId} className="text-sm text-ivory-muted">
-              {t("participantsHint")}
-            </p>
-          </CardBody>
-        </Card>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {players.map((player) => (
+              <ParticipantChip
+                key={player.id}
+                player={player}
+                included={included.includes(player.id)}
+                victim={victimId === player.id}
+                disabled={spinning}
+                describedBy={hintId}
+                onToggle={() => toggleParticipant(player.id)}
+                onMakeVictim={() => changeVictim(player.id)}
+              />
+            ))}
+          </div>
+          <p id={hintId} className="text-sm text-ivory-muted">
+            {t("participantsHint")}
+          </p>
+        </section>
 
-        <Card>
-          <CardHeader>
+        <section>
+          <CardTitle>{t("spinnerTitle")}</CardTitle>
+          <div role="group" aria-label={t("spinnerTitle")} className="flex flex-wrap gap-2">
+            {participants.map((player) => {
+              const isSpinner = spinner?.id === player.id;
+              return (
+                <Chip
+                  key={player.id}
+                  selected={isSpinner}
+                  disabled={spinning}
+                  onClick={() => changeSpinner(isSpinner ? null : player.id)}
+                >
+                  {player.name}
+                </Chip>
+              );
+            })}
+          </div>
+          <p className="text-sm text-ivory-muted">{t("spinnerHint")}</p>
+        </section>
+
+        <section>
+          <div className="flex items-center justify-between gap-3">
             <CardTitle>{t("chanceTitle")}</CardTitle>
             <Button variant="ghost" size="sm" aria-expanded={advanced} onClick={() => setAdvanced((v) => !v)}>
               <SlidersHorizontal className="size-4" aria-hidden />
               {t("advanced")}
             </Button>
-          </CardHeader>
-          <CardBody>
-            <ChanceList
-              players={onWheel}
-              weights={weights}
-              chances={chances}
-              picked={picks}
-              victimId={victimId}
-              advanced={advanced}
-              locked={spinning}
-              onWeightChange={changeWeight}
-              onVictimChange={changeVictim}
-            />
-            <p className="mt-3 text-xs text-ivory-faint">{t("chanceHint")}</p>
-          </CardBody>
-        </Card>
-      </div>
+          </div>
+          <ChanceList
+            players={onWheel}
+            weights={weights}
+            chances={chances}
+            picked={picks}
+            victimId={victimId}
+            advanced={advanced}
+            locked={spinning}
+            onWeightChange={changeWeight}
+            onVictimChange={changeVictim}
+          />
+          <p className="text-xs text-ivory-muted">{t("chanceHint")}</p>
+        </section>
+      </Card>
     </div>
   );
 }

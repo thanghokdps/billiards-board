@@ -75,13 +75,6 @@
     "confirm": "Xóa",
     "cancel": "Hủy"
   },
-  "session": {
-    "title": "Buổi hôm nay",
-    "venue": "Quán",
-    "table": "Bàn",
-    "save": "Lưu buổi",
-    "saved": "Đã lưu thông tin buổi"
-  },
   "links": {
     "title": "Lối tắt",
     "assistant": "Mở trợ lý ghi trận",
