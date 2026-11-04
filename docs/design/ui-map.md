@@ -6,6 +6,32 @@ No Figma: the design concept is "Bàn đã bật đèn", a real table from above
 
 One navigation at every width, no sidebar: `FloatingDock` holds Today, History, the 8-ball, Board, and Wheel (viewer) or the assistant (admin). The 8-ball opens `RackMenu`: ten pages racked 1-2-3-4 as balls on the felt, with Change log and Admin as plain links under the rack.
 
+## Motion
+
+| Moment        | Where                                                  | How                                                                                                                                               | Reduced motion         |
+| ------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| 3D pool table | `features/leaderboard` (`table-canvas`, `lib/table-*`) | `three` over the flat table. The HTML buttons stay the controls and the scene pins them to each ball and pocket. It draws only while a ball moves | not loaded, flat table |
+| Break shot    | `features/home` (`break-shot`, `lib/break-physics`)    | 2D canvas with real collisions under the hero text, once per browser session                                                                      | skipped                |
+| Holo card     | `features/player/components/holo-frame.tsx`            | CSS variables set on pointer move, foil in `.holo-foil`                                                                                           | no tilt, no sweep      |
+| LED digits    | `components/ui/rolling-number.tsx`                     | CSS only, so it starts before hydration and the server HTML holds the real value. Reserved for headline numbers: each digit adds 20 spans         | final digits at once   |
+| Rows, charts  | `.stagger-in`, `animate-plinth`, recharts default      | CSS keyframes; recharts' `auto` animation checks reduced motion itself                                                                            | no animation           |
+
+| Elo stage | `features/leaderboard` (`elo-canvas`, `lib/elo-scene`) | `three` curtains in depth with a ball per player, scrubbed by pointer; `elo-line-chart` is the flat fallback |
+| Chalk cubes | `h2h-heatmap.tsx`, `.h2h-*` | CSS perspective; cube height and colour come from `--rate` and `--heat` |
+| Match plates | `.match-tiles` on home and history lists | CSS thick edge, stand up on entry (scroll-driven in history), tip on hover |
+| Score wire | `components/ui/filter-links.tsx`, `.score-*` | The bead is one DOM node kept across navigation, so it slides to the new stop |
+| Table frame | `features/home/components/table-frame.tsx`, `.pool-*` | CSS pocket table: rails, cushions, sights, six pockets |
+| Dock | `features/shell/components/floating-dock.tsx`, `.dock*` | Wooden rail tilted by a pseudo-element behind upright keys; the current page is a key held down |
+| Pixel pet | `features/shell` (`pixel-pet`, `lib/pet-brain`, `lib/pet-sprites`) | Canvas sprite. Roams; a click makes it leap there, cheer on a control, go dizzy after four quick clicks; it tumbles on scroll, cheers on a new page, sleeps after 25 s idle. Absent under reduced motion, never takes a click |
+| Backdrop | `features/shell` (`lamp-smoke`, `match-art`, `lib/smoke-shader`, `lib/match-strokes`) | Raw WebGL smoke at 0.4 scale and 30 fps, no `three`. The last 16 matches paint as ball paths in the winner's colour, seeded by match id, then the canvas stops. Reduced motion gets one still frame |
+| Drawn scenes | `components/ui/billiard-art.tsx`, `.art-*` | Own SVGs moved by CSS: `CueShot` on history, `RackBreak` on leaderboard, `SwingLamp` on wheel, `ChalkCube` in empty states |
+| Scroll | `.scroll-cue`, `main section`, `.pool-table`, `.match-stack` | CSS scroll timelines: cue progress under the header, sections rise in, the hero table tips back; history plates stack per day. Without `animation-timeline` these simply stay put |
+| Hover | `.ball-roll`, `.poster-swing`, `.match-tiles`, `.dock-key` | CSS only, inside `@media (hover: hover)`: balls roll, the wanted poster swings, a plate gets a sheen while its siblings dim |
+
+Tailwind keeps `@theme` keyframes only when an `animation:` shorthand names them; `animation-name` alone drops them.
+
+WebGL failure or a lost context falls back to the flat table or chart. A new `.digit-reel`-style delayed animation must also go in the reduced-motion block of `globals.css`, or its delay holds back the first frame.
+
 ## Chat states
 
 | State                    | Decision / implementation                                                                                                                                               |

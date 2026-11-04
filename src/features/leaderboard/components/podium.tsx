@@ -2,6 +2,7 @@ import { Crown } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { PlayerAvatar } from "@/components/ui/player-avatar";
+import { RollingNumber } from "@/components/ui/rolling-number";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
 import { formatPercent } from "@/lib/domain";
@@ -11,8 +12,8 @@ import { SectionTitle } from "./section-title";
 import { MIN_RANKED_GAMES } from "../lib/ranking";
 
 const SLOTS = [
-  { rank: 1, plinth: "h-20", avatar: "xl", order: "order-2" },
-  { rank: 2, plinth: "h-14", avatar: "lg", order: "order-1" },
+  { rank: 1, plinth: "h-20 [animation-delay:300ms]", avatar: "xl", order: "order-2" },
+  { rank: 2, plinth: "h-14 [animation-delay:150ms]", avatar: "lg", order: "order-1" },
   { rank: 3, plinth: "h-10", avatar: "lg", order: "order-3" },
 ] as const;
 
@@ -45,7 +46,7 @@ export function Podium({ top }: { top: PlayerStats[] }) {
                 />
                 <span className="w-full truncate font-bold group-hover:text-lamp">{s.player.name}</span>
                 <span className={cn("digits text-score font-bold", first ? "text-lamp digits-glow" : "text-ivory")}>
-                  {formatPercent(s.winRate, locale)}
+                  <RollingNumber value={formatPercent(s.winRate, locale)} />
                 </span>
                 <span className="text-2xs text-ivory-muted">{t("record", { wins: s.wins, losses: s.losses })}</span>
                 {s.played < MIN_RANKED_GAMES && (
@@ -54,11 +55,12 @@ export function Podium({ top }: { top: PlayerStats[] }) {
               </Link>
               <div
                 className={cn(
-                  "flex w-full items-start justify-center rounded-t-md border border-b-0 pt-2 digits text-2xl font-bold",
+                  "relative flex w-full origin-bottom animate-plinth items-start justify-center border border-b-0 pt-2 digits text-2xl font-bold",
+                  "before:absolute before:inset-x-0 before:bottom-full before:h-3 before:[clip-path:polygon(7%_0,93%_0,100%_100%,0_100%)]",
                   plinth,
                   first
-                    ? "border-lamp/50 bg-lamp/15 text-lamp shadow-lamp"
-                    : "border-line-strong bg-surface-2 text-ivory-muted",
+                    ? "border-lamp/50 bg-lamp/15 text-lamp shadow-lamp before:bg-lamp/45"
+                    : "border-line-strong bg-surface-2 text-ivory-muted before:bg-surface-3",
                 )}
               >
                 <span className="sr-only">{t("rank", { rank })}</span>

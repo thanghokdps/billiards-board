@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PlayerAvatar } from "@/components/ui/player-avatar";
+import { cn } from "@/lib/cn";
 import { formatPercent } from "@/lib/domain";
 import { clack, haptic } from "@/lib/feedback";
 import type { PlayerStats } from "@/lib/stats";
@@ -14,11 +15,13 @@ import { GroupFormList } from "./group-form-list";
 import { PlayerStatsPanel } from "./player-stats-panel";
 import { SectionTitle } from "./section-title";
 import { TableBall } from "./table-ball";
+import { TableCanvas, type CanvasBall } from "./table-canvas";
 import { TablePocket } from "./table-pocket";
 import { ballPoint, orderByMetric, POCKET_METRICS, POCKETS, rackPoint, type PocketMetric } from "../lib/pocket-layout";
 
 const RACK_TALL = { x: 13, y: 10 };
 const RACK_WIDE = { x: 7, y: 15 };
+const BALL_STAGGER_MS = 60;
 
 const LABEL_KEY = {
   winRate: "winRate",
@@ -58,13 +61,30 @@ export function PocketTable({ ranked }: { ranked: PlayerStats[] }) {
   const [metric, setMetric] = useState<PocketMetric>("winRate");
   const [selectedId, setSelectedId] = useState(ranked[0]?.player.id);
   const [showGroup, setShowGroup] = useState(false);
+  const [live, setLive] = useState(false);
 
   const active = ranked.filter((s) => s.played > 0);
   const bench = ranked.filter((s) => s.played === 0);
   const order = orderByMetric(active, metric);
   const leader = order[0];
   const selected = ranked.find((s) => s.player.id === selectedId) ?? ranked[0];
+
+  const restPoints = (s: PlayerStats, index: number) => {
+    const rank = order.indexOf(s);
+    const { tall, wide } = POCKETS[metric];
+    return {
+      tall: broken ? ballPoint(tall, rank, active.length) : rackPoint(index, RACK_TALL),
+      wide: broken ? ballPoint(wide, rank, active.length) : rackPoint(index, RACK_WIDE),
+    };
+  };
   const metricLabel = t(LABEL_KEY[metric]);
+  const sceneBalls: CanvasBall[] = active.map((s, i) => ({
+    id: s.player.id,
+    color: s.player.ballColor,
+    number: s.player.ballNumber,
+    delayMs: order.indexOf(s) * BALL_STAGGER_MS,
+    ...restPoints(s, i),
+  }));
 
   const valueOf = (s: PlayerStats): string => {
     switch (metric) {
@@ -116,8 +136,23 @@ export function PocketTable({ ranked }: { ranked: PlayerStats[] }) {
         <div className="grid gap-4 @4xl:grid-cols-[minmax(0,1fr)_18rem]">
           <div className="min-w-0 space-y-2">
             <div ref={ref} className="@container">
-              <div className="rounded-xl bg-wood p-3.5 shadow-card">
-                <div className="felt relative aspect-3/4 rounded-md @xl:aspect-8/5">
+              <div className="relative rounded-xl p-3.5">
+                <div
+                  aria-hidden
+                  className={cn(
+                    "absolute inset-0 rounded-xl bg-wood shadow-card transition-opacity duration-500",
+                    live && "opacity-0",
+                  )}
+                />
+                <div className="relative aspect-3/4 rounded-md @xl:aspect-8/5">
+                  <div
+                    aria-hidden
+                    className={cn(
+                      "felt absolute inset-0 rounded-md transition-opacity duration-500",
+                      live && "opacity-0",
+                    )}
+                  />
+                  <TableCanvas balls={sceneBalls} broken={broken} live={live} onLiveChange={setLive} />
                   {POCKET_METRICS.map((m) => (
                     <TablePocket
                       key={m}
@@ -125,6 +160,7 @@ export function PocketTable({ ranked }: { ranked: PlayerStats[] }) {
                       tall={POCKETS[m].tall}
                       wide={POCKETS[m].wide}
                       active={m === metric}
+                      live={live}
                       onPick={() => pickPocket(m)}
                     />
                   ))}
@@ -142,13 +178,13 @@ export function PocketTable({ ranked }: { ranked: PlayerStats[] }) {
                           value: valueOf(s),
                         })}
                         value={shortValueOf(s)}
-                        tall={broken ? ballPoint(tall, rank, active.length) : rackPoint(i, RACK_TALL)}
-                        wide={broken ? ballPoint(wide, rank, active.length) : rackPoint(i, RACK_WIDE)}
+                        {...restPoints(s, i)}
                         tallLine={tall}
                         wideLine={wide}
                         rank={rank}
                         showTag={broken}
                         selected={s === selected}
+                        live={live}
                         onPick={() => pickBall(s.player.id)}
                       />
                     );

@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
+import { RackBreak } from "@/components/ui/billiard-art";
 import { FilterLinks } from "@/components/ui/filter-links";
 import { EmptyState, PageHeader } from "@/components/ui/misc";
 import { EloSection, H2hHeatmap, PocketTable, Podium, rankPlayers } from "@/features/leaderboard";
@@ -51,7 +52,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
-      <PageHeader title={t("title")} kicker={t("kicker")} />
+      <PageHeader title={t("title")} kicker={t("kicker")} actions={<RackBreak />} />
 
       <div className="space-y-2">
         <FilterLinks

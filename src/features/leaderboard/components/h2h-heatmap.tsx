@@ -9,13 +9,12 @@ import { SectionTitle } from "./section-title";
 
 type Matrix = Record<number, Record<number, { wins: number; played: number }>>;
 
-/** Loss colour at 0 %, win colour at 100 %, laid over the card so the scale stays dark-theme friendly. */
+/** Loss colour at 0 %, win colour at 100 %; bright enough to carry dark digits on every step of the scale. */
 function heat(rate: number): string {
-  const scale = `color-mix(in oklab, var(--color-win) ${Math.round(rate * 100)}%, var(--color-loss))`;
-  return `color-mix(in oklab, ${scale} 62%, var(--color-surface))`;
+  return `color-mix(in oklab, var(--color-win) ${Math.round(rate * 100)}%, var(--color-loss))`;
 }
 
-/** Row player's win rate against the column player. Scrolls inside the card on a phone. */
+/** Row player's win rate against the column player as chalk cubes: the better the record, the taller the cube. */
 export function H2hHeatmap({ players, matrix }: { players: StatPlayer[]; matrix: Matrix }) {
   const t = useTranslations("leaderboard.h2h");
   const locale = useLocale();
@@ -27,8 +26,8 @@ export function H2hHeatmap({ players, matrix }: { players: StatPlayer[]; matrix:
       </div>
       <Card>
         <CardBody className="space-y-3">
-          <div className="relative overflow-x-auto">
-            <table className="border-separate border-spacing-1 text-center">
+          <div className="h2h-stage relative overflow-x-auto pt-3 pb-2">
+            <table className="border-separate border-spacing-x-1 border-spacing-y-3 text-center sm:border-spacing-x-1.5">
               <caption className="sr-only">{t("title")}</caption>
               <thead>
                 <tr>
@@ -55,22 +54,16 @@ export function H2hHeatmap({ players, matrix }: { players: StatPlayer[]; matrix:
                     {players.map((col) => {
                       if (row.id === col.id) {
                         return (
-                          <td
-                            key={col.id}
-                            aria-label={t("self", { name: row.name })}
-                            className="size-12 rounded-sm bg-night/60"
-                          />
+                          <td key={col.id} aria-label={t("self", { name: row.name })} className="p-0">
+                            <span aria-hidden className="h2h-slot h2h-slot-self" />
+                          </td>
                         );
                       }
                       const cell = matrix[row.id]?.[col.id];
                       if (!cell || cell.played === 0) {
                         return (
-                          <td
-                            key={col.id}
-                            aria-label={t("none", { row: row.name, col: col.name })}
-                            className="size-12 rounded-sm border border-dashed border-line-strong text-ivory-faint"
-                          >
-                            <span aria-hidden>·</span>
+                          <td key={col.id} aria-label={t("none", { row: row.name, col: col.name })} className="p-0">
+                            <span aria-hidden className="h2h-slot" />
                           </td>
                         );
                       }
@@ -85,14 +78,19 @@ export function H2hHeatmap({ players, matrix }: { players: StatPlayer[]; matrix:
                             played: cell.played,
                             rate: formatPercent(rate, locale),
                           })}
-                          className="size-12 rounded-sm"
-                          style={{ backgroundColor: heat(rate) }}
+                          className="p-0"
                         >
-                          <span aria-hidden className="block digits text-base font-bold leading-none text-ivory">
-                            {formatPercent(rate, locale)}
-                          </span>
-                          <span aria-hidden className="block pt-0.5 text-2xs leading-none text-ivory-muted">
-                            {cell.wins}/{cell.played}
+                          <span
+                            aria-hidden
+                            className="h2h-cube"
+                            style={{ ["--heat" as string]: heat(rate), ["--rate" as string]: rate }}
+                          >
+                            <span className="digits text-lg font-bold leading-none sm:text-2xl">
+                              {formatPercent(rate, locale)}
+                            </span>
+                            <span className="pt-0.5 text-2xs font-semibold leading-none">
+                              {cell.wins}/{cell.played}
+                            </span>
                           </span>
                         </td>
                       );
@@ -108,7 +106,6 @@ export function H2hHeatmap({ players, matrix }: { players: StatPlayer[]; matrix:
               className="h-2 flex-1 rounded-full"
               style={{
                 backgroundImage: "linear-gradient(to right, var(--color-loss), var(--color-win))",
-                opacity: 0.62,
               }}
             />
             <span>{t("legendWin")}</span>

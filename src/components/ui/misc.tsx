@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 import { Ball } from "./ball";
+import { ChalkCube } from "./billiard-art";
 
 export function PageHeader({
   title,
@@ -63,7 +64,7 @@ export function EmptyState({
 }) {
   return (
     <div className={cn("flex flex-col items-center px-6 py-8 text-center", className)}>
-      <Ball className="mb-3 size-12" />
+      <ChalkCube className="mb-3" />
       <p className="text-balance font-display text-2xl font-bold leading-tight">{title}</p>
       {body && <p className="mt-1.5 max-w-xs text-sm text-ivory-muted">{body}</p>}
       {action && <div className="mt-4">{action}</div>}
