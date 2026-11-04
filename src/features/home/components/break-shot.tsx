@@ -63,7 +63,7 @@ export function BreakShot() {
 
     const css = getComputedStyle(canvas);
     const colors = POOL_COLORS.map((name) => css.getPropertyValue(`--color-pool-${name}`).trim());
-    const radius = Math.max(8, Math.min(width, height) * 0.075);
+    const radius = Math.max(8, Math.min(width, height) * 0.03);
     const discs = rackUp(width, height, radius, css.getPropertyValue("--color-ivory").trim(), colors);
 
     let frame = 0;

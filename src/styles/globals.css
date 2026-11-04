@@ -919,6 +919,12 @@
       --pocket: 2.25rem;
     }
   }
+  /* A real playfield is twice as long as it is wide; content taller than that grows the table rather than clipping. */
+  .pool-field {
+    display: grid;
+    align-content: center;
+    aspect-ratio: 2 / 1;
+  }
   .pool-cloth,
   .pool-furniture {
     position: absolute;
