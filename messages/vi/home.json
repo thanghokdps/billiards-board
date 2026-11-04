@@ -20,7 +20,6 @@
     "copyFailed": "Không chép được, hãy bôi đen và sao chép tay"
   },
   "session": {
-    "title": "Buổi trưa",
     "noVenue": "Chưa nhập quán",
     "table": "Bàn {label}",
     "noTable": "Chưa nhập bàn",

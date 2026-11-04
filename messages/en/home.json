@@ -20,7 +20,6 @@
     "copyFailed": "Could not copy, select the text and copy it by hand"
   },
   "session": {
-    "title": "Lunch session",
     "noVenue": "No venue yet",
     "table": "Table {label}",
     "noTable": "No table yet",
