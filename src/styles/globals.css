@@ -56,6 +56,30 @@
   --animate-flicker: flicker 4s ease-in-out infinite;
   --animate-pulse-ring: pulse-ring 2s ease-out infinite;
   --animate-lamp-on: lamp-on 0.9s ease-out both;
+  --animate-rack-in: rack-in 0.32s cubic-bezier(0.2, 1.3, 0.4, 1) both;
+
+  /* The navigation rack: balls 1-7 of a real set, then 9-10 as the striped-set colours. */
+  --color-pool-yellow: #f2b632;
+  --color-pool-blue: #2f6fd0;
+  --color-pool-red: #d7263d;
+  --color-pool-purple: #7a4bc2;
+  --color-pool-orange: #ee7f2b;
+  --color-pool-green: #1c9a63;
+  --color-pool-maroon: #8c2f39;
+  --color-pool-teal: #1f9aa8;
+  --color-pool-pink: #d65a95;
+  --color-pool-ivory: #d9c9a8;
+
+  @keyframes rack-in {
+    from {
+      opacity: 0;
+      transform: translateY(5rem) scale(0.4);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 
   @keyframes lamp-on {
     0% {

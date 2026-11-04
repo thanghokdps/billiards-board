@@ -1,19 +1,17 @@
 "use client";
 
-import { LogIn, Menu, ShieldCheck } from "lucide-react";
+import { LogIn, ShieldCheck } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { Ball } from "@/components/ui/ball";
-import { Sheet } from "@/components/ui/sheet";
 import { MatchMomentOverlay } from "@/features/matches";
 import { Link, usePathname } from "@/i18n/navigation";
-import { cn } from "@/lib/cn";
 
+import { FloatingDock } from "./floating-dock";
 import { LanguageSwitch } from "./language-switch";
 import { ChatContext, type ChatControls, type PendingChatMessage } from "../chat-context";
-import { isActive, NAV_ITEMS } from "../nav-items";
 
 // The chat (CopilotKit) is loaded for the admin only; viewers never download it.
 const AdminChat = dynamic(() => import("@/features/chat").then((m) => m.AdminChat), { ssr: false });
@@ -28,7 +26,6 @@ export function AppShell({ admin, children }: AppShellProps) {
   const pathname = usePathname();
   const [chatOpen, setChatOpen] = useState(false);
   const [pending, setPending] = useState<PendingChatMessage | undefined>();
-  const [moreOpen, setMoreOpen] = useState(false);
 
   const open = useCallback((message?: string, mode: "send" | "prefill" = "send") => {
     setPending(message ? { id: Date.now(), text: message, mode } : undefined);
@@ -52,8 +49,6 @@ export function AppShell({ admin, children }: AppShellProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, [admin]);
 
-  const tabs = NAV_ITEMS.filter((i) => i.tab);
-  const more = NAV_ITEMS.filter((i) => !i.tab);
   const fullBleed = pathname === "/tv" || pathname.startsWith("/wrapped/");
 
   if (fullBleed) return <ChatContext.Provider value={controls}>{children}</ChatContext.Provider>;
@@ -66,149 +61,43 @@ export function AppShell({ admin, children }: AppShellProps) {
       >
         {t("skip")}
       </a>
-      <div className="lg:grid lg:grid-cols-[16rem_1fr]">
-        {/* Desktop sidebar */}
-        <aside className="sticky top-0 hidden h-dvh flex-col border-r border-line bg-surface/60 px-4 py-5 backdrop-blur lg:flex">
+
+      <header className="sticky top-0 z-30 border-b border-line bg-night/80 backdrop-blur-md">
+        <div className="mx-auto flex h-(--header-h) max-w-5xl items-center gap-3 px-4">
           <Brand />
-          <nav aria-label={t("mainNav")} className="mt-8 flex-1 space-y-0.5 overflow-y-auto">
-            {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={isActive(pathname, item.href) ? "page" : undefined}
-                className={cn(
-                  "flex h-11 items-center gap-3 rounded-md border-l-2 px-3 text-sm font-semibold transition-colors",
-                  isActive(pathname, item.href)
-                    ? "border-lamp bg-lamp/12 text-lamp"
-                    : "border-transparent text-ivory-muted hover:bg-surface-2 hover:text-ivory",
-                )}
-              >
-                <item.icon className="size-4" aria-hidden />
-                {t(item.key)}
-              </Link>
-            ))}
-          </nav>
-          {admin && (
-            <button
-              type="button"
-              onClick={() => open()}
-              className="mt-4 flex items-center gap-3 rounded-lg border border-lamp/40 bg-lamp/10 p-3 text-left transition-colors hover:bg-lamp/15"
-            >
-              <Ball className="size-10" />
-              <span>
-                <span className="block font-display text-lg font-bold leading-tight text-lamp">{t("chat")}</span>
-                <span className="block text-xs text-ivory-muted">⌘K</span>
-              </span>
-            </button>
-          )}
-        </aside>
-
-        <div className="min-w-0">
-          <header className="sticky top-0 z-30 flex h-[var(--header-h)] items-center gap-3 border-b border-line bg-night/80 px-4 backdrop-blur-md lg:px-8">
-            <div className="lg:hidden">
-              <Brand compact />
-            </div>
-            <div className="ml-auto flex items-center gap-2">
-              <LanguageSwitch />
-              {admin ? (
-                <Link
-                  href="/admin"
-                  className="flex h-11 items-center gap-1.5 rounded-full px-3 text-xs font-bold text-win hover:bg-surface-2"
-                  aria-label={t("admin")}
-                >
-                  <ShieldCheck className="size-4" aria-hidden />
-                  <span className="hidden sm:inline">{t("admin")}</span>
-                </Link>
-              ) : (
-                <Link
-                  href="/admin"
-                  className="flex size-11 items-center justify-center rounded-full text-ivory-muted hover:bg-surface-2 hover:text-ivory"
-                  aria-label={t("login")}
-                >
-                  <LogIn className="size-4" aria-hidden />
-                </Link>
-              )}
-            </div>
-          </header>
-
-          <main
-            id="main"
-            // Each page sets its own width and gutter (`mx-auto max-w-5xl px-4 py-6`); main only clears the tab bar.
-            className="w-full pb-[calc(var(--nav-h)+1rem)] lg:pb-6"
-          >
-            {children}
-          </main>
-        </div>
-      </div>
-
-      {/* Phone tab bar: Home · History · 8-ball · Board · More */}
-      <nav
-        aria-label={t("mainNav")}
-        className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-line bg-night/90 backdrop-blur-lg lg:hidden"
-      >
-        <ul className="mx-auto grid h-[var(--nav-h)] max-w-md grid-cols-5 items-center">
-          {tabs.slice(0, 2).map((item) => (
-            <TabLink
-              key={item.href}
-              item={item}
-              label={t(item.key === "home" ? "homeShort" : item.key)}
-              active={isActive(pathname, item.href)}
-            />
-          ))}
-          <li className="flex justify-center">
+          <div className="ml-auto flex items-center gap-2">
+            <LanguageSwitch />
             {admin ? (
-              <button
-                type="button"
-                onClick={() => open()}
-                aria-label={t("openChat")}
-                className="-mt-7 flex size-16 items-center justify-center rounded-full bg-night shadow-lamp ring-4 ring-night animate-pulse-ring"
+              <Link
+                href="/admin"
+                className="flex h-11 items-center gap-1.5 rounded-full px-3 text-xs font-bold text-win hover:bg-surface-2"
+                aria-label={t("admin")}
               >
-                <Ball className="size-14" />
-              </button>
+                <ShieldCheck className="size-4" aria-hidden />
+                <span className="hidden sm:inline">{t("admin")}</span>
+              </Link>
             ) : (
               <Link
-                href="/wheel"
-                aria-label={t("openWheel")}
-                className="-mt-7 flex size-16 items-center justify-center rounded-full bg-night shadow-lamp ring-4 ring-night"
+                href="/admin"
+                className="flex size-11 items-center justify-center rounded-full text-ivory-muted hover:bg-surface-2 hover:text-ivory"
+                aria-label={t("login")}
               >
-                <Ball className="size-14" />
+                <LogIn className="size-4" aria-hidden />
               </Link>
             )}
-          </li>
-          <TabLink item={tabs[2]!} label={t("leaderboardShort")} active={isActive(pathname, tabs[2]!.href)} />
-          <li>
-            <button
-              type="button"
-              onClick={() => setMoreOpen(true)}
-              className={cn(tabClass(more.some((i) => isActive(pathname, i.href))), "w-full cursor-pointer")}
-            >
-              <Menu className="size-5" aria-hidden />
-              {t("more")}
-            </button>
-          </li>
-        </ul>
-      </nav>
+          </div>
+        </div>
+      </header>
 
-      <Sheet open={moreOpen} onOpenChange={setMoreOpen} title={t("more")}>
-        <ul className="grid grid-cols-3 gap-1 p-4 pb-8">
-          {more.map((item) => (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                onClick={() => setMoreOpen(false)}
-                aria-current={isActive(pathname, item.href) ? "page" : undefined}
-                className={cn(
-                  "flex h-20 flex-col items-center justify-center gap-1.5 rounded-md p-2 text-center text-xs font-semibold",
-                  isActive(pathname, item.href) ? "bg-lamp/12 text-lamp" : "text-ivory-muted hover:bg-surface-2",
-                )}
-              >
-                <item.icon className="size-6" aria-hidden />
-                {t(item.key)}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </Sheet>
+      <main
+        id="main"
+        // Each page sets its own width and gutter (`mx-auto max-w-5xl px-4 py-6`); main only clears the dock.
+        className="w-full pb-[calc(var(--nav-h)+2rem)]"
+      >
+        {children}
+      </main>
+
+      <FloatingDock admin={admin} onOpenChat={open} />
 
       {admin && (
         <>
@@ -220,33 +109,14 @@ export function AppShell({ admin, children }: AppShellProps) {
   );
 }
 
-/** The active tab also gets a bar above it, so it does not rely on colour alone. */
-function tabClass(active: boolean) {
-  return cn(
-    "flex flex-col items-center gap-1 border-t-2 py-2 text-2xs font-semibold",
-    active ? "border-lamp text-lamp" : "border-transparent text-ivory-muted",
-  );
-}
-
-function TabLink({ item, label, active }: { item: (typeof NAV_ITEMS)[number]; label: string; active: boolean }) {
-  return (
-    <li>
-      <Link href={item.href} aria-current={active ? "page" : undefined} className={tabClass(active)}>
-        <item.icon className="size-5" aria-hidden />
-        {label}
-      </Link>
-    </li>
-  );
-}
-
-function Brand({ compact }: { compact?: boolean }) {
+function Brand() {
   const t = useTranslations("common");
   return (
     <Link href="/" className="flex items-center gap-2.5" aria-label={t("appName")}>
-      <Ball className={compact ? "size-8" : "size-10"} />
+      <Ball className="size-8" />
       <span className="leading-none">
         <span className="block font-display text-2xl font-extrabold">{t("appName")}</span>
-        {!compact && <span className="mt-1 block text-2xs text-ivory-muted">{t("slogan")}</span>}
+        <span className="mt-1 hidden text-2xs text-ivory-muted sm:block">{t("slogan")}</span>
       </span>
     </Link>
   );
