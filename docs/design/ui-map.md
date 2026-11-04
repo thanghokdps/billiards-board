@@ -27,17 +27,17 @@ One navigation at every width, no sidebar: `FloatingDock` holds Today, History, 
 
 ## Primitives used in the chat
 
-| Element               | Class             | Source                                                     |
-| --------------------- | ----------------- | ---------------------------------------------------------- |
-| Send / stop, composer | library primitive | CopilotChat input (stock), themed                          |
-| Buttons on cards      | design primitive  | `components/ui/button.tsx`                                 |
-| Chips                 | design primitive  | `components/ui/chip.tsx`                                   |
-| Card shell            | design primitive  | `components/ui/card.tsx`                                   |
-| Scoreboard row        | design primitive  | `components/ui/match-row.tsx` (a 1v1v1 shows three equals) |
-| Avatar with streak    | design primitive  | `components/ui/player-avatar.tsx`                          |
-| Sheet                 | design primitive  | `components/ui/sheet.tsx` (radix Dialog)                   |
-| Wheel                 | feature component | `features/wheel` (shared with `/wheel`)                    |
-| Icons                 | library           | lucide-react, size-4/5                                     |
+| Element               | Class             | Source                                                                                                              |
+| --------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Send / stop, composer | library primitive | CopilotChat input (stock), themed                                                                                   |
+| Buttons on cards      | design primitive  | `components/ui/button.tsx`                                                                                          |
+| Chips                 | design primitive  | `components/ui/chip.tsx`                                                                                            |
+| Card shell            | design primitive  | `components/ui/card.tsx`                                                                                            |
+| Scoreboard row        | design primitive  | `components/ui/match-row.tsx` (every format the same anatomy; the loser reads "Trả bill" when the match has a bill) |
+| Avatar with streak    | design primitive  | `components/ui/player-avatar.tsx`                                                                                   |
+| Sheet                 | design primitive  | `components/ui/sheet.tsx` (radix Dialog)                                                                            |
+| Wheel                 | feature component | `features/wheel` (shared with `/wheel`)                                                                             |
+| Icons                 | library           | lucide-react, size-4/5                                                                                              |
 
 ## Ladder
 

@@ -1,5 +1,5 @@
 import { useLocale, useTranslations } from "next-intl";
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 
 import { cn } from "@/lib/cn";
 import { formatTime, formatVnd } from "@/lib/domain";
@@ -28,12 +28,14 @@ function Side({
   align,
   streaks,
   winLabel,
+  lossLabel,
 }: {
   players: PlayerRef[];
   won: boolean;
   align: "left" | "right";
   streaks?: MatchRowProps["streaks"];
   winLabel: string;
+  lossLabel?: string;
 }) {
   return (
     <div className={cn("flex min-w-0 flex-1 items-center gap-2", align === "right" && "flex-row-reverse text-right")}>
@@ -48,49 +50,66 @@ function Side({
           {players.map((p) => p.name).join(" & ")}
         </p>
         {won && <p className="text-2xs font-semibold text-lamp">{winLabel}</p>}
+        {!won && lossLabel && <p className="text-2xs font-semibold text-loss">{lossLabel}</p>}
       </div>
     </div>
   );
 }
 
-/** A 1v1v1: three equals in a row, the winners lit and the loser marked as the one paying. */
-function ThreeWayBoard({ match, streaks }: Pick<MatchRowProps, "match" | "streaks">) {
+/**
+ * A 1v1v1 in the same anatomy as a 1v1: winners left, loser right, the score board between them.
+ * Too narrow for that (phone, chat card), the three seats share a line and the board drops below.
+ * Measured on the container because the chat card is narrow at any viewport width.
+ */
+function ThreeWayBoard({
+  match,
+  streaks,
+  lossLabel,
+}: Pick<MatchRowProps, "match" | "streaks"> & { lossLabel?: string }) {
   const t = useTranslations("common");
-  const seats = [
-    ...match.sideA.map((player) => ({ player, won: true })),
-    ...match.sideB.map((player) => ({ player, won: false })),
-  ];
+  const seats = [...match.sideA, ...match.sideB];
+  const scores = seats.flatMap((p) => match.scores.filter((s) => s.playerId === p.id));
+  const seat = (player: PlayerRef, won: boolean) => (
+    <Side
+      key={player.id}
+      players={[player]}
+      won={won}
+      align={won ? "left" : "right"}
+      streaks={streaks}
+      winLabel={t("win")}
+      lossLabel={lossLabel}
+    />
+  );
   return (
-    <div className="grid grid-cols-3 gap-2">
-      {seats.map(({ player, won }) => {
-        const score = match.scores.find((s) => s.playerId === player.id)?.score;
-        return (
-          <div key={player.id} className="flex min-w-0 flex-col items-center gap-1 text-center">
-            <PlayerAvatar player={player} size="sm" streak={streaks?.[player.id]} />
-            <p
-              className={cn(
-                "max-w-full font-bold leading-tight wrap-anywhere",
-                won ? "text-ivory" : "text-ivory-muted",
-              )}
-            >
-              {player.name}
-            </p>
-            {score !== undefined && (
-              <p
-                className={cn(
-                  "rounded-sm bg-night px-2.5 py-0.5 digits text-2xl font-bold",
-                  won ? "text-lamp digits-glow" : "text-ivory-faint",
-                )}
-              >
-                {score}
-              </p>
-            )}
-            <p className={cn("text-2xs font-semibold", won ? "text-lamp" : "text-loss")}>
-              {won ? t("win") : t("paysBill")}
-            </p>
-          </div>
-        );
-      })}
+    <div className="@container">
+      <div className="grid grid-cols-3 items-center gap-2 @xl:grid-cols-[1fr_auto_1fr]">
+        <div className="contents @xl:flex @xl:gap-2">{match.sideA.map((p) => seat(p, true))}</div>
+        <div
+          className={cn(
+            "order-last col-span-3 flex items-baseline gap-1 justify-self-center rounded-sm bg-night px-2.5 py-1 digits text-3xl font-bold @xl:order-none @xl:col-span-1",
+            scores.length === 0 && "hidden @xl:flex",
+          )}
+          aria-label={scores.length > 0 ? scores.map((s) => s.score).join("–") : t("noScore")}
+        >
+          {scores.length > 0 ? (
+            scores.map((s, i) => (
+              <Fragment key={s.playerId}>
+                {i > 0 && <span className="text-ivory-faint">:</span>}
+                <span
+                  className={
+                    match.sideA.some((p) => p.id === s.playerId) ? "text-lamp digits-glow" : "text-ivory-faint"
+                  }
+                >
+                  {s.score}
+                </span>
+              </Fragment>
+            ))
+          ) : (
+            <span className="px-1 text-base text-ivory-faint">{t("vs")}</span>
+          )}
+        </div>
+        {match.sideB.map((p) => seat(p, false))}
+      </div>
     </div>
   );
 }
@@ -101,6 +120,8 @@ export function MatchRow({ match, streaks, footer, compact, className }: MatchRo
   const locale = useLocale();
   const aWon = match.winnerSide === "a";
   const hasScore = match.scoreA != null && match.scoreB != null;
+  // No bill on the match means nobody paid, so the loser carries no label.
+  const lossLabel = match.bill != null ? t("paysBill") : undefined;
   return (
     <article className={cn("py-3", className)}>
       <div className="mb-2 flex items-center gap-2 text-2xs text-ivory-muted">
@@ -111,10 +132,17 @@ export function MatchRow({ match, streaks, footer, compact, className }: MatchRo
         </span>
       </div>
       {match.format === "1v1v1" ? (
-        <ThreeWayBoard match={match} streaks={streaks} />
+        <ThreeWayBoard match={match} streaks={streaks} lossLabel={lossLabel} />
       ) : (
         <div className="flex items-center gap-2">
-          <Side players={match.sideA} won={aWon} align="left" streaks={streaks} winLabel={t("win")} />
+          <Side
+            players={match.sideA}
+            won={aWon}
+            align="left"
+            streaks={streaks}
+            winLabel={t("win")}
+            lossLabel={lossLabel}
+          />
           <div
             className="flex shrink-0 items-baseline gap-1 rounded-sm bg-night px-2.5 py-1 digits text-3xl font-bold"
             aria-label={hasScore ? `${match.scoreA}–${match.scoreB}` : t("noScore")}
@@ -129,7 +157,14 @@ export function MatchRow({ match, streaks, footer, compact, className }: MatchRo
               <span className="px-1 text-base text-ivory-faint">{t("vs")}</span>
             )}
           </div>
-          <Side players={match.sideB} won={!aWon} align="right" streaks={streaks} winLabel={t("win")} />
+          <Side
+            players={match.sideB}
+            won={!aWon}
+            align="right"
+            streaks={streaks}
+            winLabel={t("win")}
+            lossLabel={lossLabel}
+          />
         </div>
       )}
       {!compact && (match.tags.length > 0 || match.note) && (
