@@ -30,6 +30,7 @@
     "updated": "Updated",
     "deletedDone": "Deleted",
     "cancelled": "Discarded, nothing written",
+    "superseded": "Replaced by a new card, nothing written from this one",
     "undo": "Undo · {seconds}s",
     "undone": "Undone",
     "retry": "Retry",
@@ -67,5 +68,6 @@
   },
   "error": "The assistant failed. Try again.",
   "toolFailed": "Could not load the data.",
+  "cardStillOpen": "The card above is still waiting for your confirmation.",
   "unauthorized": "Your admin session expired. Log in again."
 }

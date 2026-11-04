@@ -41,5 +41,6 @@ export async function loadContextSnapshot(context: AgentContext, now: Date): Pro
       const bill = m.bill != null ? `${m.bill} VND` : "no bill";
       return `${m.id} · ${formatTime(m.playedAt, "en", context.timeZone)} · ${GAME[m.gameType]} · ${side(m.sideA)} vs ${side(m.sideB)} · ${score} · winner ${m.winnerSide === "a" ? side(m.sideA) : side(m.sideB)} · ${bill}`;
     }),
+    openCards: context.openCards.map((c, i) => `#${i + 1} · ${c.kind} · ${c.proposal}`),
   };
 }

@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { Player } from "@/db/schema";
-import type { NameProblem, NeedsInput, ToolFailure } from "@/lib/agent-results";
+import type { CardNotice, NameProblem, NeedsInput, ToolFailure } from "@/lib/agent-results";
 import { localDate, type GameType } from "@/lib/domain";
 import { resolvePlayerName } from "@/lib/names";
 import { findMatches, findMatchById } from "@/server/matches/repository";
@@ -53,6 +53,18 @@ export function resolveNames(names: string[], roster: Player[]): Resolved {
     };
   }
   return { ok: true, ids: refs.map((r) => r.id), refs };
+}
+
+export const supersededCards = (context: AgentContext) => context.openCards.map((c) => c.id);
+
+/** "latest" means the newest saved match, so with an unsaved create card open it would change the wrong row. */
+export function latestHidesOpenCard(ref: string, context: AgentContext): CardNotice | null {
+  if (ref !== "latest" || !context.openCards.some((c) => c.kind === "create")) return null;
+  return {
+    status: "card_notice",
+    message:
+      'Not done yet, and do not ask the admin anything. "latest" is a saved match; the admin means the unsaved open "create" card. Call propose_matches now yourself, with every match of that card from CONTEXT and the change applied. Only if the admin named an older saved match, call this tool again with its id.',
+  };
 }
 
 /** "latest" or a match id → the match, or a failure the model can relay. */

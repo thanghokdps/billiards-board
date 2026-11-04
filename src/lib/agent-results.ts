@@ -14,6 +14,7 @@ export const TOOL_NAMES = {
   proposeMatches: "propose_matches",
   proposeUpdate: "propose_update",
   proposeDelete: "propose_delete",
+  resolveCard: "resolve_card",
   queryStats: "query_stats",
   headToHead: "head_to_head",
   spinWheel: "spin_wheel",
@@ -22,6 +23,11 @@ export const TOOL_NAMES = {
 } as const;
 
 export type ToolName = (typeof TOOL_NAMES)[keyof typeof TOOL_NAMES];
+
+/** `RunAgentInput.context` entry: the comma-joined ids of the confirm cards the admin has not decided yet. */
+export const OPEN_CARDS_CONTEXT = "Confirm cards still open";
+/** `RunAgentInput.context` entry: this page load's id, echoed in `CardDecision.pageId`. */
+export const CHAT_PAGE_CONTEXT = "Chat page id";
 
 /** Something the model must ask the user, in exactly one question (chips when options exist). */
 export interface NeedsInput {
@@ -48,11 +54,13 @@ export interface ProposedMatch {
   sideB: PlayerRef[];
 }
 
+/** `supersedes`: the cards open when this turn began. This card closes them, so a stale one can no longer be saved. */
 export interface CreateProposal {
   status: "proposal";
   kind: "create";
   date: string;
   matches: ProposedMatch[];
+  supersedes: string[];
 }
 
 export interface UpdateProposal {
@@ -62,15 +70,34 @@ export interface UpdateProposal {
   before: MatchView;
   after: MatchView;
   patch: MatchPatch;
+  supersedes: string[];
 }
 
 export interface DeleteProposal {
   status: "proposal";
   kind: "delete";
   match: MatchView;
+  supersedes: string[];
 }
 
 export type Proposal = CreateProposal | UpdateProposal | DeleteProposal;
+
+/**
+ * The admin answered an open card in chat: the card acts on it as if its button was tapped.
+ * `pageId`: only the page load that sent the message acts; a reload replays this result and must not write again.
+ */
+export interface CardDecision {
+  status: "card_decision";
+  cardIds: string[];
+  decision: "confirm" | "cancel";
+  pageId: string;
+}
+
+/** An instruction for the model only; the chat shows nothing. */
+export interface CardNotice {
+  status: "card_notice";
+  message: string;
+}
 
 export interface MatchList {
   status: "ok";
@@ -136,6 +163,8 @@ export type AnyToolResult =
   | NameProblem
   | ToolFailure
   | Proposal
+  | CardDecision
+  | CardNotice
   | MatchList
   | StatsResult
   | HeadToHeadResult

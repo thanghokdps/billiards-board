@@ -3,15 +3,20 @@ import "server-only";
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
 import {
   createAgent,
+  createMiddleware,
   dynamicSystemPromptMiddleware,
+  HumanMessage,
   modelFallbackMiddleware,
+  SystemMessage,
   toolCallLimitMiddleware,
   toolErrorMiddleware,
+  ToolMessage,
   toolRetryMiddleware,
   type AgentMiddleware,
 } from "langchain";
 
 import { getPool } from "@/db/client";
+import { TOOL_NAMES } from "@/lib/agent-results";
 import { localDate } from "@/lib/domain";
 import { getServerEnv } from "@/server/env";
 
@@ -19,7 +24,7 @@ import { createModels } from "./config/models";
 import { agentContextSchema, readTrustedContext } from "./context";
 import { loadContextSnapshot } from "./context-snapshot";
 import { createPiiMiddleware } from "./guardrails/pii";
-import { buildSystemPrompt } from "./prompts";
+import { buildSystemPrompt, OPEN_CARD_REMINDER } from "./prompts";
 import { TOOLS } from "./tools";
 
 /**
@@ -31,6 +36,24 @@ export const THREAD_RETENTION_DAYS = 30;
 
 const TOOL_FAILURE_REPLY = "The database did not answer. Tell the admin to try again in a moment.";
 
+const DECIDING_TOOLS = new Set<string>([
+  TOOL_NAMES.proposeMatches,
+  TOOL_NAMES.proposeUpdate,
+  TOOL_NAMES.proposeDelete,
+  TOOL_NAMES.resolveCard,
+]);
+
+/** Added to the model call only, never to the checkpoint, and dropped once this turn has acted on the card. */
+const openCardReminder = createMiddleware({
+  name: "OpenCardReminder",
+  wrapModelCall: (request, handler) => {
+    if (!readTrustedContext(request.runtime.context)?.openCards.length) return handler(request);
+    const turn = request.messages.slice(request.messages.findLastIndex((m) => HumanMessage.isInstance(m)) + 1);
+    if (turn.some((m) => ToolMessage.isInstance(m) && DECIDING_TOOLS.has(m.name ?? ""))) return handler(request);
+    return handler({ ...request, messages: [...request.messages, new SystemMessage(OPEN_CARD_REMINDER)] });
+  },
+});
+
 /** Order is a contract: PII redaction sees input first; fallback wraps the model; the prompt is set last. */
 function buildMiddleware(models: ReturnType<typeof createModels>, piiOn: boolean): AgentMiddleware[] {
   return [
@@ -39,6 +62,7 @@ function buildMiddleware(models: ReturnType<typeof createModels>, piiOn: boolean
     toolRetryMiddleware({ maxRetries: 1, tools: TOOLS }) as unknown as AgentMiddleware,
     toolErrorMiddleware({ onError: () => TOOL_FAILURE_REPLY }) as unknown as AgentMiddleware,
     modelFallbackMiddleware(models.fallback) as unknown as AgentMiddleware,
+    openCardReminder as unknown as AgentMiddleware,
     dynamicSystemPromptMiddleware(async (_state, runtime) => {
       const context = readTrustedContext(runtime.context);
       if (!context) throw new Error("no trusted caller");
