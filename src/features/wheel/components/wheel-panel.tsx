@@ -11,6 +11,7 @@ import type { WheelEntry } from "@/lib/wheel";
 import type { PlayerRef } from "@/server/matches/schema";
 
 import { SpinWheel, type SpinWheelHandle } from "./spin-wheel";
+import { useHydrated } from "../hooks/use-hydrated";
 
 export interface WheelPairing {
   sideA: PlayerRef[];
@@ -79,7 +80,8 @@ export function WheelPanel({
     [players, picks, weights, spinnerId],
   );
   const done = picks.length >= spins;
-  const canSpin = !spinning && !done && entries.length > 0 && entries.length + picks.length >= spins;
+  const hydrated = useHydrated();
+  const canSpin = hydrated && !spinning && !done && entries.length > 0 && entries.length + picks.length >= spins;
 
   const onResult = useCallback(
     (entry: WheelEntry) => {
@@ -132,7 +134,7 @@ export function WheelPanel({
         )}
       </div>
 
-      {(seated.length > 0 || !canSpin) && (
+      {(seated.length > 0 || (hydrated && !canSpin)) && (
         <div aria-live="polite" className="rounded-lg border border-line bg-surface-2 p-3">
           {entries.length + picks.length < spins && (
             <p className="text-center text-sm text-loss">{t("notEnough", { n: needed })}</p>
