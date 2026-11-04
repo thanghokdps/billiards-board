@@ -16,7 +16,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const gameTypeEnum = pgEnum("game_type", ["3c_real", "3c_fake", "libre"]);
-export const matchFormatEnum = pgEnum("match_format", ["1v1", "2v2"]);
+export const matchFormatEnum = pgEnum("match_format", ["1v1", "2v2", "1v1v1"]);
 export const sideEnum = pgEnum("side", ["a", "b"]);
 
 export const players = pgTable("players", {
@@ -91,6 +91,8 @@ export const matchPlayers = pgTable(
       .notNull()
       .references(() => players.id),
     side: sideEnum("side").notNull(),
+    /** A 1v1v1 player's own score; 1v1 and 2v2 keep theirs in matches.score_a/score_b. */
+    score: integer("score"),
   },
   (t) => [primaryKey({ columns: [t.matchId, t.playerId] })],
 );

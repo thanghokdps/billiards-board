@@ -2,7 +2,7 @@
  * Pure statistics over a chronological list of matches. No I/O: the server, the agent and the UI
  * all call these with the same MatchView DTOs, so every number in the app comes from one place.
  */
-import type { GameType } from "./domain";
+import type { GameType, MatchFormat } from "./domain";
 
 export interface StatPlayer {
   id: number;
@@ -19,12 +19,14 @@ export interface StatMatch {
   date: string;
   playedAt: string;
   gameType: GameType;
-  format: "1v1" | "2v2";
+  format: MatchFormat;
   sideA: StatPlayer[];
   sideB: StatPlayer[];
   winnerSide: "a" | "b";
   scoreA: number | null;
   scoreB: number | null;
+  /** Each player's own score in a 1v1v1; empty otherwise. */
+  scores: { playerId: number; score: number }[];
   bill: number | null;
   tags: string[];
 }
@@ -70,7 +72,14 @@ function emptyByType(): PlayerStats["byGameType"] {
   };
 }
 
-/** Elo replayed over the matches in order; 2v2 uses team averages and every member gets the team delta. */
+/** What the winner gains from the loser. */
+const eloGain = (winnerRating: number, loserRating: number, k: number) =>
+  k * (1 - 1 / (1 + 10 ** ((loserRating - winnerRating) / 400)));
+
+/**
+ * Elo replayed over the matches in order. 2v2 uses team averages and every member gets the team delta.
+ * In a 1v1v1 the loser plays each winner at half K: the sum stays zero and the loser risks what a 1v1 costs.
+ */
 export function computeElo(matches: StatMatch[]): {
   ratings: Map<number, number>;
   history: { date: string; matchId: string; ratings: Record<number, number> }[];
@@ -80,12 +89,23 @@ export function computeElo(matches: StatMatch[]): {
   const history: { date: string; matchId: string; ratings: Record<number, number> }[] = [];
   for (const m of matches) {
     const { winners, losers } = sidesOf(m);
-    const rw = winners.reduce((s, p) => s + get(p.id), 0) / winners.length;
-    const rl = losers.reduce((s, p) => s + get(p.id), 0) / losers.length;
-    const expected = 1 / (1 + 10 ** ((rl - rw) / 400));
-    const delta = ELO_K * (1 - expected);
-    for (const p of winners) ratings.set(p.id, get(p.id) + delta);
-    for (const p of losers) ratings.set(p.id, get(p.id) - delta);
+    if (m.format === "1v1v1") {
+      const loser = losers[0]!;
+      const loserRating = get(loser.id);
+      let lost = 0;
+      for (const p of winners) {
+        const gain = eloGain(get(p.id), loserRating, ELO_K / 2);
+        ratings.set(p.id, get(p.id) + gain);
+        lost += gain;
+      }
+      ratings.set(loser.id, loserRating - lost);
+    } else {
+      const rw = winners.reduce((s, p) => s + get(p.id), 0) / winners.length;
+      const rl = losers.reduce((s, p) => s + get(p.id), 0) / losers.length;
+      const delta = eloGain(rw, rl, ELO_K);
+      for (const p of winners) ratings.set(p.id, get(p.id) + delta);
+      for (const p of losers) ratings.set(p.id, get(p.id) - delta);
+    }
     history.push({
       date: m.date,
       matchId: m.id,
@@ -112,7 +132,7 @@ export function computePlayerStats(players: StatPlayer[], matches: StatMatch[]):
       const t = byGameType[m.gameType];
       t.played += 1;
       if (won) t.wins += 1;
-      const own = onA ? m.scoreA : m.scoreB;
+      const own = m.scores.find((s) => s.playerId === player.id)?.score ?? (onA ? m.scoreA : m.scoreB);
       if (own != null) {
         points += own;
         pointMatches += 1;
@@ -180,7 +200,7 @@ export interface HeadToHead {
   recent: StatMatch[];
 }
 
-/** Every match where the two were on opposite sides (1v1 and 2v2). */
+/** Every match where the two were on opposite sides; a 1v1v1's two winners never met in this sense. */
 export function headToHead(a: StatPlayer, b: StatPlayer, matches: StatMatch[]): HeadToHead {
   let aWins = 0;
   let bWins = 0;

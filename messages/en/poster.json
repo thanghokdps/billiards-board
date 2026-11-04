@@ -8,6 +8,7 @@
     "default": "Fight night"
   },
   "win": "Winner",
+  "paysBill": "Pays the bill",
   "bill": "Bill {amount}",
   "wanted": {
     "title": "WANTED",

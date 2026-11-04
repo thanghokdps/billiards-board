@@ -27,6 +27,7 @@ export const GET = route(async (request: Request, { params }: { params: Promise<
       scoreB: match.scoreB,
       winnerSide: match.winnerSide,
       winLabel: t("win"),
+      threeWay: match.format === "1v1v1" ? { scores: match.scores, loserLabel: t("paysBill") } : null,
     }),
   );
 });

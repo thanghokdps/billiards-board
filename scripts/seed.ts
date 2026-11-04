@@ -2,6 +2,7 @@
  * Seeds the five players. With `--demo`, also adds two weeks of sample matches for a
  * local/preview database. Never run `--demo` against production data.
  */
+import { desc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 
@@ -120,6 +121,28 @@ if (process.argv.includes("--demo")) {
           ...sideB.map((playerId) => ({ matchId: match.id, playerId, side: "b" as const })),
         ]);
     }
+  }
+  const [latest] = await db.select({ id: sessions.id }).from(sessions).orderBy(desc(sessions.date)).limit(1);
+  const [threeWay] = latest
+    ? await db
+        .insert(matches)
+        .values({
+          sessionId: latest.id,
+          playedAt: new Date(),
+          gameType: "libre",
+          format: "1v1v1",
+          winnerSide: "a",
+          bill: 60_000,
+        })
+        .returning()
+    : [];
+  const [first, second, third] = ids;
+  if (threeWay && first && second && third) {
+    await db.insert(matchPlayers).values([
+      { matchId: threeWay.id, playerId: first, side: "a", score: 40 },
+      { matchId: threeWay.id, playerId: second, side: "a", score: 32 },
+      { matchId: threeWay.id, playerId: third, side: "b", score: 18 },
+    ]);
   }
   console.log("demo matches seeded");
 }

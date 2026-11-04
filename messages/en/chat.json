@@ -48,6 +48,7 @@
   "ask": {
     "game_type": "Which game?",
     "winner": "Who won?",
+    "loser": "Who came last?",
     "players": "Who played?",
     "match": "Which match?",
     "player": "Which player?",

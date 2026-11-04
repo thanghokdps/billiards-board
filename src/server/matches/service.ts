@@ -24,6 +24,16 @@ function playedAtFor(date: string, now: Date): Date {
   return date === localDate(now) ? now : new Date(`${date}T05:30:00Z`);
 }
 
+function playerRows(matchId: string, input: Pick<MatchInput, "sideA" | "sideB" | "scores">) {
+  const row = (playerId: number, side: "a" | "b") => ({
+    matchId,
+    playerId,
+    side,
+    score: input.scores?.find((s) => s.playerId === playerId)?.score ?? null,
+  });
+  return [...input.sideA.map((id) => row(id, "a")), ...input.sideB.map((id) => row(id, "b"))];
+}
+
 async function insertOne(tx: Tx, input: MatchInput, now: Date, clientKey: string | null): Promise<string> {
   const date = input.date ?? localDate(now);
   const sessionId = await getOrCreateSession(date, tx);
@@ -44,12 +54,7 @@ async function insertOne(tx: Tx, input: MatchInput, now: Date, clientKey: string
     })
     .returning({ id: matches.id });
   if (!row) throw new Error("insert returned no row");
-  await tx
-    .insert(matchPlayers)
-    .values([
-      ...input.sideA.map((playerId) => ({ matchId: row.id, playerId, side: "a" as const })),
-      ...input.sideB.map((playerId) => ({ matchId: row.id, playerId, side: "b" as const })),
-    ]);
+  await tx.insert(matchPlayers).values(playerRows(row.id, input));
   return row.id;
 }
 
@@ -145,6 +150,7 @@ export async function updateMatch(id: string, patch: MatchPatch, who: Actor): Pr
       winnerSide: patch.winnerSide ?? before.winnerSide,
       scoreA: patch.scoreA === undefined ? before.scoreA : patch.scoreA,
       scoreB: patch.scoreB === undefined ? before.scoreB : patch.scoreB,
+      scores: patch.scores ?? before.scores,
       bill: patch.bill === undefined ? before.bill : patch.bill,
       note: patch.note === undefined ? before.note : patch.note,
       tags: patch.tags ?? before.tags,
@@ -167,14 +173,9 @@ export async function updateMatch(id: string, patch: MatchPatch, who: Actor): Pr
         updatedAt: new Date(),
       })
       .where(eq(matches.id, id));
-    if (patch.sideA || patch.sideB || patch.format) {
+    if (patch.sideA || patch.sideB || patch.format || patch.scores) {
       await tx.delete(matchPlayers).where(eq(matchPlayers.matchId, id));
-      await tx
-        .insert(matchPlayers)
-        .values([
-          ...merged.sideA.map((playerId) => ({ matchId: id, playerId, side: "a" as const })),
-          ...merged.sideB.map((playerId) => ({ matchId: id, playerId, side: "b" as const })),
-        ]);
+      await tx.insert(matchPlayers).values(playerRows(id, merged));
     }
     const after = await findMatchById(id, tx);
     if (!after) throw new Error("updated match not found");

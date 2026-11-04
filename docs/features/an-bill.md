@@ -12,6 +12,7 @@ Card rows used: Q4 **user writes** (tools propose, the confirm card calls `/api/
 | --------------- | ------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------- |
 | create_match    | "3c real Thén thắng Dũ 15-11, bill 45k"                                   | assistant | `propose_matches` → card → `POST /api/admin/matches`                |
 | create_matches  | "trưa nay: libre Bổ > Hi 40-32 bill 50k, 3c fake Lâm thắng Thén bill 30k" | assistant | `propose_matches` (array)                                           |
+| create_1v1v1    | "libre 1v1v1 Thén, Dũ, Bổ: Bổ bét, bill 60k"                              | assistant | `propose_matches` (`threeWay`); winners on sideA, loser on sideB    |
 | update_match    | "sửa trận vừa rồi thành 15-13"                                            | assistant | `list_matches` → `propose_update` → `PATCH /api/admin/matches/:id`  |
 | set_bill        | "trận vừa rồi bill 45k"                                                   | assistant | `propose_update` (bill only)                                        |
 | delete_match    | "xóa trận libre lúc 12h20"                                                | assistant | `list_matches` → `propose_delete` → `DELETE /api/admin/matches/:id` |

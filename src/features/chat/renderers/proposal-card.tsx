@@ -123,11 +123,13 @@ export function ProposalCard({ proposal, toolCallId }: { proposal: Proposal; too
               compact={false}
               match={{
                 gameType: m.input.gameType,
+                format: m.input.format,
                 sideA: m.sideA,
                 sideB: m.sideB,
                 winnerSide: m.input.winnerSide,
                 scoreA: m.input.scoreA ?? null,
                 scoreB: m.input.scoreB ?? null,
+                scores: m.input.scores ?? [],
                 bill: m.input.bill ?? null,
                 tags: m.input.tags ?? [],
                 note: m.input.note ?? null,
