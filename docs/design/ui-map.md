@@ -6,6 +6,18 @@ No Figma: the design concept is "Bàn đã bật đèn", a real table from above
 
 One navigation at every width, no sidebar: `FloatingDock` holds Today, History, the 8-ball, Board, and Wheel (viewer) or the assistant (admin). The 8-ball opens `RackMenu`: ten pages racked 1-2-3-4 as balls on the felt, with Change log and Admin as plain links under the rack.
 
+## Motion
+
+| Moment        | Where                                                  | How                                                                                                                                               | Reduced motion         |
+| ------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| 3D pool table | `features/leaderboard` (`table-canvas`, `lib/table-*`) | `three` over the flat table. The HTML buttons stay the controls and the scene pins them to each ball and pocket. It draws only while a ball moves | not loaded, flat table |
+| Break shot    | `features/home` (`break-shot`, `lib/break-physics`)    | 2D canvas with real collisions under the hero text, once per browser session                                                                      | skipped                |
+| Holo card     | `features/player/components/holo-frame.tsx`            | CSS variables set on pointer move, foil in `.holo-foil`                                                                                           | no tilt, no sweep      |
+| LED digits    | `components/ui/rolling-number.tsx`                     | CSS only, so it starts before hydration and the server HTML holds the real value. Reserved for headline numbers: each digit adds 20 spans         | final digits at once   |
+| Rows, charts  | `.stagger-in`, `animate-plinth`, recharts default      | CSS keyframes; recharts' `auto` animation checks reduced motion itself                                                                            | no animation           |
+
+WebGL failure or a lost context falls back to the flat table. A new `.digit-reel`-style delayed animation must also go in the reduced-motion block of `globals.css`, or its delay holds back the first frame.
+
 ## Chat states
 
 | State                    | Decision / implementation                                                                                                                                               |
