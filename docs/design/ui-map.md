@@ -16,7 +16,13 @@ One navigation at every width, no sidebar: `FloatingDock` holds Today, History, 
 | LED digits    | `components/ui/rolling-number.tsx`                     | CSS only, so it starts before hydration and the server HTML holds the real value. Reserved for headline numbers: each digit adds 20 spans         | final digits at once   |
 | Rows, charts  | `.stagger-in`, `animate-plinth`, recharts default      | CSS keyframes; recharts' `auto` animation checks reduced motion itself                                                                            | no animation           |
 
-WebGL failure or a lost context falls back to the flat table. A new `.digit-reel`-style delayed animation must also go in the reduced-motion block of `globals.css`, or its delay holds back the first frame.
+| Elo stage | `features/leaderboard` (`elo-canvas`, `lib/elo-scene`) | `three` curtains in depth with a ball per player, scrubbed by pointer; `elo-line-chart` is the flat fallback |
+| Chalk cubes | `h2h-heatmap.tsx`, `.h2h-*` | CSS perspective; cube height and colour come from `--rate` and `--heat` |
+| Match plates | `.match-tiles` on home and history lists | CSS thick edge, stand up on entry (scroll-driven in history), tip on hover |
+| Score wire | `components/ui/filter-links.tsx`, `.score-*` | The bead is one DOM node kept across navigation, so it slides to the new stop |
+| Table frame | `features/home/components/table-frame.tsx`, `.pool-*` | CSS pocket table: rails, cushions, sights, six pockets |
+
+WebGL failure or a lost context falls back to the flat table or chart. A new `.digit-reel`-style delayed animation must also go in the reduced-motion block of `globals.css`, or its delay holds back the first frame.
 
 ## Chat states
 

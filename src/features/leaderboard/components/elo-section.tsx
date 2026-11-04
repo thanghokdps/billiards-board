@@ -2,15 +2,17 @@
 
 import { Eye, EyeOff } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useMemo } from "react";
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useMemo, useState } from "react";
 
 import { Ball } from "@/components/ui/ball";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
+import { cn } from "@/lib/cn";
 import { formatDate } from "@/lib/domain";
 import type { StatPlayer } from "@/lib/stats";
 
+import { EloCanvas } from "./elo-canvas";
+import { EloLineChart } from "./elo-line-chart";
 import { SectionTitle } from "./section-title";
 import { useStoredFlag } from "../lib/use-stored-flag";
 
@@ -20,7 +22,6 @@ export interface EloPoint {
 }
 
 const STORAGE_KEY = "an-bill:leaderboard:elo-hidden";
-const AXIS = { fill: "var(--color-ivory-faint)", fontSize: 11 } as const;
 
 /** One point per session day (the last match of the day), so a busy day does not stretch the axis. */
 function perDay(history: EloPoint[]): EloPoint[] {
@@ -29,13 +30,13 @@ function perDay(history: EloPoint[]): EloPoint[] {
   return [...byDate.values()];
 }
 
-const shortDate = (date: string) => `${Number(date.slice(8, 10))}/${Number(date.slice(5, 7))}`;
-
 /** Elo is "for reference": the section can be hidden, and the choice is remembered in this browser. */
 export function EloSection({ players, history }: { players: StatPlayer[]; history: EloPoint[] }) {
   const t = useTranslations("leaderboard.elo");
   const locale = useLocale();
   const [hidden, setHidden] = useStoredFlag(STORAGE_KEY, false);
+  const [live, setLive] = useState(false);
+  const [scrubbedDay, setScrubbedDay] = useState<number | null>(null);
   const days = useMemo(() => perDay(history), [history]);
   const data = useMemo(
     () =>
@@ -45,7 +46,18 @@ export function EloSection({ players, history }: { players: StatPlayer[]; histor
       })),
     [days],
   );
+  const series = useMemo(
+    () =>
+      players.map((p) => ({
+        color: p.ballColor,
+        number: p.ballNumber,
+        ratings: days.map((d) => d.ratings[p.id] ?? null),
+      })),
+    [players, days],
+  );
+  const shownDay = days[scrubbedDay ?? days.length - 1];
   const latest = days.at(-1)?.ratings ?? {};
+  const shown = shownDay?.ratings ?? {};
   const legend = players
     .filter((p) => latest[p.id] !== undefined)
     .sort((a, b) => (latest[b.id] ?? 0) - (latest[a.id] ?? 0));
@@ -71,58 +83,22 @@ export function EloSection({ players, history }: { players: StatPlayer[]; histor
           ) : (
             <figure aria-label={t("chartLabel")} className="space-y-3">
               {/* The legend below carries the same numbers as text, so the drawing is skipped by screen readers. */}
-              <div aria-hidden className="h-56 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -16 }} accessibilityLayer={false}>
-                    <CartesianGrid stroke="var(--color-line)" vertical={false} />
-                    <XAxis
-                      dataKey="date"
-                      tickFormatter={shortDate}
-                      tick={AXIS}
-                      stroke="var(--color-line-strong)"
-                      minTickGap={24}
-                    />
-                    <YAxis
-                      domain={["dataMin - 10", "dataMax + 10"]}
-                      tick={AXIS}
-                      stroke="var(--color-line-strong)"
-                      allowDecimals={false}
-                      width={48}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        background: "var(--color-surface-2)",
-                        border: "1px solid var(--color-line-strong)",
-                        borderRadius: "var(--radius-md)",
-                        color: "var(--color-ivory)",
-                      }}
-                      labelStyle={{ color: "var(--color-ivory-muted)" }}
-                      labelFormatter={(date) => formatDate(String(date), locale)}
-                      itemSorter={(item) => -(Number(item.value) || 0)}
-                    />
-                    {players.map((p) => (
-                      <Line
-                        key={p.id}
-                        type="monotone"
-                        dataKey={`p${p.id}`}
-                        name={p.name}
-                        stroke={p.ballColor}
-                        strokeWidth={2.5}
-                        dot={false}
-                        connectNulls
-                        animationDuration={1200}
-                      />
-                    ))}
-                  </LineChart>
-                </ResponsiveContainer>
+              <div aria-hidden className="relative h-64 w-full sm:h-80">
+                <div className={cn("size-full transition-opacity duration-500", live && "opacity-0")}>
+                  <EloLineChart players={players} data={data} />
+                </div>
+                <EloCanvas series={series} live={live} onLiveChange={setLive} onDayChange={setScrubbedDay} />
               </div>
-              <figcaption>
+              <figcaption className="space-y-2">
+                {live && shownDay && (
+                  <p className="text-xs font-medium text-ivory-muted">{formatDate(shownDay.date, locale)}</p>
+                )}
                 <ul className="flex flex-wrap gap-x-4 gap-y-2">
                   {legend.map((p) => (
                     <li key={p.id} className="flex items-center gap-1.5 text-sm">
                       <Ball color={p.ballColor} number={p.ballNumber} className="size-5" />
                       <span className="font-semibold">{p.name}</span>
-                      <span className="digits text-base text-lamp">{latest[p.id]}</span>
+                      <span className="digits text-base text-lamp">{shown[p.id] ?? "—"}</span>
                     </li>
                   ))}
                 </ul>
