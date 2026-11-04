@@ -77,10 +77,10 @@ export function AppShell({ admin, children }: AppShellProps) {
                 href={item.href}
                 aria-current={isActive(pathname, item.href) ? "page" : undefined}
                 className={cn(
-                  "flex h-10 items-center gap-3 rounded-md px-3 text-sm font-semibold transition-colors",
+                  "flex h-11 items-center gap-3 rounded-md border-l-2 px-3 text-sm font-semibold transition-colors",
                   isActive(pathname, item.href)
-                    ? "bg-lamp/12 text-lamp"
-                    : "text-ivory-muted hover:bg-surface-2 hover:text-ivory",
+                    ? "border-lamp bg-lamp/12 text-lamp"
+                    : "border-transparent text-ivory-muted hover:bg-surface-2 hover:text-ivory",
                 )}
               >
                 <item.icon className="size-4" aria-hidden />
@@ -96,9 +96,7 @@ export function AppShell({ admin, children }: AppShellProps) {
             >
               <Ball className="size-10" />
               <span>
-                <span className="block font-display text-sm font-bold uppercase tracking-wide text-lamp">
-                  {t("chat")}
-                </span>
+                <span className="block font-display text-lg font-bold leading-tight text-lamp">{t("chat")}</span>
                 <span className="block text-xs text-ivory-muted">⌘K</span>
               </span>
             </button>
@@ -115,7 +113,7 @@ export function AppShell({ admin, children }: AppShellProps) {
               {admin ? (
                 <Link
                   href="/admin"
-                  className="flex h-8 items-center gap-1.5 rounded-full bg-felt/40 px-3 text-xs font-bold text-win"
+                  className="flex h-11 items-center gap-1.5 rounded-full px-3 text-xs font-bold text-win hover:bg-surface-2"
                   aria-label={t("admin")}
                 >
                   <ShieldCheck className="size-4" aria-hidden />
@@ -124,7 +122,7 @@ export function AppShell({ admin, children }: AppShellProps) {
               ) : (
                 <Link
                   href="/admin"
-                  className="flex size-8 items-center justify-center rounded-full text-ivory-muted hover:bg-surface-2 hover:text-ivory"
+                  className="flex size-11 items-center justify-center rounded-full text-ivory-muted hover:bg-surface-2 hover:text-ivory"
                   aria-label={t("login")}
                 >
                   <LogIn className="size-4" aria-hidden />
@@ -182,10 +180,7 @@ export function AppShell({ admin, children }: AppShellProps) {
             <button
               type="button"
               onClick={() => setMoreOpen(true)}
-              className={cn(
-                "flex w-full flex-col items-center gap-1 py-2 text-2xs font-semibold",
-                more.some((i) => isActive(pathname, i.href)) ? "text-lamp" : "text-ivory-muted",
-              )}
+              className={cn(tabClass(more.some((i) => isActive(pathname, i.href))), "w-full cursor-pointer")}
             >
               <Menu className="size-5" aria-hidden />
               {t("more")}
@@ -195,17 +190,16 @@ export function AppShell({ admin, children }: AppShellProps) {
       </nav>
 
       <Sheet open={moreOpen} onOpenChange={setMoreOpen} title={t("more")}>
-        <ul className="grid grid-cols-3 gap-2 p-5 pb-8">
+        <ul className="grid grid-cols-3 gap-1 p-4 pb-8">
           {more.map((item) => (
             <li key={item.href}>
               <Link
                 href={item.href}
                 onClick={() => setMoreOpen(false)}
+                aria-current={isActive(pathname, item.href) ? "page" : undefined}
                 className={cn(
-                  "flex aspect-square flex-col items-center justify-center gap-2 rounded-lg border p-2 text-center text-xs font-semibold",
-                  isActive(pathname, item.href)
-                    ? "border-lamp/50 bg-lamp/10 text-lamp"
-                    : "border-line bg-surface-2 text-ivory-muted",
+                  "flex h-20 flex-col items-center justify-center gap-1.5 rounded-md p-2 text-center text-xs font-semibold",
+                  isActive(pathname, item.href) ? "bg-lamp/12 text-lamp" : "text-ivory-muted hover:bg-surface-2",
                 )}
               >
                 <item.icon className="size-6" aria-hidden />
@@ -226,17 +220,18 @@ export function AppShell({ admin, children }: AppShellProps) {
   );
 }
 
+/** The active tab also gets a bar above it, so it does not rely on colour alone. */
+function tabClass(active: boolean) {
+  return cn(
+    "flex flex-col items-center gap-1 border-t-2 py-2 text-2xs font-semibold",
+    active ? "border-lamp text-lamp" : "border-transparent text-ivory-muted",
+  );
+}
+
 function TabLink({ item, label, active }: { item: (typeof NAV_ITEMS)[number]; label: string; active: boolean }) {
   return (
     <li>
-      <Link
-        href={item.href}
-        aria-current={active ? "page" : undefined}
-        className={cn(
-          "flex flex-col items-center gap-1 py-2 text-2xs font-semibold",
-          active ? "text-lamp" : "text-ivory-muted",
-        )}
-      >
+      <Link href={item.href} aria-current={active ? "page" : undefined} className={tabClass(active)}>
         <item.icon className="size-5" aria-hidden />
         {label}
       </Link>
@@ -250,7 +245,7 @@ function Brand({ compact }: { compact?: boolean }) {
     <Link href="/" className="flex items-center gap-2.5" aria-label={t("appName")}>
       <Ball className={compact ? "size-8" : "size-10"} />
       <span className="leading-none">
-        <span className="block font-display text-xl font-bold uppercase tracking-wide">{t("appName")}</span>
+        <span className="block font-display text-2xl font-extrabold">{t("appName")}</span>
         {!compact && <span className="mt-1 block text-2xs text-ivory-muted">{t("slogan")}</span>}
       </span>
     </Link>

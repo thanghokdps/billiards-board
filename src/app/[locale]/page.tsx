@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 
-import { EmptyState, PageHeader } from "@/components/ui/misc";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/misc";
 import {
   ChatButton,
   localHour,
@@ -10,10 +11,10 @@ import {
   RECAP_FROM_HOUR,
   Scoreboard,
   Section,
-  SessionCard,
   SessionEditor,
   suggestPairings,
   summarizeDay,
+  TableHero,
   WantedStrip,
 } from "@/features/home";
 import { PredictionCard, toCardData } from "@/features/predictions";
@@ -57,99 +58,105 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
-      <PageHeader title={t("title")} kicker={formatDate(board.today, locale, "long")} />
-
-      {showRecap && (
-        <Section title={t("recap.title")}>
-          <RecapCard date={board.today} summary={summarizeDay(board.matches)} admin={admin} />
-        </Section>
-      )}
-
-      <div className="grid gap-6 md:grid-cols-2">
-        <Section
-          title={t("session.title")}
-          action={
-            admin && (
-              <SessionEditor
-                date={board.today}
-                roster={roster}
-                attendeeIds={attendeeIds}
-                venue={session?.venue ?? null}
-                tableLabel={session?.tableLabel ?? null}
-              />
-            )
-          }
-        >
-          <SessionCard
-            date={board.today}
-            venue={session?.venue ?? null}
-            tableLabel={session?.tableLabel ?? null}
-            totalBill={board.isToday ? board.totalBill : 0}
-            attendees={attendees}
-          />
-        </Section>
-
-        {(pairings.length > 0 || admin) && (
-          <Section title={t("pairing.title")}>
-            {pairings.length > 0 ? (
-              <PairingCard options={pairings} admin={admin} />
-            ) : (
-              <p className="rounded-lg border border-dashed border-line-strong p-4 text-sm text-ivory-muted">
-                {t("pairing.hint")}
-              </p>
-            )}
-          </Section>
-        )}
-      </div>
-
-      <Section title={t("scoreboard.title")}>
-        <div className="space-y-4">
-          {!board.isToday && (
-            <EmptyState
-              title={t("scoreboard.empty")}
-              body={admin ? t("scoreboard.emptyBody") : t("scoreboard.emptyViewerBody")}
-              action={admin && <ChatButton label={t("scoreboard.openAssistant")} variant="primary" size="md" />}
+      <TableHero
+        title={t("title")}
+        date={board.today}
+        venue={session?.venue ?? null}
+        tableLabel={session?.tableLabel ?? null}
+        totalBill={board.isToday ? board.totalBill : 0}
+        attendees={attendees}
+        action={
+          admin && (
+            <SessionEditor
+              date={board.today}
+              roster={roster}
+              attendeeIds={attendeeIds}
+              venue={session?.venue ?? null}
+              tableLabel={session?.tableLabel ?? null}
             />
-          )}
-          {board.shownDate && board.matches.length > 0 && (
-            <div className="space-y-2.5">
+          )
+        }
+      />
+
+      <div className="grid gap-8 lg:grid-cols-3 lg:items-start">
+        <div className="space-y-8 lg:col-span-2">
+          <Section title={t("scoreboard.title")}>
+            <div className="space-y-4">
               {!board.isToday && (
-                <p className="text-sm font-semibold text-ivory-muted">
-                  {t("scoreboard.lastSession", { date: formatDate(board.shownDate, locale, "long") })}
-                </p>
+                <EmptyState
+                  title={t("scoreboard.empty")}
+                  body={admin ? t("scoreboard.emptyBody") : t("scoreboard.emptyViewerBody")}
+                  action={
+                    admin ? (
+                      <ChatButton label={t("scoreboard.openAssistant")} variant="primary" size="md" />
+                    ) : (
+                      <Button asChild>
+                        <Link href="/wheel">{t("scoreboard.pickPairing")}</Link>
+                      </Button>
+                    )
+                  }
+                />
               )}
-              <Scoreboard matches={board.matches} streaks={streaks} specials={board.specials} admin={admin} />
+              {board.shownDate && board.matches.length > 0 && (
+                <div>
+                  {!board.isToday && (
+                    <p className="text-sm font-semibold text-ivory-muted">
+                      {t("scoreboard.lastSession", { date: formatDate(board.shownDate, locale, "long") })}
+                    </p>
+                  )}
+                  <Scoreboard matches={board.matches} streaks={streaks} specials={board.specials} admin={admin} />
+                </div>
+              )}
             </div>
+          </Section>
+
+          {showRecap && (
+            <Section title={t("recap.title")}>
+              <RecapCard date={board.today} summary={summarizeDay(board.matches)} admin={admin} />
+            </Section>
           )}
         </div>
-      </Section>
 
-      {overview.wanted.length > 0 && (
-        <Section title={t("wanted.title")}>
-          <WantedStrip entries={overview.wanted} />
-        </Section>
-      )}
+        <div className="space-y-8">
+          {(pairings.length > 0 || admin) && (
+            <Section title={t("pairing.title")}>
+              {pairings.length > 0 ? (
+                <PairingCard options={pairings} admin={admin} />
+              ) : (
+                <p className="text-sm text-ivory-muted">{t("pairing.hint")}</p>
+              )}
+            </Section>
+          )}
 
-      <Section
-        title={t("predictions.title")}
-        action={
-          <Link href="/predictions" className="text-sm font-semibold text-lamp underline-offset-2 hover:underline">
-            {t("predictions.seeAll")}
-          </Link>
-        }
-      >
-        {openToday.length > 0 ? (
-          <div className="grid gap-3 md:grid-cols-2">
-            {openToday.map((p) => (
-              <PredictionCard key={p.id} prediction={p} />
-            ))}
-          </div>
-        ) : (
-          <p className="rounded-lg border border-dashed border-line-strong p-4 text-sm text-ivory-muted">
-            {t("predictions.empty")}
-          </p>
-        )}
-      </Section>
+          {overview.wanted.length > 0 && (
+            <Section title={t("wanted.title")}>
+              <WantedStrip entries={overview.wanted} />
+            </Section>
+          )}
+
+          <Section
+            title={t("predictions.title")}
+            action={
+              <Link
+                href="/predictions"
+                className="flex h-9 items-center text-sm font-semibold text-lamp underline-offset-2 hover:underline"
+              >
+                {t("predictions.seeAll")}
+              </Link>
+            }
+          >
+            {openToday.length > 0 ? (
+              <div className="grid gap-3">
+                {openToday.map((p) => (
+                  <PredictionCard key={p.id} prediction={p} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-ivory-muted">{t("predictions.empty")}</p>
+            )}
+          </Section>
+        </div>
+      </div>
     </div>
   );
 }

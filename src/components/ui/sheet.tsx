@@ -44,7 +44,7 @@ export function Sheet({ open, onOpenChange, title, hideTitle, side = "bottom", c
             />
           )}
           <Dialog.Title
-            className={cn("px-5 pt-3 font-display text-lg font-bold uppercase tracking-wide", hideTitle && "sr-only")}
+            className={cn("px-5 pt-3 font-display text-2xl font-bold leading-tight", hideTitle && "sr-only")}
           >
             {title}
           </Dialog.Title>
