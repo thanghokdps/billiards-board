@@ -169,6 +169,13 @@
   html {
     background: var(--color-night);
     -webkit-tap-highlight-color: transparent;
+    /* The gutter stays when a dialog locks scrolling, so fixed elements don't jump. */
+    scrollbar-gutter: stable;
+  }
+
+  /* The dialog scroll lock adds the scrollbar width as a margin; the gutter already holds that space. */
+  body[data-scroll-locked] {
+    margin-right: 0 !important;
   }
 
   body {
