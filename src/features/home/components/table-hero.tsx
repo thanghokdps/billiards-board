@@ -4,6 +4,7 @@ import { RollingNumber } from "@/components/ui/rolling-number";
 import { formatDate, formatVnd } from "@/lib/domain";
 
 import { BreakShot } from "./break-shot";
+import { TableFrame } from "./table-frame";
 
 interface TableHeroProps {
   title: string;
@@ -16,10 +17,10 @@ export function TableHero({ title, date, totalBill }: TableHeroProps) {
   const t = useTranslations("home.session");
   const locale = useLocale();
   return (
-    <section aria-labelledby="table-hero-title" className="table-rail">
-      <div className="felt relative animate-lamp-on rounded-md p-4 shadow-[inset_0_0_32px_rgb(0_0_0/0.45)] sm:p-6">
-        <BreakShot />
-        <div className="relative flex flex-wrap items-end justify-between gap-x-6 gap-y-5">
+    <TableFrame labelledBy="table-hero-title">
+      <BreakShot />
+      <div className="relative p-3 sm:p-5">
+        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-5">
           <div className="min-w-0">
             <h1 id="table-hero-title" className="font-display text-4xl font-extrabold leading-none sm:text-5xl">
               {title}
@@ -34,6 +35,6 @@ export function TableHero({ title, date, totalBill }: TableHeroProps) {
           </div>
         </div>
       </div>
-    </section>
+    </TableFrame>
   );
 }

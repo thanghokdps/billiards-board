@@ -201,6 +201,10 @@ export class TableScene {
 
   dispose() {
     cancelAnimationFrame(this.frame);
+    // A new layout reuses this canvas's GL context, and three's start-up uploads reject a leftover flip-Y state.
+    const gl = this.renderer.getContext();
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
     this.renderer.dispose();
   }
 }

@@ -27,6 +27,7 @@ export const RAIL_HEIGHT = 0.16;
 export const RAIL_BASE = -0.3;
 
 const POCKET_RATIO = 1.1;
+const CUSHION_DEPTH = 0.13;
 
 export interface Tokens {
   felt: string;
@@ -116,15 +117,79 @@ function railShape(width: number, depth: number, rail: number): Shape {
   return shape;
 }
 
-/** Felt, wood rail, six pockets and the lamp above; everything that never moves. */
+/** A cushion along x with its long face on the rail and its ends cut at the jaws; +z is towards the rail. */
+function cushionGeometry(length: number): ExtrudeGeometry {
+  const half = length / 2;
+  const shape = new Shape();
+  shape.moveTo(-half, 0);
+  shape.lineTo(half, 0);
+  shape.lineTo(half - CUSHION_DEPTH, CUSHION_DEPTH);
+  shape.lineTo(-half + CUSHION_DEPTH, CUSHION_DEPTH);
+  shape.closePath();
+  const geometry = new ExtrudeGeometry(shape, { depth: RAIL_HEIGHT - 0.02, bevelEnabled: false });
+  geometry.rotateX(-Math.PI / 2);
+  return geometry;
+}
+
+/** Six cushions around the felt: one on each short rail, two on each long rail, parted by the side pockets. */
+function addCushions(scene: Scene, layout: SceneLayout, cloth: MeshStandardMaterial) {
+  const { width, depth, ball } = TABLE[layout];
+  const mouth = ball * POCKET_RATIO * 0.9;
+  const edges = [
+    { angle: 0, along: width, at: depth / 2 },
+    { angle: Math.PI, along: width, at: depth / 2 },
+    { angle: Math.PI / 2, along: depth, at: width / 2 },
+    { angle: -Math.PI / 2, along: depth, at: width / 2 },
+  ];
+  const longAlong = Math.max(width, depth);
+  for (const { angle, along, at } of edges) {
+    const parted = along === longAlong;
+    const length = parted ? along / 2 - mouth * 1.8 : along - mouth * 2;
+    const geometry = cushionGeometry(length);
+    for (const offset of parted ? [-along / 4 - mouth / 10, along / 4 + mouth / 10] : [0]) {
+      const mesh = new Mesh(geometry, cloth);
+      mesh.rotation.y = angle;
+      mesh.position.set(
+        Math.cos(angle) * offset + Math.sin(angle) * at,
+        0,
+        -Math.sin(angle) * offset + Math.cos(angle) * at,
+      );
+      scene.add(mesh);
+    }
+  }
+}
+
+/** The ivory diamonds on the rails: quarters of each half of a long rail, quarters of a short one. */
+function addSights(scene: Scene, layout: SceneLayout, ivory: string) {
+  const { width, depth, rail } = TABLE[layout];
+  const sight = new CircleGeometry(rail * 0.14, 4);
+  const material = new MeshBasicMaterial({ color: ivory });
+  const longIsX = width > depth;
+  const quarters = (length: number, parts: number) =>
+    Array.from({ length: parts - 1 }, (_, i) => ((i + 1) / parts - 0.5) * length).filter(
+      (at) => parts === 4 || Math.abs(at) > 0.001,
+    );
+  const put = (x: number, z: number) => {
+    const mesh = new Mesh(sight, material);
+    mesh.rotation.x = -Math.PI / 2;
+    mesh.position.set(x, RAIL_HEIGHT + 0.035, z);
+    scene.add(mesh);
+  };
+  const onX = quarters(width, longIsX ? 8 : 4);
+  const onZ = quarters(depth, longIsX ? 4 : 8);
+  for (const x of onX) for (const side of [-1, 1]) put(x, side * (depth / 2 + rail / 2));
+  for (const z of onZ) for (const side of [-1, 1]) put(side * (width / 2 + rail / 2), z);
+}
+
+/** Felt, wood rail, cushions, sights, six pockets and the lamp above; everything that never moves. */
 export function buildTable(scene: Scene, layout: SceneLayout, tokens: Tokens) {
   const { width, depth, rail, ball } = TABLE[layout];
-  const felt = new Mesh(
-    new PlaneGeometry(width, depth),
-    new MeshStandardMaterial({ color: tokens.felt, roughness: 0.95 }),
-  );
+  const cloth = new MeshStandardMaterial({ color: tokens.felt, roughness: 0.95 });
+  const felt = new Mesh(new PlaneGeometry(width, depth), cloth);
   felt.rotation.x = -Math.PI / 2;
   scene.add(felt);
+  addCushions(scene, layout, cloth);
+  addSights(scene, layout, tokens.ivory);
 
   const wood = new Mesh(
     new ExtrudeGeometry(railShape(width, depth, rail), {
