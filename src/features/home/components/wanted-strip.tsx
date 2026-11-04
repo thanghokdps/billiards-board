@@ -26,7 +26,7 @@ export function WantedStrip({ entries }: { entries: WantedEntry[] }) {
               target="_blank"
               rel="noreferrer"
               aria-label={t("posterOf", { name: player.name })}
-              className="relative aspect-4/5 w-24 shrink-0 bg-night"
+              className="poster-swing relative aspect-4/5 w-24 shrink-0 bg-night"
             >
               <Image
                 src={`/api/poster/wanted/${player.slug}?locale=${locale}`}

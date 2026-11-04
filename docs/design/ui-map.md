@@ -24,6 +24,11 @@ One navigation at every width, no sidebar: `FloatingDock` holds Today, History, 
 | Dock | `features/shell/components/floating-dock.tsx`, `.dock*` | Wooden rail tilted by a pseudo-element behind upright keys; the current page is a key held down |
 | Pixel pet | `features/shell` (`pixel-pet`, `lib/pet-brain`, `lib/pet-sprites`) | Canvas sprite. Roams; a click makes it leap there, cheer on a control, go dizzy after four quick clicks; it tumbles on scroll, cheers on a new page, sleeps after 25 s idle. Absent under reduced motion, never takes a click |
 | Backdrop | `features/shell` (`lamp-smoke`, `match-art`, `lib/smoke-shader`, `lib/match-strokes`) | Raw WebGL smoke at 0.4 scale and 30 fps, no `three`. The last 16 matches paint as ball paths in the winner's colour, seeded by match id, then the canvas stops. Reduced motion gets one still frame |
+| Drawn scenes | `components/ui/billiard-art.tsx`, `.art-*` | Own SVGs moved by CSS: `CueShot` on history, `RackBreak` on leaderboard, `SwingLamp` on wheel, `ChalkCube` in empty states |
+| Scroll | `.scroll-cue`, `main section`, `.pool-table`, `.match-stack` | CSS scroll timelines: cue progress under the header, sections rise in, the hero table tips back; history plates stack per day. Without `animation-timeline` these simply stay put |
+| Hover | `.ball-roll`, `.poster-swing`, `.match-tiles`, `.dock-key` | CSS only, inside `@media (hover: hover)`: balls roll, the wanted poster swings, a plate gets a sheen while its siblings dim |
+
+Tailwind keeps `@theme` keyframes only when an `animation:` shorthand names them; `animation-name` alone drops them.
 
 WebGL failure or a lost context falls back to the flat table or chart. A new `.digit-reel`-style delayed animation must also go in the reduced-motion block of `globals.css`, or its delay holds back the first frame.
 

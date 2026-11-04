@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
+import { SwingLamp } from "@/components/ui/billiard-art";
 import { PageHeader } from "@/components/ui/misc";
 import { WheelStudio } from "@/features/wheel";
 import { isAdmin } from "@/server/auth/session";
@@ -21,7 +22,7 @@ export default async function WheelPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
-      <PageHeader title={t("title")} kicker={t("kicker")} />
+      <PageHeader title={t("title")} kicker={t("kicker")} actions={<SwingLamp />} />
       <WheelStudio players={players} admin={admin} />
     </div>
   );

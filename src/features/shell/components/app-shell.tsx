@@ -95,6 +95,7 @@ export function AppShell({ admin, art, children }: AppShellProps) {
             )}
           </div>
         </div>
+        <span aria-hidden className="scroll-cue" />
       </header>
 
       <main

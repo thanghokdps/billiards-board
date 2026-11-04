@@ -41,11 +41,11 @@ export function HistoryList({ days, highlights, admin }: HistoryListProps) {
                 <span className="digits font-bold text-lamp">{formatVnd(day.bill, locale)}</span>
               </p>
             </header>
-            <ul className="stagger-in scroll-in match-tiles">
-              {day.matches.map((match) => {
+            <ul className="stagger-in scroll-in match-tiles match-stack">
+              {day.matches.map((match, index) => {
                 const count = highlights[match.id]?.length ?? 0;
                 return (
-                  <li key={match.id} className="relative">
+                  <li key={match.id} style={{ ["--i" as string]: index }}>
                     <MatchRow
                       match={match}
                       footer={

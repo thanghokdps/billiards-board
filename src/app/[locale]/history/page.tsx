@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { CueShot } from "@/components/ui/billiard-art";
 import { Button } from "@/components/ui/button";
 import { FilterLinks } from "@/components/ui/filter-links";
 import { EmptyState, PageHeader } from "@/components/ui/misc";
@@ -68,7 +69,7 @@ export default async function HistoryPage({ searchParams }: { searchParams: Sear
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
-      <PageHeader title={t("title")} kicker={t("kicker")} />
+      <PageHeader title={t("title")} kicker={t("kicker")} actions={<CueShot />} />
 
       <div className="space-y-3">
         <FilterLinks

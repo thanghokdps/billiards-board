@@ -39,7 +39,10 @@ export function PlayerAvatar({ player, size = "md", streak, className }: PlayerA
   return (
     <span className={cn("relative inline-flex shrink-0", className)}>
       <span
-        className={cn("relative inline-flex items-center justify-center overflow-hidden rounded-full ring-2", s.box)}
+        className={cn(
+          "ball-roll relative inline-flex items-center justify-center overflow-hidden rounded-full ring-2",
+          s.box,
+        )}
         style={{ ["--tw-ring-color" as string]: player.ballColor, filter: grey ? `grayscale(${grey})` : undefined }}
       >
         {player.avatarUrl ? (
