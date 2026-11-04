@@ -911,11 +911,27 @@
       --pocket: 2.25rem;
     }
   }
-  /* A real playfield is twice as long as it is wide; content taller than that grows the table rather than clipping. */
+  /* A real playfield is twice as long as it is wide. */
   .pool-field {
-    display: grid;
-    align-content: center;
     aspect-ratio: 2 / 1;
+  }
+  /* Only this grip blocks scrolling, so a swipe anywhere else on the table still moves the page. 2.75rem is the touch minimum. */
+  .pool-cue-handle {
+    position: absolute;
+    top: -1.375rem;
+    left: -1.375rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+  }
+  .pool-cue-handle:active {
+    cursor: grabbing;
+  }
+  .pool-cue-handle[hidden] {
+    display: none;
   }
   .pool-cloth,
   .pool-furniture {
