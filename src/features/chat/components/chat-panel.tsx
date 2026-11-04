@@ -18,7 +18,8 @@ import { SendContext } from "../lib/send-context";
 import { useSpeech } from "../lib/use-speech";
 import { useToolRenderers } from "../renderers/tool-result";
 
-const SUGGESTION_KEYS = ["log", "batch", "money", "h2h", "wheel", "roast"] as const;
+// A tap sends the text as is, so a suggestion holds no names or scores: they would log a match nobody played.
+const SUGGESTION_KEYS = ["log", "today", "money", "leader", "wheel", "roast"] as const;
 
 interface ChatPanelProps {
   pendingMessage: PendingChatMessage | undefined;
