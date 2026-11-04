@@ -1,7 +1,6 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { Fragment } from "react";
 
 import { GameTypeBadge } from "@/components/ui/game-type-badge";
 import { EmptyState } from "@/components/ui/misc";
@@ -43,37 +42,35 @@ function Side({
   );
 }
 
-/** A 1v1v1 on the TV: the same seats as a 1v1, one LED below because three names and three scores won't fit a line. */
+const SEAT_ALIGN = ["items-start", "items-center", "items-end"];
+
+/** A 1v1v1 on the TV: three columns of the 1v1 seat, each with its own score under it. */
 function ThreeWayBoard({ match, lossLabel }: { match: StatMatch; lossLabel?: string }) {
   const t = useTranslations("common");
-  const scores = [...match.sideA, ...match.sideB].flatMap((p) => match.scores.filter((s) => s.playerId === p.id));
+  const seats = [
+    ...match.sideA.map((player) => ({ player, won: true })),
+    ...match.sideB.map((player) => ({ player, won: false })),
+  ];
   return (
-    <div className="flex flex-col items-center gap-3 2xl:gap-5">
-      <div className="flex w-full items-center gap-4">
-        {match.sideA.map((p) => (
-          <Side key={p.id} players={[p]} won align="left" label={t("win")} />
-        ))}
-        {match.sideB.map((p) => (
-          <Side key={p.id} players={[p]} won={false} align="right" label={lossLabel} />
-        ))}
-      </div>
-      {scores.length > 0 && (
-        <div
-          className="digits flex shrink-0 items-baseline gap-2 rounded-md border border-line-strong bg-night px-4 py-1 text-6xl font-bold 2xl:gap-4 2xl:px-8 2xl:text-8xl"
-          aria-label={scores.map((s) => s.score).join("–")}
-        >
-          {scores.map((s, i) => (
-            <Fragment key={s.playerId}>
-              {i > 0 && <span className="text-ivory-faint">:</span>}
-              <span
-                className={match.sideA.some((p) => p.id === s.playerId) ? "text-lamp digits-glow" : "text-ivory-faint"}
+    <div className="grid grid-cols-3 gap-4">
+      {seats.map(({ player, won }, i) => {
+        const score = match.scores.find((s) => s.playerId === player.id)?.score;
+        return (
+          <div key={player.id} className={cn("flex min-w-0 flex-col gap-2", SEAT_ALIGN[i])}>
+            <Side players={[player]} won={won} align={won ? "left" : "right"} label={won ? t("win") : lossLabel} />
+            {score !== undefined && (
+              <p
+                className={cn(
+                  "digits rounded-md border border-line-strong bg-night px-4 py-1 text-6xl font-bold 2xl:px-8 2xl:text-8xl",
+                  won ? "text-lamp digits-glow" : "text-ivory-faint",
+                )}
               >
-                {s.score}
-              </span>
-            </Fragment>
-          ))}
-        </div>
-      )}
+                {score}
+              </p>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
