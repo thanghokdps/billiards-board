@@ -7,7 +7,7 @@ Run on the live app, in /vi and /en, at 375 px and desktop. The console must sta
 - [ ] `/` redirects to `/vi`; the VI/EN switch keeps the page.
 - [ ] Home: table hero with the attendees' balls and the day's bill, scoreboard (or the "last session" label), streak avatars, WANTED strip when someone has 5 straight losses, and the recap card after 13:00.
 - [ ] History: game and period filters change the list; the match sheet shows highlights and the poster button. No admin buttons are visible. A 1v1v1 row uses the 1v1 seat in three columns, and the loser reads "Trả bill" only on a match with a bill.
-- [ ] Leaderboard: podium, table, Elo chart (hide toggle remembered), 5×5 heatmap readable at 375 px.
+- [ ] Leaderboard: podium, six-pocket table (balls break from the rack, a pocket re-ranks, a ball opens every stat, the group view, no sideways scroll at 375 px), Elo chart (hide toggle remembered), 5×5 heatmap readable at 375 px.
 - [ ] Player profile: FIFA card, form, nemesis/prey, badges.
 - [ ] Money, Hall of Fame (posters load), Rivalry (poster), Predictions, Wrapped story (tap, keys, auto-advance), TV mode (rotates, full-bleed).
 - [ ] Wheel: opens in 2v2, participant chips, 1v1/2v2/1v1v1, long-press victim, x5/x10 repeat every name N times with chances unchanged (with a victim: 4 players with x5 leaves the victim at ≈ 6%), +/−, % on slices when names are not repeated, spin 2–3 s, skip, then sound and vibrate. No "Tạo trận" button for viewers.
