@@ -19,9 +19,7 @@
     "rule": "Ranked by win rate with at least {min} games; below that, by most wins."
   },
   "table": {
-    "title": "Full table",
-    "caption": "Stats for every player, in rank order",
-    "player": "Player",
+    "title": "Six pockets",
     "played": "Played",
     "record": "W – L",
     "winRate": "Win rate",
@@ -33,7 +31,18 @@
     "paid": "Paid",
     "strongest": "Strongest",
     "weakest": "Weakest",
-    "hint": "Strongest and weakest game type need at least 3 games of each. Swipe sideways to see every column."
+    "pocketBestWin": "Best run",
+    "pocketBestLoss": "Worst run",
+    "streakWins": "{count} won",
+    "streakLosses": "{count} lost",
+    "leads": "{name} leads {metric}: {value}",
+    "rankOf": "No. {rank} by {metric}",
+    "ballLabel": "{name}, rank {rank}, {metric} {value}",
+    "notPlayed": "No games yet",
+    "showGroup": "See the whole group",
+    "showPlayer": "See one player",
+    "groupTitle": "Whole group",
+    "hint": "Tap a pocket to rank, tap a ball for every stat. Strongest and weakest game type need at least 3 games of each."
   },
   "elo": {
     "title": "Elo (for reference)",
