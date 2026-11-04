@@ -8,6 +8,7 @@ import { cryptoRandom, pickWeighted, rotationFor, slicesOf, type Slice, type Whe
 
 const SPIN_MS = 2600;
 const R = 140;
+const MIN_LABEL_SHARE = 0.012;
 
 // Node and Chrome disagree on the last float digit of cos/sin, which breaks hydration; round SVG coordinates.
 const round = (n: number) => Math.round(n * 100) / 100;
@@ -49,6 +50,8 @@ interface SpinWheelProps {
 /** The felt table seen from above: one slice per player in their ball colour, the cue tip as pointer. */
 export function SpinWheel({ ref, entries, onResult, onSpinningChange, percentLabel, className }: SpinWheelProps) {
   const slices = slicesOf(entries);
+  // With names repeated a slice's share is no longer the player's chance, and it gets too thin for sideways text.
+  const repeated = slices.length > entries.length;
   const [rotation, setRotation] = useState(0);
   const [duration, setDuration] = useState(SPIN_MS);
   const pending = useRef<WheelEntry | null>(null);
@@ -128,42 +131,42 @@ export function SpinWheel({ ref, entries, onResult, onSpinningChange, percentLab
             const label = labelAt(slice, R * 0.64);
             const pct = labelAt(slice, R * 0.86);
             return (
-              <g key={slice.entry.id}>
+              <g key={slice.start}>
                 <path
                   d={arcPath(slice)}
                   style={{ fill: slice.entry.color, stroke: "var(--color-felt-deep)", strokeWidth: 2 }}
                 />
-                {slice.share > 0.04 && (
-                  <>
-                    <text
-                      x={label.x}
-                      y={label.y}
-                      transform={`rotate(${label.rotate} ${label.x} ${label.y})`}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      fontWeight="800"
-                      fontSize={slice.share > 0.12 ? 17 : 12}
-                      style={{
-                        fill: "var(--color-night)",
-                        fontFamily: "var(--font-display)",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      {slice.entry.label}
-                    </text>
-                    <text
-                      x={pct.x}
-                      y={pct.y}
-                      transform={`rotate(${pct.rotate} ${pct.x} ${pct.y})`}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      fontWeight="700"
-                      fontSize="11"
-                      style={{ fill: "var(--color-night)", fontFamily: "var(--font-display)", opacity: 0.8 }}
-                    >
-                      {percentLabel(slice.share)}
-                    </text>
-                  </>
+                {slice.share > MIN_LABEL_SHARE && (
+                  <text
+                    x={label.x}
+                    y={label.y}
+                    transform={`rotate(${repeated ? label.rotate - 90 : label.rotate} ${label.x} ${label.y})`}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fontWeight="800"
+                    fontSize={slice.share > 0.12 ? 17 : slice.share > 0.03 ? 12 : 9}
+                    style={{
+                      fill: "var(--color-night)",
+                      fontFamily: "var(--font-display)",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {slice.entry.label}
+                  </text>
+                )}
+                {!repeated && slice.share > MIN_LABEL_SHARE && (
+                  <text
+                    x={pct.x}
+                    y={pct.y}
+                    transform={`rotate(${pct.rotate} ${pct.x} ${pct.y})`}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fontWeight="700"
+                    fontSize="11"
+                    style={{ fill: "var(--color-night)", fontFamily: "var(--font-display)", opacity: 0.8 }}
+                  >
+                    {percentLabel(slice.share)}
+                  </text>
                 )}
               </g>
             );

@@ -42,4 +42,4 @@ No unit tests or evals by user decision; see [test-strategy.md](test-strategy.md
 
 ## Deploy
 
-Vercel and Supabase Postgres. Set every name in `.env.example` as a Vercel env var. Run `pnpm db:migrate` (and `pnpm db:seed` once) against the Supabase URL. `LANGSMITH_TRACING` stays `"false"`; tracing goes through `TRACING_PROVIDER` only, which keeps it masked.
+Vercel and Supabase Postgres. Only `main` deploys (`vercel.json`, `git.deploymentEnabled`): env vars exist for Production only, so a branch build cannot pass. Set every name in `.env.example` as a Vercel env var. Run `pnpm db:migrate` (and `pnpm db:seed` once) against the Supabase URL. `LANGSMITH_TRACING` stays `"false"`; tracing goes through `TRACING_PROVIDER` only, which keeps it masked.

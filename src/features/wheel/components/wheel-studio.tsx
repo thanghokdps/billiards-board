@@ -16,7 +16,7 @@ import { ChanceList } from "./chance-list";
 import { ParticipantChip } from "./participant-chip";
 import { WheelPanel } from "./wheel-panel";
 
-const MULTIPLIERS = [2, 3, 5, 6] as const;
+const MULTIPLIERS = [5, 10] as const;
 const MODES = ["1v1", "2v2"] as const;
 
 interface WheelStudioProps {
@@ -42,7 +42,8 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
   const hintId = useId();
   const [included, setIncluded] = useState<number[]>(defaultIncluded);
   const [weights, setWeights] = useState<Record<number, number>>({});
-  const [mode, setMode] = useState<(typeof MODES)[number]>("1v1");
+  const [mode, setMode] = useState<(typeof MODES)[number]>("2v2");
+  const [spinnerId, setSpinnerId] = useState<number | null>(null);
   const [victimId, setVictimId] = useState<number | null>(null);
   const [multiplier, setMultiplier] = useState<number | null>(null);
   const [picks, setPicks] = useState<number[]>([]);
@@ -52,23 +53,32 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
   if (players.length === 0) return <EmptyState title={t("emptyTitle")} body={t("emptyBody")} />;
 
   const participants = players.filter((p) => included.includes(p.id));
+  const spinner = participants.find((p) => p.id === spinnerId) ?? null;
   const victim = participants.find((p) => p.id === victimId) ?? null;
-  const chances = probabilities(participants.filter((p) => !picks.includes(p.id)).map((p) => toEntry(p, weights)));
+  const onWheel = participants.filter((p) => p.id !== spinner?.id);
+  const chances = probabilities(onWheel.filter((p) => !picks.includes(p.id)).map((p) => toEntry(p, weights)));
 
-  /** ×N for everyone but the victim (a player on weight 0 stays hidden). */
-  function reweigh(who: PlayerRef[], nextVictim: number, nextMultiplier: number) {
+  /** ×N for everyone, resting players included so they rejoin at ×N; the victim stays at 1. */
+  function reweigh(nextVictim: number | null, nextMultiplier: number) {
     const weighted = applyVictim(
-      who.map((p) => toEntry(p, weights)),
+      players.map((p) => toEntry(p, weights)),
       nextVictim,
       nextMultiplier,
     );
-    setWeights({ ...weights, ...Object.fromEntries(weighted.map((e) => [e.id, e.weight])) });
+    setWeights(Object.fromEntries(weighted.map((e) => [e.id, e.weight])));
   }
 
   function toggleParticipant(id: number) {
     setIncluded((ids) => (ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]));
     if (victimId === id) setVictimId(null);
+    if (spinnerId === id) setSpinnerId(null);
     setPicks([]);
+  }
+
+  function changeSpinner(id: number | null) {
+    setSpinnerId(id);
+    setPicks([]);
+    if (id !== null && id === victimId) changeVictim(null);
   }
 
   function changeVictim(id: number | null) {
@@ -78,15 +88,14 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
       setWeights({});
       return;
     }
-    const joining = players.find((p) => p.id === id && !included.includes(id));
-    if (joining) setIncluded((ids) => [...ids, id]);
-    if (multiplier !== null) reweigh(joining ? [...participants, joining] : participants, id, multiplier);
+    if (id === spinnerId) changeSpinner(null);
+    if (!included.includes(id)) setIncluded((ids) => [...ids, id]);
+    if (multiplier !== null) reweigh(id, multiplier);
   }
 
   function chooseMultiplier(n: number) {
-    if (victimId === null) return;
     setMultiplier(n);
-    reweigh(participants, victimId, n);
+    reweigh(victimId, n);
   }
 
   function changeWeight(id: number, weight: number) {
@@ -112,8 +121,8 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
           <Chip
             key={n}
             selected={multiplier === n}
-            disabled={spinning || victim === null}
-            aria-label={t("victimMultiplier", { n })}
+            disabled={spinning}
+            aria-label={t("repeatMultiplier", { n })}
             onClick={() => chooseMultiplier(n)}
           >
             <span className="digits text-base font-bold">{t("multiplier", { n })}</span>
@@ -146,6 +155,7 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
             players={participants}
             weights={weights}
             mode={mode}
+            spinnerId={spinner?.id ?? null}
             picks={picks}
             onPicksChange={setPicks}
             onSpinningChange={setSpinning}
@@ -193,7 +203,35 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
                 </Chip>
               ))}
             </div>
-            <p className="text-sm text-ivory-muted">{t(mode === "1v1" ? "modeHint1v1" : "modeHint2v2")}</p>
+            <p className="text-sm text-ivory-muted">
+              {spinner
+                ? t(mode === "1v1" ? "modeHintSpinner1v1" : "modeHintSpinner2v2", { name: spinner.name })
+                : t(mode === "1v1" ? "modeHint1v1" : "modeHint2v2")}
+            </p>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("spinnerTitle")}</CardTitle>
+          </CardHeader>
+          <CardBody className="space-y-3">
+            <div role="group" aria-label={t("spinnerTitle")} className="flex flex-wrap gap-2">
+              {participants.map((player) => {
+                const isSpinner = spinner?.id === player.id;
+                return (
+                  <Chip
+                    key={player.id}
+                    selected={isSpinner}
+                    disabled={spinning}
+                    onClick={() => changeSpinner(isSpinner ? null : player.id)}
+                  >
+                    {player.name}
+                  </Chip>
+                );
+              })}
+            </div>
+            <p className="text-sm text-ivory-muted">{t("spinnerHint")}</p>
           </CardBody>
         </Card>
 
@@ -235,7 +273,7 @@ export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProp
           </CardHeader>
           <CardBody>
             <ChanceList
-              players={participants}
+              players={onWheel}
               weights={weights}
               chances={chances}
               picked={picks}
