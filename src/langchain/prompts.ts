@@ -45,12 +45,10 @@ export interface ContextSnapshot {
   timeZone: string;
   locale: "vi" | "en";
   roster: string[];
-  session: string | null;
   todaysMatches: string[];
 }
 
 const NO_MATCHES = "(no match recorded today yet)";
-const NO_SESSION = "(no session today yet: it is created with the first match)";
 const NO_ROSTER = "(no players yet: the admin adds them on the Players page)";
 
 export function buildContextSection(snapshot: ContextSnapshot): string {
@@ -60,7 +58,6 @@ export function buildContextSection(snapshot: ContextSnapshot): string {
     `- Now: ${snapshot.now} (${snapshot.timeZone}). App language: ${snapshot.locale}.`,
     "- Roster (id · name · nickname · aliases · ball):",
     ...(snapshot.roster.length ? snapshot.roster.map((r) => `  - ${r}`) : [`  - ${NO_ROSTER}`]),
-    `- Today's session: ${snapshot.session ?? NO_SESSION}`,
     "- Today's matches, newest first (id · time · game · players · score · winner or, in a 1v1v1, loser · bill):",
     ...(snapshot.todaysMatches.length ? snapshot.todaysMatches.map((m) => `  - ${m}`) : [`  - ${NO_MATCHES}`]),
   ].join("\n");

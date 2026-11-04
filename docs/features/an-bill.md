@@ -28,10 +28,9 @@ Card rows used: Q4 **user writes** (tools propose, the confirm card calls `/api/
 
 Fits the ADR. Additions decided here, none widen it:
 
-- **Predictions** (v3 "dự đoán"): viewers have no login, and `security.md` requires every mutating endpoint to be authenticated, so votes are entered by the admin on the prediction card (one tap per voter). No viewer write path.
 - **Uploads** (avatar, highlight photo): stored in Postgres (`media`, bytea, ≤ 1.5 MB after client-side resize to 640 px), admin-only. No new system or credential (no Supabase Storage key). Clips are links.
-- **Attendance** ("trưa nay ai đi?"): `sessions.attendees int[]`, admin toggles; feeds wheel defaults and Elo-balanced pairing.
 - **Events**: `createMatches` writes `events` rows for special matches (streak broken, comeback, derby, blowout) and returns them so the UI plays the micro-moment.
+- **Removed later**: predictions, attendance, venue, table label and the Elo pairing card were unused. Their tables and columns are dropped by `drizzle/0005_drop_unused_session_features.sql`; slice 1 and 2 below keep the original plan.
 
 ## 3 · Inventory (before this feature)
 

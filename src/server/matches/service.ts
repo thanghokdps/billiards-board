@@ -9,7 +9,6 @@ import { specialReason } from "@/lib/stats";
 import { recordAudit } from "@/server/audit/repository";
 import { recordEvents, type MatchEvent } from "@/server/events/repository";
 import { HttpError } from "@/server/http";
-import { settleFor } from "@/server/predictions/repository";
 
 import { findMatchById, findMatches, getOrCreateSession, type Tx } from "./repository";
 import { matchInputSchema, type MatchInput, type MatchPatch, type MatchView } from "./schema";
@@ -66,7 +65,7 @@ export interface CreatedMatches {
 
 /**
  * Creates one or more matches in one transaction, each with its audit entry. Special matches get an
- * `events` row, and open predictions on the same players are settled in the same transaction.
+ * `events` row.
  */
 export async function createMatches(
   inputs: MatchInput[],
@@ -123,13 +122,6 @@ async function insertBatch(
         history.filter((m) => m.playedAt < view.playedAt),
       );
       if (reason) moments.push({ type: reason, matchId: id });
-      await settleFor(tx, {
-        id,
-        date: view.date,
-        sideA: input.sideA,
-        sideB: input.sideB,
-        winnerSide: input.winnerSide,
-      });
       history.push(view);
       created.push(view);
     }

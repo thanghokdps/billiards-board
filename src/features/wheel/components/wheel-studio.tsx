@@ -30,8 +30,6 @@ const MODE_SPINNER_HINTS = {
 interface WheelStudioProps {
   /** Every active player. */
   players: PlayerRef[];
-  /** Who is in at the start: today's attendees, else everyone. */
-  defaultIncluded: number[];
   /** Only the admin sees "create a match from this pairing". */
   admin: boolean;
 }
@@ -44,11 +42,11 @@ const toEntry = (player: PlayerRef, weights: Record<number, number>): WheelEntry
 });
 
 /** The Random Wheel screen: wheel on the left (desktop), setup on the right; stacked on phones. Results are never saved. */
-export function WheelStudio({ players, defaultIncluded, admin }: WheelStudioProps) {
+export function WheelStudio({ players, admin }: WheelStudioProps) {
   const t = useTranslations("wheel");
   const chat = useChat();
   const hintId = useId();
-  const [included, setIncluded] = useState<number[]>(defaultIncluded);
+  const [included, setIncluded] = useState<number[]>(() => players.map((p) => p.id));
   const [weights, setWeights] = useState<Record<number, number>>({});
   const [mode, setMode] = useState<PairingFormat>("2v2");
   const [spinnerId, setSpinnerId] = useState<number | null>(null);

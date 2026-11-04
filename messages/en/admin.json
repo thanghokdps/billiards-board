@@ -75,13 +75,6 @@
     "confirm": "Delete",
     "cancel": "Cancel"
   },
-  "session": {
-    "title": "Today's session",
-    "venue": "Venue",
-    "table": "Table",
-    "save": "Save session",
-    "saved": "Session saved"
-  },
   "links": {
     "title": "Shortcuts",
     "assistant": "Open the match assistant",

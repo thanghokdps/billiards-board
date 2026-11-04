@@ -42,13 +42,6 @@ export const sessions = pgTable("sessions", {
   id: serial("id").primaryKey(),
   /** Local date of the lunch session (Asia/Ho_Chi_Minh). */
   date: date("date").notNull().unique(),
-  venue: text("venue"),
-  tableLabel: text("table_label"),
-  /** Player ids marked as coming ("trưa nay ai đi?"); empty = not asked yet. */
-  attendees: integer("attendees")
-    .array()
-    .notNull()
-    .default(sql`'{}'::integer[]`),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -157,43 +150,7 @@ export const highlights = pgTable(
   (t) => [index("highlights_match_idx").on(t.matchId)],
 );
 
-export const predictionStatusEnum = pgEnum("prediction_status", ["open", "settled", "cancelled"]);
-
-/** A fun pre-match poll ("kèo"), no real money. Settled automatically when the matching match is recorded. */
-export const predictions = pgTable(
-  "predictions",
-  {
-    id: serial("id").primaryKey(),
-    date: date("date").notNull(),
-    gameType: gameTypeEnum("game_type"),
-    sideA: integer("side_a").array().notNull(),
-    sideB: integer("side_b").array().notNull(),
-    status: predictionStatusEnum("status").notNull().default("open"),
-    matchId: uuid("match_id").references(() => matches.id, { onDelete: "set null" }),
-    winnerSide: sideEnum("winner_side"),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-  },
-  (t) => [index("predictions_date_idx").on(t.date), index("predictions_match_idx").on(t.matchId)],
-);
-
-export const predictionVotes = pgTable(
-  "prediction_votes",
-  {
-    predictionId: integer("prediction_id")
-      .notNull()
-      .references(() => predictions.id, { onDelete: "cascade" }),
-    voterId: integer("voter_id")
-      .notNull()
-      .references(() => players.id),
-    pick: sideEnum("pick").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  },
-  (t) => [primaryKey({ columns: [t.predictionId, t.voterId] }), index("prediction_votes_voter_idx").on(t.voterId)],
-);
-
 export type Player = typeof players.$inferSelect;
-export type Prediction = typeof predictions.$inferSelect;
 export type Highlight = typeof highlights.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
 export type MatchRow = typeof matches.$inferSelect;
