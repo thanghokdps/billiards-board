@@ -12,3 +12,5 @@ coverage/
 *.tsbuildinfo
 .DS_Store
 .claude/memory/user.md
+.claude/memory/sessions/
+specs/HANDOFF.md
