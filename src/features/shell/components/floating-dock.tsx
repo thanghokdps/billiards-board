@@ -62,7 +62,7 @@ export function FloatingDock({ admin, onOpenChat }: { admin: boolean; onOpenChat
           {leaderboard && <DockLink item={leaderboard} />}
           {admin ? (
             <li>
-              <button type="button" onClick={onOpenChat} aria-label={t("openChat")} className={tabClass(false)}>
+              <button type="button" onClick={() => onOpenChat()} aria-label={t("openChat")} className={tabClass(false)}>
                 <MessageCircle className="size-5" aria-hidden />
                 {t("chatShort")}
               </button>
