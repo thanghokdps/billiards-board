@@ -6,7 +6,7 @@ import { GameTypeBadge } from "@/components/ui/game-type-badge";
 import { EmptyState } from "@/components/ui/misc";
 import { PlayerAvatar } from "@/components/ui/player-avatar";
 import { cn } from "@/lib/cn";
-import { formatDate, formatTime, formatVnd } from "@/lib/domain";
+import { formatDate, formatTime, formatVnd, shownSideB } from "@/lib/domain";
 import type { StatMatch, StatPlayer } from "@/lib/stats";
 
 import type { TvData } from "../types";
@@ -81,15 +81,15 @@ function LedBoard({ match }: { match: StatMatch }) {
   const locale = useLocale();
   const aWon = match.winnerSide === "a";
   const hasScore = match.scoreA != null && match.scoreB != null;
-  const lossLabel = match.bill != null ? t("paysBill") : undefined;
+  const isGuest = match.format === "guest";
+  const lossLabel = isGuest ? t("loss") : match.bill != null ? t("paysBill") : undefined;
+  const billLabel = match.bill != null ? formatVnd(match.bill, locale) : t("noBill");
   return (
     <article className="flex flex-col justify-center gap-3 rounded-lg border border-line bg-surface p-4 shadow-card 2xl:gap-5 2xl:p-8">
       <div className="flex items-center gap-3 text-sm text-ivory-muted 2xl:text-2xl">
         <GameTypeBadge gameType={match.gameType} className="2xl:px-3 2xl:py-1 2xl:text-lg" />
         <time dateTime={match.playedAt}>{formatTime(match.playedAt, locale)}</time>
-        <span className="ml-auto font-semibold">
-          {match.bill != null ? formatVnd(match.bill, locale) : t("noBill")}
-        </span>
+        <span className="ml-auto font-semibold">{isGuest ? t("guestMatch") : billLabel}</span>
       </div>
       {match.format === "1v1v1" ? (
         <ThreeWayBoard match={match} lossLabel={lossLabel} />
@@ -98,7 +98,7 @@ function LedBoard({ match }: { match: StatMatch }) {
           <Side players={match.sideA} won={aWon} align="left" label={aWon ? t("win") : lossLabel} />
           <div
             className="digits flex shrink-0 items-baseline gap-2 rounded-md border border-line-strong bg-night px-4 py-1 text-6xl font-bold 2xl:gap-4 2xl:px-8 2xl:text-8xl"
-            aria-label={hasScore ? `${match.scoreA}–${match.scoreB}` : t("noScore")}
+            aria-label={hasScore ? `${match.scoreA}–${match.scoreB}` : isGuest ? t("vs") : t("noScore")}
           >
             {hasScore ? (
               <>
@@ -110,7 +110,7 @@ function LedBoard({ match }: { match: StatMatch }) {
               <span className="text-4xl text-ivory-faint 2xl:text-7xl">{t("vs")}</span>
             )}
           </div>
-          <Side players={match.sideB} won={!aWon} align="right" label={aWon ? lossLabel : t("win")} />
+          <Side players={shownSideB(match)} won={!aWon} align="right" label={aWon ? lossLabel : t("win")} />
         </div>
       )}
     </article>

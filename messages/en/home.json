@@ -20,29 +20,7 @@
     "copyFailed": "Could not copy, select the text and copy it by hand"
   },
   "session": {
-    "noVenue": "No venue yet",
-    "table": "Table {label}",
-    "noTable": "No table yet",
-    "totalBill": "Today's total bill",
-    "attendees": "Here at lunch",
-    "noAttendees": "Nobody marked as coming yet",
-    "edit": "Edit session",
-    "editTitle": "Edit lunch session",
-    "attendeesLabel": "Who is coming today?",
-    "venue": "Venue",
-    "venuePlaceholder": "Venue name",
-    "tableLabel": "Table",
-    "tablePlaceholder": "For example: no. 3",
-    "saved": "Session saved",
-    "saveFailed": "Could not save, try again"
-  },
-  "pairing": {
-    "title": "Elo-balanced matchups",
-    "gap": "{gap} Elo apart",
-    "elo": "Elo {value}",
-    "record": "Record this match",
-    "prompt": "Just finished {sideA} vs {sideB}: ",
-    "hint": "Mark who is coming today to get Elo-balanced matchups."
+    "totalBill": "Today's total bill"
   },
   "scoreboard": {
     "title": "Scoreboard",
@@ -71,10 +49,5 @@
     "line": "{count, plural, one {# loss in a row} other {# losses in a row}}",
     "bounty": "Bounty {amount}",
     "posterOf": "Wanted poster of {name}"
-  },
-  "predictions": {
-    "title": "Today's picks",
-    "seeAll": "All picks",
-    "empty": "No open picks today."
   }
 }

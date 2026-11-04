@@ -11,7 +11,7 @@ export interface AuditEntry {
   actor: string;
   via: "chat" | "ui";
   action: "create" | "update" | "delete" | "restore";
-  entity: "match" | "player" | "session" | "prediction" | "highlight";
+  entity: "match" | "player" | "highlight";
   entityId: string;
   before?: unknown;
   after?: unknown;

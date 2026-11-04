@@ -12,7 +12,7 @@ import { isActive, NAV_ITEMS, type NavItem } from "../nav-items";
 
 const RACKED = NAV_ITEMS.filter((i) => i.ball);
 const LOOSE = NAV_ITEMS.filter((i) => !i.ball);
-/** Rows of a 10-ball rack, apex first: start index of row n is the triangular number n(n+1)/2. */
+/** Rows of a triangular rack, apex first: start index of row n is the triangular number n(n+1)/2. */
 const RACK_ROWS = [0, 1, 2, 3].map((row) => RACKED.slice((row * (row + 1)) / 2, ((row + 1) * (row + 2)) / 2));
 
 function RackBall({

@@ -6,7 +6,7 @@ import { Fragment, useCallback, useMemo, useRef, useState, type ReactNode } from
 
 import { Button } from "@/components/ui/button";
 import { PlayerAvatar } from "@/components/ui/player-avatar";
-import { formatPercent, PLAYERS_IN_FORMAT, type MatchFormat } from "@/lib/domain";
+import { formatPercent, PLAYERS_IN_FORMAT, type PairingFormat } from "@/lib/domain";
 import type { WheelEntry } from "@/lib/wheel";
 import type { PlayerRef } from "@/server/matches/schema";
 
@@ -14,7 +14,7 @@ import { SpinWheel, type SpinWheelHandle } from "./spin-wheel";
 import { useHydrated } from "../hooks/use-hydrated";
 
 export interface WheelPairing {
-  format: MatchFormat;
+  format: PairingFormat;
   sideA: PlayerRef[];
   sideB: PlayerRef[];
 }
@@ -23,7 +23,7 @@ interface WheelPanelProps {
   players: PlayerRef[];
   /** Weight per player id; 0 hides a player. */
   weights: Record<number, number>;
-  mode: MatchFormat;
+  mode: PairingFormat;
   /** Rendered under a finished pairing (e.g. "Tạo trận từ cặp này"). */
   pairingActions?: (pairing: WheelPairing) => ReactNode;
   compact?: boolean;

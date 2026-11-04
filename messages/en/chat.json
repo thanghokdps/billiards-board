@@ -49,6 +49,7 @@
     "game_type": "Which game?",
     "winner": "Who won?",
     "loser": "Who came last?",
+    "guest_loser": "Who lost?",
     "players": "Who played?",
     "match": "Which match?",
     "player": "Which player?",

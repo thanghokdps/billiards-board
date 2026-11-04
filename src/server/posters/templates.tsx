@@ -101,6 +101,8 @@ export interface MatchPosterProps {
   winLabel: string;
   /** Set for a 1v1v1: every player's score, and the loser's label; sideA and sideB then hold winners and loser. */
   threeWay: { scores: { playerId: number; score: number }[]; loserLabel: string } | null;
+  /** A guest match keeps no score, so the scoreboard is left out. */
+  scoreless: boolean;
 }
 
 /** Barlow has no ★ glyph, so the winner mark is drawn. */
@@ -163,7 +165,8 @@ export function MatchPoster(p: MatchPosterProps): ReactElement {
   const threeWayScores = threeWay
     ? seated.flatMap((pl) => threeWay.scores.filter((s) => s.playerId === pl.id).map((s) => s.score))
     : [];
-  const scores = threeWay ? threeWayScores : [p.scoreA ?? "–", p.scoreB ?? "–"];
+  const pairScores = p.scoreless ? [] : [p.scoreA ?? "–", p.scoreB ?? "–"];
+  const scores = threeWay ? threeWayScores : pairScores;
   return (
     <Frame>
       <Brand label={p.brand} />

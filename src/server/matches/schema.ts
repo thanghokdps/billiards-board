@@ -43,7 +43,8 @@ export const matchInputSchema = z
     gameType: z.enum(GAME_TYPES),
     format: z.enum(MATCH_FORMATS),
     sideA: z.array(playerId).min(1).max(2),
-    sideB: z.array(playerId).min(1).max(2),
+    /** Empty only in a guest match; `formatOfSides` below enforces it. */
+    sideB: z.array(playerId).max(2),
     winnerSide: z.enum(["a", "b"]),
     scoreA: z.number().int().min(0).max(999).nullable().optional(),
     scoreB: z.number().int().min(0).max(999).nullable().optional(),
@@ -67,6 +68,11 @@ export const matchInputSchema = z
     }
     if (m.format === "1v1v1") {
       for (const { path, message } of threeWayProblems(m)) ctx.addIssue({ code: "custom", path: [path], message });
+      return;
+    }
+    if (m.format === "guest") {
+      if (m.scoreA != null || m.scoreB != null || m.scores?.length || m.bill != null)
+        ctx.addIssue({ code: "custom", path: ["format"], message: "a guest match keeps no score and no bill" });
       return;
     }
     if (m.scores?.length) ctx.addIssue({ code: "custom", path: ["scores"], message: "only a 1v1v1 uses scores" });
@@ -98,7 +104,7 @@ export const matchPatchSchema = z.object({
   gameType: z.enum(GAME_TYPES).optional(),
   format: z.enum(MATCH_FORMATS).optional(),
   sideA: z.array(playerId).min(1).max(2).optional(),
-  sideB: z.array(playerId).min(1).max(2).optional(),
+  sideB: z.array(playerId).max(2).optional(),
   winnerSide: z.enum(["a", "b"]).optional(),
   scoreA: z.number().int().min(0).max(999).nullable().optional(),
   scoreB: z.number().int().min(0).max(999).nullable().optional(),

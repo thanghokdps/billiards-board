@@ -5,15 +5,15 @@ Run on the live app, in /vi and /en, at 375 px and desktop. The console must sta
 ## Viewer (logged out)
 
 - [ ] `/` redirects to `/vi`; the VI/EN switch keeps the page.
-- [ ] Home: table hero with the attendees' balls and the day's bill, scoreboard (or the "last session" label), streak avatars, WANTED strip when someone has 5 straight losses, and the recap card after 13:00.
+- [ ] Home: table hero with the date and the day's bill, scoreboard (or the "last session" label), streak avatars, WANTED strip when someone has 5 straight losses, and the recap card after 13:00.
 - [ ] History: game and period filters change the list; the match sheet shows highlights and the poster button. No admin buttons are visible. A 1v1v1 row uses the 1v1 seat in three columns, and the loser reads "Trả bill" only on a match with a bill.
 - [ ] Leaderboard: podium, six-pocket table (balls break from the rack, a pocket re-ranks, a ball opens every stat, the group view, no sideways scroll at 375 px), Elo chart (hide toggle remembered), 5×5 heatmap readable at 375 px.
 - [ ] Player profile: FIFA card, form, nemesis/prey, badges.
-- [ ] Money, Hall of Fame (posters load), Rivalry (poster), Predictions, Wrapped story (tap, keys, auto-advance), TV mode (rotates, full-bleed).
+- [ ] Money, Hall of Fame (posters load), Rivalry (poster), Wrapped story (tap, keys, auto-advance), TV mode (rotates, full-bleed).
 - [ ] Wheel: opens in 2v2, participant chips, 1v1/2v2/1v1v1, long-press victim, x5/x10 repeat every name N times with chances unchanged (with a victim: 4 players with x5 leaves the victim at ≈ 6%), +/−, % on slices when names are not repeated, spin 2–3 s, skip, then sound and vibrate. No "Tạo trận" button for viewers.
 - [ ] Wheel spinner: pick "Ai quay?" → that player leaves the wheel and sits on side A. 4 players: one spin fills both teams. 5 players: first spin is the partner, then spin for the other team. 1v1: the winner is the opponent. 1v1v1: two spins, both winners are opponents. No spinner: everyone on the wheel, as before.
 - [ ] `POST /api/admin/matches` without the cookie → 401; `/api/copilotkit` without the cookie → 401.
-- [ ] The 8-ball in the dock opens the rack: 10 balls plus Change log and Admin links; a ball navigates and closes it; Esc, the X and a tap outside close it. The active page's ball is ringed. The dock's last slot is the wheel, not the chat.
+- [ ] The 8-ball in the dock opens the rack: 9 balls plus Change log and Admin links; a ball navigates and closes it; Esc, the X and a tap outside close it. The active page's ball is ringed. The dock's last slot is the wheel, not the chat.
 
 ## Admin
 
@@ -24,6 +24,9 @@ Run on the live app, in /vi and /en, at 375 px and desktop. The console must sta
 - [ ] "libre 1v1v1 Thén, Dũ, Bổ: Bổ bét, Thén 40 Dũ 32 Bổ 18, bill 60k" → card with three columns, each score under its player, Bổ marked "Trả bill" → Save → Undo works. On Elo 1200 each: +6, +6, −12.
 - [ ] 1v1v1 without a loser → "Ai bét?" chips with the three names; tapping one gives the card.
 - [ ] "trận vừa rồi Dũ mới là người bét" on a 1v1v1 → before/after card → Save → Undo restores the players and scores.
+- [ ] "du đấu 3c real, Thén thua guest" → card with "Du đấu" instead of a bill, Thén marked "Thua", Guest "Thắng" → Save → row on Home. Elo unchanged; win rate and streak change.
+- [ ] Guest match without a loser → chips with the player and Guest. A score or bill in the sentence is not saved.
+- [ ] "trận vừa rồi Thén thắng guest" on a guest match → before/after card → Save → Undo.
 - [ ] Batch of 2 matches in one sentence → one card, Save all.
 - [ ] Missing game type → one question with chips; tapping a chip continues.
 - [ ] Unknown or ambiguous name → chips of candidates.
@@ -34,8 +37,6 @@ Run on the live app, in /vi and /en, at 375 px and desktop. The console must sta
 - [ ] Mic: Vietnamese speech → interim text → the composer is filled.
 - [ ] Streak-breaking save → STREAK BROKEN overlay, shake, confetti.
 - [ ] Home recap (after 13:00): "Viết bản tin bằng AI" → text → Copy post.
-- [ ] Session sheet: attendees, venue, table saved; the wheel defaults to the attendees.
-- [ ] Predictions: create for a pairing, enter votes, save the matching match → settled; the prophet board updates.
 - [ ] Highlight upload on a match → visible to viewers.
 - [ ] Audit log shows every write above with via chat/ui.
 - [ ] LangSmith project `billiards-board`: the turns appear with no prompt text (masked) and metadata agent=billiards-board.

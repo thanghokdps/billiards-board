@@ -82,11 +82,7 @@ if (process.argv.includes("--demo")) {
     const dow = day.getUTCDay();
     if (dow === 0 || dow === 6) continue;
     const dateStr = day.toISOString().slice(0, 10);
-    const [session] = await db
-      .insert(sessions)
-      .values({ date: dateStr, venue: "Bida Hoàng Gia", tableLabel: "Bàn 3" })
-      .onConflictDoNothing()
-      .returning();
+    const [session] = await db.insert(sessions).values({ date: dateStr }).onConflictDoNothing().returning();
     if (!session) continue;
     const count = 2 + Math.floor(rand() * 3);
     for (let i = 0; i < count; i++) {
@@ -143,6 +139,18 @@ if (process.argv.includes("--demo")) {
       { matchId: threeWay.id, playerId: second, side: "a", score: 32 },
       { matchId: threeWay.id, playerId: third, side: "b", score: 18 },
     ]);
+  }
+  if (latest && first && second) {
+    const guestMatches = await db
+      .insert(matches)
+      .values([
+        { sessionId: latest.id, playedAt: new Date(), gameType: "3c_real", format: "guest", winnerSide: "b" },
+        { sessionId: latest.id, playedAt: new Date(), gameType: "libre", format: "guest", winnerSide: "a" },
+      ])
+      .returning();
+    await db
+      .insert(matchPlayers)
+      .values([first, second].map((playerId, i) => ({ matchId: guestMatches[i]!.id, playerId, side: "a" as const })));
   }
   console.log("demo matches seeded");
 }
