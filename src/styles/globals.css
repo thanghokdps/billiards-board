@@ -546,7 +546,7 @@
     transform-origin: 50% 100%;
     transition:
       transform 0.2s ease-out,
-      opacity 0.2s ease-out,
+      filter 0.2s ease-out,
       background-position 0.7s ease-out;
   }
   @media (hover: hover) {
@@ -727,8 +727,9 @@
     .dock-key:hover svg {
       animation: icon-nudge 0.4s ease-out;
     }
+    /* Brightness, not opacity: a see-through plate would show the stacked plates under it. */
     .match-tiles:has(> :hover) > :not(:hover) {
-      opacity: 0.55;
+      filter: brightness(0.6) saturate(0.7);
     }
   }
   @supports (animation-timeline: scroll()) {
