@@ -22,6 +22,14 @@
   "session": {
     "totalBill": "Today's total bill"
   },
+  "pool": {
+    "hint": "Pull the cue ball back and let go to shoot",
+    "scratch": "Scratch! Drag the cue ball to put it back",
+    "cleared": "Table cleared in {count, plural, one {# shot} other {# shots}}!",
+    "sunk": "Balls potted",
+    "shots": "{count, plural, one {# shot} other {# shots}}",
+    "rerack": "Rack again"
+  },
   "scoreboard": {
     "title": "Scoreboard",
     "lastSession": "Last session · {date}",

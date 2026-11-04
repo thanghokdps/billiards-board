@@ -12,9 +12,9 @@ const sights = (rail: string, positions: number[]) =>
   ));
 
 /** A pocket table from above: wood rail with diamond sights, six cushions cut at the jaws, six pockets. */
-export function TableFrame({ labelledBy, children }: { labelledBy: string; children: ReactNode }) {
+export function TableFrame({ children }: { children: ReactNode }) {
   return (
-    <section aria-labelledby={labelledBy} className="pool-table">
+    <div className="pool-table">
       <div aria-hidden className="pool-cloth felt animate-lamp-on" />
       <div aria-hidden className="pool-furniture">
         {CUSHIONS.map((side) => (
@@ -29,6 +29,6 @@ export function TableFrame({ labelledBy, children }: { labelledBy: string; child
         <span key={spot} aria-hidden className={`pool-pocket pool-pocket-${spot}`} />
       ))}
       <div className="pool-field relative">{children}</div>
-    </section>
+    </div>
   );
 }

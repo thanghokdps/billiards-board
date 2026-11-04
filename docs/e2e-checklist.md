@@ -5,7 +5,8 @@ Run on the live app, in /vi and /en, at 375 px and desktop. The console must sta
 ## Viewer (logged out)
 
 - [ ] `/` redirects to `/vi`; the VI/EN switch keeps the page.
-- [ ] Home: table hero with the date and the day's bill, scoreboard (or the "last session" label), streak avatars, WANTED strip when someone has 5 straight losses, and the recap card after 13:00.
+- [ ] Home: the date and the day's bill beside the table (above it on a phone), scoreboard (or the "last session" label), streak avatars, WANTED strip when someone has 5 straight losses, and the recap card after 13:00.
+- [ ] Home table: nine balls break once per session; drag the cue ball back and let go to shoot; a potted ball shows under the table; a scratched cue ball is dragged back into place; "Xếp lại" resets. At 375 px a swipe anywhere but the cue ball scrolls the page.
 - [ ] History: game and period filters change the list; the match sheet shows highlights and the poster button. No admin buttons are visible. A 1v1v1 row uses the 1v1 seat in three columns, and the loser reads "Trả bill" only on a match with a bill.
 - [ ] Leaderboard: podium, six-pocket table (balls break from the rack, a pocket re-ranks, a ball opens every stat, the group view, no sideways scroll at 375 px), Elo chart (hide toggle remembered), 5×5 heatmap readable at 375 px.
 - [ ] Player profile: FIFA card, form, nemesis/prey, badges.

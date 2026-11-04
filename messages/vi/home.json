@@ -22,6 +22,14 @@
   "session": {
     "totalBill": "Tổng bill hôm nay"
   },
+  "pool": {
+    "hint": "Kéo bi cái ngược hướng muốn bắn rồi thả tay",
+    "scratch": "Bi cái rớt lỗ rồi, kéo để đặt lại",
+    "cleared": "Sạch bàn sau {count} cơ!",
+    "sunk": "Bi đã rớt lỗ",
+    "shots": "{count} cơ",
+    "rerack": "Xếp lại"
+  },
   "scoreboard": {
     "title": "Bảng điểm",
     "lastSession": "Buổi gần nhất · {date}",

@@ -8,13 +8,13 @@ One navigation at every width, no sidebar: `FloatingDock` holds Today, History, 
 
 ## Motion
 
-| Moment        | Where                                                  | How                                                                                                                                               | Reduced motion         |
-| ------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| 3D pool table | `features/leaderboard` (`table-canvas`, `lib/table-*`) | `three` over the flat table. The HTML buttons stay the controls and the scene pins them to each ball and pocket. It draws only while a ball moves | not loaded, flat table |
-| Break shot    | `features/home` (`break-shot`, `lib/break-physics`)    | 2D canvas with real collisions under the hero text, once per browser session                                                                      | skipped                |
-| Holo card     | `features/player/components/holo-frame.tsx`            | CSS variables set on pointer move, foil in `.holo-foil`                                                                                           | no tilt, no sweep      |
-| LED digits    | `components/ui/rolling-number.tsx`                     | CSS only, so it starts before hydration and the server HTML holds the real value. Reserved for headline numbers: each digit adds 20 spans         | final digits at once   |
-| Rows, charts  | `.stagger-in`, `animate-plinth`, recharts default      | CSS keyframes; recharts' `auto` animation checks reduced motion itself                                                                            | no animation           |
+| Moment        | Where                                                  | How                                                                                                                                               | Reduced motion                |
+| ------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| 3D pool table | `features/leaderboard` (`table-canvas`, `lib/table-*`) | `three` over the flat table. The HTML buttons stay the controls and the scene pins them to each ball and pocket. It draws only while a ball moves | not loaded, flat table        |
+| Pool game     | `features/home` (`pool-game`, `lib/pool-*`)            | 2D canvas on a fixed 1000×500 table, free play. Nine balls break once per browser session, then the cue ball's grip aims and shoots               | no auto break, still playable |
+| Holo card     | `features/player/components/holo-frame.tsx`            | CSS variables set on pointer move, foil in `.holo-foil`                                                                                           | no tilt, no sweep             |
+| LED digits    | `components/ui/rolling-number.tsx`                     | CSS only, so it starts before hydration and the server HTML holds the real value. Reserved for headline numbers: each digit adds 20 spans         | final digits at once          |
+| Rows, charts  | `.stagger-in`, `animate-plinth`, recharts default      | CSS keyframes; recharts' `auto` animation checks reduced motion itself                                                                            | no animation                  |
 
 | Elo stage | `features/leaderboard` (`elo-canvas`, `lib/elo-scene`) | `three` curtains in depth with a ball per player, scrubbed by pointer; `elo-line-chart` is the flat fallback |
 | Chalk cubes | `h2h-heatmap.tsx`, `.h2h-*` | CSS perspective; cube height and colour come from `--rate` and `--heat` |
