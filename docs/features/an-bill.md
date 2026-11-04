@@ -66,4 +66,14 @@ Per the user's instruction, slices end on the E2E checklist, not on tests or eva
 
 ## 6 · Duplicate check
 
-Filled after the build (see bottom).
+Run over the whole tree on 2026-11-04 (`jscpd` not installed; grep for re-declared constants, schemas, helpers and renderers).
+
+| Hit                                                                                                                                       | Decision                                                                                                                                     |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GAME_LABEL` declared three times (`components/ui/game-type-badge.tsx`, `app/api/poster/match/[id]/route.ts`, `langchain/tools/stats.ts`) | **fixed**: one copy in `src/lib/domain.ts`; the badge, poster route, stats tool, recap and 6 screens import it                               |
+| Game-type colours in `langchain/tools/stats.ts` (hex, sent to the chat chart) and `features/player/components/type-chart.tsx` (CSS vars)  | **kept**: two copies in different forms. The tool result must carry literal colours because the chart renders them as data                   |
+| Player-name resolution                                                                                                                    | **reuse**: `src/lib/names.ts` serves the tools and the browser (moved out of the tool in slice 4)                                            |
+| Tool-result shapes                                                                                                                        | **reuse**: one contract in `src/lib/agent-results.ts`, parsed by `parseToolResult` in the single wildcard renderer                           |
+| Confirm mechanism                                                                                                                         | **one**: `proposal-card.tsx` + `card-store.ts`; no second HITL path (no LangGraph interrupt)                                                 |
+| `Intl.DateTimeFormat` outside `lib/domain.ts` (`context-snapshot.ts`, `home/lib/day-summary.ts`, `audit/lib/time.ts`)                     | **kept**: each needs a different format (full prompt timestamp, hour bucket, relative audit time) that `formatDate`/`formatTime` don't cover |
+| Admin fetchers                                                                                                                            | **reuse**: `features/matches` `matchesApi` serves the chat cards and the history screen                                                      |
