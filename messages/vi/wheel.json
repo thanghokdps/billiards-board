@@ -24,7 +24,7 @@
   "modeHintSpinner2v2": "{name} quay trúng ai thì người đó cùng đội. Đúng 4 người thì 2 người còn lại là đội kia, dư người thì quay tiếp cho đội kia.",
   "spinnerTitle": "Ai quay?",
   "spinnerHint": "Người quay không nằm trên vòng quay. Không chọn ai thì vòng quay có đủ mọi người.",
-  "victimNone": "×N lặp tên mọi người N lần trên vòng quay. Giữ lâu một avatar để chọn nạn nhân: nạn nhân chỉ xuất hiện 1 lần.",
+  "victimNone": "×N lặp tên mọi người N lần. Nạn nhân chỉ có 1 lần.",
   "victimIs": "Nạn nhân: {name}",
   "victimClear": "Bỏ nạn nhân",
   "victimBadge": "Nạn nhân",

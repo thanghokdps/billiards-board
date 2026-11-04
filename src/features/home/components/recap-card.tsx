@@ -24,7 +24,7 @@ interface RecapCardProps {
 function Fact({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="min-w-0">
-      <dt className="truncate text-2xs font-semibold uppercase tracking-label text-ivory-faint">{label}</dt>
+      <dt className="truncate text-xs font-medium text-ivory-muted">{label}</dt>
       <dd className="mt-1 min-w-0">{children}</dd>
     </div>
   );

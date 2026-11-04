@@ -36,7 +36,7 @@ export function HistoryList({ days, highlights, admin }: HistoryListProps) {
         {days.map((day) => (
           <section key={day.date} aria-labelledby={`day-${day.date}`}>
             <header className="sticky top-(--header-h) z-10 -mx-4 flex items-baseline justify-between gap-3 border-b border-line bg-night/90 px-4 py-2 backdrop-blur-md">
-              <h2 id={`day-${day.date}`} className="font-display text-lg font-bold uppercase tracking-wide">
+              <h2 id={`day-${day.date}`} className="font-display text-xl font-bold leading-tight">
                 {formatDate(day.date, locale, "long")}
               </h2>
               <p className="shrink-0 text-xs text-ivory-muted">
@@ -44,7 +44,7 @@ export function HistoryList({ days, highlights, admin }: HistoryListProps) {
                 <span className="digits font-bold text-lamp">{formatVnd(day.bill, locale)}</span>
               </p>
             </header>
-            <ul className="mt-3 space-y-3">
+            <ul className="divide-y divide-line">
               {day.matches.map((match) => {
                 const count = highlights[match.id]?.length ?? 0;
                 return (

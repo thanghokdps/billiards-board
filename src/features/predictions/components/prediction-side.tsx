@@ -27,11 +27,9 @@ export function PredictionSide({ players, voters, won, align }: PredictionSidePr
       </p>
       <p className={cn("digits text-score font-bold leading-none", won ? "text-lamp digits-glow" : "text-ivory")}>
         {voters.length}
-        <span className="ml-1.5 text-2xs font-semibold uppercase tracking-label text-ivory-faint">
-          {t("votes", { count: voters.length })}
-        </span>
+        <span className="ml-1.5 text-xs font-medium text-ivory-muted">{t("votes", { count: voters.length })}</span>
       </p>
-      {won && <p className="font-display text-xs font-bold uppercase tracking-label text-lamp">★ {t("winner")}</p>}
+      {won && <p className="text-xs font-semibold text-lamp">★ {t("winner")}</p>}
       {voters.length > 0 && (
         <ul aria-label={t("voters")} className={cn("flex flex-wrap gap-1", right && "justify-end")}>
           {voters.map((v) => (

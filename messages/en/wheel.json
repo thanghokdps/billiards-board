@@ -24,7 +24,7 @@
   "modeHintSpinner2v2": "Whoever {name} draws joins their team. With exactly 4 players the other two are the other team; with more, keep spinning for the other team.",
   "spinnerTitle": "Who spins?",
   "spinnerHint": "The spinner is not on the wheel. Pick nobody to keep everyone on it.",
-  "victimNone": "×N repeats everyone's name N times on the wheel. Press and hold an avatar to pick a victim, who appears only once.",
+  "victimNone": "×N repeats every name N times. The victim appears once.",
   "victimIs": "Victim: {name}",
   "victimClear": "Clear victim",
   "victimBadge": "Victim",

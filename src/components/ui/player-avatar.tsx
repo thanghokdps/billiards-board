@@ -1,3 +1,4 @@
+import { Flame, Snowflake } from "lucide-react";
 import Image from "next/image";
 
 import { cn } from "@/lib/cn";
@@ -19,7 +20,7 @@ const SIZES = {
 interface PlayerAvatarProps {
   player: Pick<PlayerRef, "name" | "ballColor" | "ballNumber" | "avatarUrl">;
   size?: keyof typeof SIZES;
-  /** 🔥 after 3 wins in a row; after losses the avatar greys out, and wears the chicken hat from 3. */
+  /** A flame after 3 wins in a row; after losses the avatar greys out, and wears the chicken hat from 3. */
   streak?: Streak | null;
   className?: string;
 }
@@ -49,12 +50,12 @@ export function PlayerAvatar({ player, size = "md", streak, className }: PlayerA
       </span>
       {(hot || chicken) && (
         <span aria-hidden className={cn("absolute drop-shadow", s.badge)}>
-          {hot ? "🔥" : "🐔"}
+          {hot ? <Flame size="1em" className="fill-lamp text-ball" /> : "🐔"}
         </span>
       )}
       {streak && streak.result === "L" && streak.length >= 2 && !chicken && (
         <span aria-hidden className={cn("absolute drop-shadow", s.badge)}>
-          🧊
+          <Snowflake size="1em" className="text-cold" />
         </span>
       )}
     </span>

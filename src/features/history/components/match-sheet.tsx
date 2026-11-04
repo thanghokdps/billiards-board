@@ -45,10 +45,7 @@ export function MatchSheet({ match, highlights, admin, onClose }: MatchSheetProp
           </Button>
 
           <section aria-labelledby="sheet-highlights" className="space-y-3">
-            <h3
-              id="sheet-highlights"
-              className="font-display text-sm font-semibold uppercase tracking-label text-ivory-muted"
-            >
+            <h3 id="sheet-highlights" className="font-display text-xl font-bold leading-tight">
               {t("sheet.highlights")}
             </h3>
             <HighlightGallery matchId={match.id} items={highlights} admin={admin} />
@@ -56,7 +53,7 @@ export function MatchSheet({ match, highlights, admin, onClose }: MatchSheetProp
 
           {admin && (
             <section aria-labelledby="sheet-admin" className="space-y-5 border-t border-line pt-5">
-              <h3 id="sheet-admin" className="font-display text-sm font-semibold uppercase tracking-label text-lamp">
+              <h3 id="sheet-admin" className="font-display text-xl font-bold leading-tight text-lamp">
                 {t("admin.heading")}
               </h3>
               <div className="space-y-3">

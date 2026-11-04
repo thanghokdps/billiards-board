@@ -24,7 +24,7 @@ export function RecordCard({ icon: Icon, title, value, unit, match, caption }: R
         <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-lamp/15 text-lamp">
           <Icon className="size-5" aria-hidden />
         </span>
-        <h3 className="font-display text-sm font-semibold uppercase tracking-label text-ivory-muted">{title}</h3>
+        <h3 className="font-display text-lg font-bold leading-tight">{title}</h3>
       </div>
       <div>
         <p className="digits text-score font-bold text-lamp digits-glow">{value}</p>

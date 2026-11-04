@@ -85,7 +85,7 @@ export function MatchMomentOverlay() {
               />
             </div>
             <div className="flex items-center justify-between gap-3 p-4">
-              <p className="font-display text-2xl font-bold uppercase tracking-wide text-lamp">
+              <p className="font-display text-3xl font-extrabold text-lamp">
                 {moment.type === "streak_broken" ? t("streakBroken") : t(`special.${moment.type}`)}
               </p>
               <Button variant="ghost" size="icon-sm" onClick={() => emit(null)} aria-label={tc("close")}>

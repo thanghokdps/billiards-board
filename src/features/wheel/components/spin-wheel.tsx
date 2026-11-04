@@ -7,8 +7,15 @@ import { clack, haptic } from "@/lib/feedback";
 import { cryptoRandom, pickWeighted, rotationFor, slicesOf, type Slice, type WheelEntry } from "@/lib/wheel";
 
 const SPIN_MS = 2600;
-const R = 140;
+const R = 148;
 const MIN_LABEL_SHARE = 0.012;
+const REPEATED_LABEL_RADIUS = R * 0.8;
+
+/** Fits a repeated name to its slice's width at the label radius, so ×10 stays readable on a 375 px phone. */
+function repeatedLabelSize(share: number): number {
+  const sliceWidth = 2 * Math.PI * REPEATED_LABEL_RADIUS * share;
+  return round(Math.min(17, Math.max(11, sliceWidth * 0.9)));
+}
 
 // Node and Chrome disagree on the last float digit of cos/sin, which breaks hydration; round SVG coordinates.
 const round = (n: number) => Math.round(n * 100) / 100;
@@ -93,7 +100,7 @@ export function SpinWheel({ ref, entries, onResult, onSpinningChange, percentLab
   }
 
   return (
-    <div className={cn("relative mx-auto aspect-square w-full max-w-sm", className)}>
+    <div className={cn("relative mx-auto aspect-square w-full max-w-md", className)}>
       {/* Cue tip pointer at 12 o'clock */}
       <div aria-hidden className="absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-1">
         <svg viewBox="0 0 24 56" className="h-12 w-6 drop-shadow-lg">
@@ -110,13 +117,13 @@ export function SpinWheel({ ref, entries, onResult, onSpinningChange, percentLab
       >
         {/* Rail and pockets */}
         <circle r="158" style={{ fill: "var(--color-wood)" }} />
-        <circle r="150" style={{ fill: "var(--color-felt-deep)" }} />
+        <circle r="152" style={{ fill: "var(--color-felt-deep)" }} />
         {[0, 60, 120, 180, 240, 300].map((deg) => (
           <circle
             key={deg}
-            r="6"
-            cx={round(154 * Math.cos((deg * Math.PI) / 180))}
-            cy={round(154 * Math.sin((deg * Math.PI) / 180))}
+            r="4"
+            cx={round(155 * Math.cos((deg * Math.PI) / 180))}
+            cy={round(155 * Math.sin((deg * Math.PI) / 180))}
             style={{ fill: "var(--color-night)" }}
           />
         ))}
@@ -128,7 +135,7 @@ export function SpinWheel({ ref, entries, onResult, onSpinningChange, percentLab
           onTransitionEnd={finish}
         >
           {slices.map((slice) => {
-            const label = labelAt(slice, R * 0.64);
+            const label = labelAt(slice, repeated ? REPEATED_LABEL_RADIUS : R * 0.64);
             const pct = labelAt(slice, R * 0.86);
             return (
               <g key={slice.start}>
@@ -144,12 +151,8 @@ export function SpinWheel({ ref, entries, onResult, onSpinningChange, percentLab
                     textAnchor="middle"
                     dominantBaseline="middle"
                     fontWeight="800"
-                    fontSize={slice.share > 0.12 ? 17 : slice.share > 0.03 ? 12 : 9}
-                    style={{
-                      fill: "var(--color-night)",
-                      fontFamily: "var(--font-display)",
-                      textTransform: "uppercase",
-                    }}
+                    fontSize={repeated ? repeatedLabelSize(slice.share) : slice.share > 0.12 ? 18 : 14}
+                    style={{ fill: "var(--color-night)", fontFamily: "var(--font-display)" }}
                   >
                     {slice.entry.label}
                   </text>

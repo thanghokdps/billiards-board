@@ -58,7 +58,7 @@ export function OracleBoard({ rows }: { rows: OracleRow[] }) {
         <table className="w-full text-sm">
           <caption className="sr-only">{t("caption")}</caption>
           <thead>
-            <tr className="border-b border-line text-left text-2xs uppercase tracking-label text-ivory-faint">
+            <tr className="border-b border-line text-left text-xs text-ivory-muted">
               <th scope="col" className="px-4 py-2.5 font-semibold">
                 {t("rank")}
               </th>

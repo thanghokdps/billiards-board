@@ -43,7 +43,7 @@ function ChartTooltip({
   if (!active || typeof value !== "number") return null;
   return (
     <div className="rounded-md border border-line-strong bg-surface-2 px-3 py-2 shadow-pop">
-      <p className="text-2xs font-semibold uppercase tracking-label text-ivory-faint">{labelOf(String(label))}</p>
+      <p className="text-xs font-medium text-ivory-muted">{labelOf(String(label))}</p>
       <p className="digits text-lg font-bold text-lamp">{formatVnd(value, locale)}</p>
     </div>
   );

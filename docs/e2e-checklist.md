@@ -5,7 +5,7 @@ Run on the live app, in /vi and /en, at 375 px and desktop. The console must sta
 ## Viewer (logged out)
 
 - [ ] `/` redirects to `/vi`; the VI/EN switch keeps the page.
-- [ ] Home: session card, scoreboard (or the "last session" label), 🔥/🧊 avatars, WANTED strip when someone has 5 straight losses, and the recap card after 13:00.
+- [ ] Home: table hero with the attendees' balls and the day's bill, scoreboard (or the "last session" label), streak avatars, WANTED strip when someone has 5 straight losses, and the recap card after 13:00.
 - [ ] History: game and period filters change the list; the match sheet shows highlights and the poster button. No admin buttons are visible.
 - [ ] Leaderboard: podium, table, Elo chart (hide toggle remembered), 5×5 heatmap readable at 375 px.
 - [ ] Player profile: FIFA card, form, nemesis/prey, badges.
@@ -13,13 +13,13 @@ Run on the live app, in /vi and /en, at 375 px and desktop. The console must sta
 - [ ] Wheel: opens in 2v2, participant chips, 1v1/2v2, long-press victim, x5/x10 repeat every name N times with chances unchanged (with a victim: 4 players with x5 leaves the victim at ≈ 6%), +/−, % on slices when names are not repeated, spin 2–3 s, skip, then sound and vibrate. No "Tạo trận" button for viewers.
 - [ ] Wheel spinner: pick "Ai quay?" → that player leaves the wheel and sits on side A. 4 players: one spin fills both teams. 5 players: first spin is the partner, then spin for the other team. 1v1: the winner is the opponent. No spinner: everyone on the wheel, as before.
 - [ ] `POST /api/admin/matches` without the cookie → 401; `/api/copilotkit` without the cookie → 401.
-- [ ] The 8-ball tab opens the wheel, not the chat.
+- [ ] The 8-ball in the dock opens the rack: 10 balls plus Change log and Admin links; a ball navigates and closes it; Esc, the X and a tap outside close it. The active page's ball is ringed. The dock's last slot is the wheel, not the chat.
 
 ## Admin
 
 - [ ] `/admin`: a wrong password → error; 6 wrong tries → 429 with a wait message; the right password → dashboard.
 - [ ] Players: add one with an avatar upload (≤1.5 MB) and a colour; edit; delete (archived when they have matches).
-- [ ] Chat (8-ball / ⌘K) opens as a bottom sheet on the phone and a side panel on desktop.
+- [ ] Chat (dock's assistant button / ⌘K) opens as a bottom sheet on the phone and a side panel on desktop.
 - [ ] "3c real Thén thắng Dũ 15-11, bill 45k" → confirm card → Save → clack + haptic, row on Home, Undo 30 s works.
 - [ ] Batch of 2 matches in one sentence → one card, Save all.
 - [ ] Missing game type → one question with chips; tapping a chip continues.

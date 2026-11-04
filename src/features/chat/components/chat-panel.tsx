@@ -85,9 +85,7 @@ export function ChatPanel({ pendingMessage, onPendingSent }: ChatPanelProps) {
             welcomeScreen={{
               welcomeMessage: () => (
                 <div className="px-2 pb-4 text-center">
-                  <p className="font-display text-2xl font-bold uppercase tracking-wide text-ivory">
-                    {t("welcomeTitle")}
-                  </p>
+                  <p className="font-display text-3xl font-bold text-ivory">{t("welcomeTitle")}</p>
                   <p className="mx-auto mt-1 max-w-sm text-sm text-ivory-muted">{t("welcomeBody")}</p>
                 </div>
               ),

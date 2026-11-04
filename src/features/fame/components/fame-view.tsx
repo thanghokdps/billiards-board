@@ -12,7 +12,7 @@ import { WrappedCard } from "./wrapped-card";
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="space-y-3">
-      <h2 className="font-display text-xl font-bold uppercase tracking-wide">{title}</h2>
+      <h2 className="font-display text-2xl font-bold leading-tight">{title}</h2>
       {children}
     </section>
   );

@@ -54,9 +54,7 @@ export function TvScreen({ data }: { data: TvData }) {
       <header className="flex items-center gap-4 2xl:gap-6">
         <Ball className="size-12 2xl:size-24" />
         <div className="min-w-0">
-          <p className="truncate font-display text-3xl font-bold uppercase leading-none tracking-wide 2xl:text-7xl">
-            {tc("appName")}
-          </p>
+          <p className="truncate font-display text-4xl font-extrabold leading-none 2xl:text-7xl">{tc("appName")}</p>
           <p className="mt-1 truncate text-sm text-ivory-muted 2xl:text-2xl">{tc("slogan")}</p>
         </div>
         <div className="ml-auto text-right">
@@ -96,7 +94,7 @@ export function TvScreen({ data }: { data: TvData }) {
               </div>
               <p
                 className={cn(
-                  "mt-1.5 truncate text-xs font-semibold uppercase tracking-label 2xl:mt-3 2xl:text-2xl",
+                  "mt-1.5 truncate text-xs font-semibold 2xl:mt-3 2xl:text-2xl",
                   i === index ? "text-lamp" : "text-ivory-faint",
                 )}
               >

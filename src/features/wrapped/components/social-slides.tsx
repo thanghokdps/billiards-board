@@ -35,10 +35,8 @@ function RivalCard({
           </span>
         )}
         <div className="min-w-0">
-          <p className="text-2xs font-semibold uppercase tracking-label text-ivory-faint">{label}</p>
-          <p className="truncate font-display text-2xl font-bold uppercase tracking-wide">
-            {player ? player.name : empty}
-          </p>
+          <p className="text-xs font-medium text-ivory-muted">{label}</p>
+          <p className="truncate font-display text-3xl font-bold">{player ? player.name : empty}</p>
           {player && <p className="text-sm text-ivory-muted">{line}</p>}
         </div>
       </CardBody>
@@ -125,7 +123,7 @@ export function BadgesSlide({ story, onReplay }: SlideProps & { onReplay: () => 
                 {BADGE_ICON[id]}
               </span>
               <div className="min-w-0">
-                <p className="font-display text-lg font-bold uppercase tracking-wide">{t(`badges.${id}`)}</p>
+                <p className="font-display text-xl font-bold leading-tight">{t(`badges.${id}`)}</p>
                 <p className="text-xs text-ivory-muted">{t(`badges.${id}_hint`)}</p>
               </div>
             </li>
@@ -133,7 +131,7 @@ export function BadgesSlide({ story, onReplay }: SlideProps & { onReplay: () => 
         </ul>
       )}
       <div className="mt-auto space-y-3">
-        <p className="font-display text-sm font-bold uppercase tracking-label text-ivory-muted">{t("share.title")}</p>
+        <p className="font-display text-xl font-bold text-ivory-muted">{t("share.title")}</p>
         <div className="pointer-events-auto flex flex-wrap gap-2">
           <ShareButton title={shareText} text={shareText} />
           <Button asChild variant="outline" className="pointer-events-auto">

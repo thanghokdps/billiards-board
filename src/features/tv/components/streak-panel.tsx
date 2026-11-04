@@ -24,7 +24,7 @@ function StreakCard({ row }: { row: TvStreakRow }) {
       >
         {row.streak.length}
       </p>
-      <p className="text-sm font-semibold uppercase tracking-label text-ivory-muted 2xl:text-2xl">
+      <p className="text-sm font-medium text-ivory-muted 2xl:text-2xl">
         {t(hot ? "wins" : "losses", { count: row.streak.length })}
       </p>
     </li>
@@ -47,9 +47,7 @@ export function StreakPanel({ data }: { data: TvData }) {
       <PanelHeading title={t("title")} />
       {data.hot.length > 0 && (
         <div>
-          <h3 className="mb-3 font-display text-xl font-semibold uppercase tracking-label text-win 2xl:text-4xl">
-            {t("hot")}
-          </h3>
+          <h3 className="mb-3 font-display text-2xl font-bold text-win 2xl:text-5xl">{t("hot")}</h3>
           <ul className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5 2xl:gap-8">
             {data.hot.map((row) => (
               <StreakCard key={row.player.id} row={row} />
@@ -59,9 +57,7 @@ export function StreakPanel({ data }: { data: TvData }) {
       )}
       {data.cold.length > 0 && (
         <div>
-          <h3 className="mb-3 font-display text-xl font-semibold uppercase tracking-label text-cold 2xl:text-4xl">
-            {t("cold")}
-          </h3>
+          <h3 className="mb-3 font-display text-2xl font-bold text-cold 2xl:text-5xl">{t("cold")}</h3>
           <ul className="grid grid-cols-2 gap-4 md:grid-cols-3 2xl:gap-8">
             {data.cold.map((row) => (
               <StreakCard key={row.player.id} row={row} />

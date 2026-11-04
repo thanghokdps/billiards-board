@@ -1,3 +1,4 @@
+import { Flame, Snowflake } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { Card } from "@/components/ui/card";
@@ -11,7 +12,7 @@ import type { PlayerStats } from "@/lib/stats";
 import { FormLine } from "./form-line";
 import { SectionTitle } from "./section-title";
 
-const HEAD = "px-3 py-2 text-left text-2xs font-semibold uppercase tracking-label text-ivory-faint whitespace-nowrap";
+const HEAD = "px-3 py-2 text-left text-xs font-medium text-ivory-muted whitespace-nowrap";
 const CELL = "px-3 py-2.5 whitespace-nowrap";
 
 /** Every player, ranked. Scrolls sideways inside the card on a phone; the name column stays put. */
@@ -106,7 +107,11 @@ export function StandingsTable({ ranked }: { ranked: PlayerStats[] }) {
                             count: s.current.length,
                           })}
                         >
-                          <span aria-hidden>{s.current.result === "W" ? "🔥" : "🧊"}</span>
+                          {s.current.result === "W" ? (
+                            <Flame className="size-4" aria-hidden />
+                          ) : (
+                            <Snowflake className="size-4" aria-hidden />
+                          )}
                           <span aria-hidden>{s.current.length}</span>
                         </span>
                       ) : (

@@ -23,7 +23,7 @@ export function FilterLinks({ label, options, current, className }: FilterLinksP
                 scroll={false}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex h-8 items-center rounded-full px-3.5 text-sm font-semibold transition-colors",
+                  "flex h-9 items-center whitespace-nowrap rounded-full px-3.5 text-sm font-semibold transition-colors",
                   active ? "bg-lamp text-night" : "text-ivory-muted hover:text-ivory",
                 )}
               >

@@ -20,7 +20,6 @@
     "copyFailed": "Could not copy, select the text and copy it by hand"
   },
   "session": {
-    "title": "Lunch session",
     "noVenue": "No venue yet",
     "table": "Table {label}",
     "noTable": "No table yet",
@@ -50,8 +49,9 @@
     "lastSession": "Last session · {date}",
     "empty": "No matches today yet",
     "emptyBody": "The balls are still on the rack. Record the first match when it's done.",
-    "emptyViewerBody": "Waiting for the admin to record today's first match.",
+    "emptyViewerBody": "The first match will show up here. Not sure who plays who? Give the wheel a spin.",
     "openAssistant": "Open the assistant",
+    "pickPairing": "Spin for a pairing",
     "delete": "Delete this match",
     "deleted": "Match deleted",
     "deleteFailed": "Could not delete the match",

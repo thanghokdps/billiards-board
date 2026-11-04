@@ -52,7 +52,7 @@ export function AdminLogin() {
         <CardBody className="space-y-5">
           <div className="flex flex-col items-center gap-2 text-center">
             <Ball className="size-14" />
-            <h1 className="font-display text-2xl font-bold uppercase tracking-wide">{t("title")}</h1>
+            <h1 className="font-display text-3xl font-bold leading-tight">{t("title")}</h1>
             <p className="text-sm text-ivory-muted">{t("hint")}</p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">

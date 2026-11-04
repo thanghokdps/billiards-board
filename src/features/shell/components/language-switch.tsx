@@ -43,7 +43,7 @@ export function LanguageSwitch({ className }: { className?: string }) {
             })
           }
           className={cn(
-            "h-7 rounded-full px-2.5 font-display text-xs font-bold tracking-wider transition-colors",
+            "h-9 cursor-pointer rounded-full px-3 text-xs font-bold transition-colors",
             locale === lang.code ? "bg-ivory text-night" : "text-ivory-muted hover:text-ivory",
           )}
         >

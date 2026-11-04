@@ -133,7 +133,7 @@ export function HeadToHeadCard({ result }: { result: HeadToHeadResult }) {
         </div>
         <p className="mt-1.5 text-center text-xs text-ivory-muted">{t("meetings", { count: result.played })}</p>
       </div>
-      <div className="space-y-2 p-3">
+      <div className="divide-y divide-line px-3">
         {result.recent.map((m) => (
           <MatchRow key={m.id} match={m} compact />
         ))}

@@ -95,7 +95,7 @@ export default async function PlayerPage({ params }: Props) {
             {profile.recent.length === 0 ? (
               <p className="text-sm text-ivory-muted">{t("recent.empty")}</p>
             ) : (
-              <ul className="space-y-2">
+              <ul className="divide-y divide-line">
                 {profile.recent.map((m) => (
                   <li key={m.id}>
                     <MatchRow match={{ ...m, note: null }} compact />

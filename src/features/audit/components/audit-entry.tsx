@@ -32,7 +32,7 @@ export function AuditEntry({ item, now }: { item: AuditItem; now: string }) {
           <Badge tone={isAction(item.action) ? ACTION_TONE[item.action] : "neutral"} size="md">
             {label("action", item.action)}
           </Badge>
-          <h3 className="font-display text-base font-bold uppercase tracking-wide">{label("entity", item.entity)}</h3>
+          <h3 className="font-display text-lg font-bold leading-tight">{label("entity", item.entity)}</h3>
           <span className="font-mono text-xs text-ivory-faint">{t("shortId", { id: item.shortId })}</span>
           <Badge tone="neutral" className="ml-auto">
             <ViaIcon className="size-3" aria-hidden />

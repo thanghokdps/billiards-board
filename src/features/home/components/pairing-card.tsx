@@ -22,8 +22,8 @@ function PairSide({ players, avg, align }: { players: StatPlayer[]; avg: number;
         ))}
       </div>
       <div className="min-w-0">
-        <p className="truncate font-bold leading-tight">{names(players)}</p>
-        <p className="digits text-sm text-ivory-muted">{t("elo", { value: Math.round(avg) })}</p>
+        <p className="font-bold leading-tight">{names(players)}</p>
+        <p className="digits whitespace-nowrap text-sm text-ivory-muted">{t("elo", { value: Math.round(avg) })}</p>
       </div>
     </div>
   );
