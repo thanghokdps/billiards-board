@@ -1,16 +1,19 @@
 "use client";
 
 import { RotateCcw, SkipForward, Sparkles } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
-import { Fragment, useCallback, useMemo, useRef, useState, type ReactNode } from "react";
+import { useTranslations } from "next-intl";
+import { useCallback, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
-import { PlayerAvatar } from "@/components/ui/player-avatar";
-import { formatPercent, PLAYERS_IN_FORMAT, type PairingFormat } from "@/lib/domain";
-import type { WheelEntry } from "@/lib/wheel";
+import { cn } from "@/lib/cn";
+import { PLAYERS_IN_FORMAT, type PairingFormat } from "@/lib/domain";
+import { celebrate } from "@/lib/feedback";
+import type { TreatPins, WheelEntry } from "@/lib/wheel";
 import type { PlayerRef } from "@/server/matches/schema";
 
+import { SeatBoard } from "./seat-board";
 import { SpinWheel, type SpinWheelHandle } from "./spin-wheel";
+import { WinnerReveal } from "./winner-reveal";
 import { useHydrated } from "../hooks/use-hydrated";
 
 export interface WheelPairing {
@@ -21,8 +24,10 @@ export interface WheelPairing {
 
 interface WheelPanelProps {
   players: PlayerRef[];
-  /** Weight per player id; 0 hides a player. */
+  /** Weight per player id: how many times a name repeats on the wheel. */
   weights: Record<number, number>;
+  /** The admin's treat, applied to the draw only. */
+  pins?: TreatPins;
   mode: PairingFormat;
   /** Rendered under a finished pairing (e.g. "Tạo trận từ cặp này"). */
   pairingActions?: (pairing: WheelPairing) => ReactNode;
@@ -31,8 +36,8 @@ interface WheelPanelProps {
   picks?: number[];
   onPicksChange?: (picks: number[]) => void;
   onSpinningChange?: (spinning: boolean) => void;
-  /** Rendered directly under the wheel, above the spin button (e.g. the ×N shortcut chips). */
-  belowWheel?: ReactNode;
+  /** Rendered above the wheel (e.g. the mode picker). */
+  aboveWheel?: ReactNode;
   /** The player spinning: off the wheel and already seated on side A. */
   spinnerId?: number | null;
 }
@@ -45,22 +50,23 @@ interface WheelPanelProps {
 export function WheelPanel({
   players,
   weights,
+  pins,
   mode,
   pairingActions,
   compact,
   picks: controlledPicks,
   onPicksChange,
   onSpinningChange,
-  belowWheel,
+  aboveWheel,
   spinnerId = null,
 }: WheelPanelProps) {
   const t = useTranslations("wheel");
-  const locale = useLocale();
   const [ownPicks, setOwnPicks] = useState<number[]>([]);
   const picks = controlledPicks ?? ownPicks;
   const setPicks = onPicksChange ?? setOwnPicks;
   const wheel = useRef<SpinWheelHandle>(null);
   const [spinning, setSpinningState] = useState(false);
+  const [revealed, setRevealed] = useState<number | null>(null);
   const setSpinning = useCallback(
     (value: boolean) => {
       setSpinningState(value);
@@ -83,18 +89,22 @@ export function WheelPanel({
   const done = picks.length >= spins;
   const hydrated = useHydrated();
   const canSpin = hydrated && !spinning && !done && entries.length > 0 && entries.length + picks.length >= spins;
+  const short = entries.length + picks.length < spins;
 
-  const onResult = useCallback(
-    (entry: WheelEntry) => {
-      const rest = entries.filter((e) => e.id !== entry.id).map((e) => e.id);
-      // Exactly the seats left: those players are the other team, so there is nothing to spin for.
-      const seatedWithoutSpin = spinnerId !== null && rest.length === spins - picks.length - 1 ? rest : [];
-      setPicks([...picks, entry.id, ...seatedWithoutSpin]);
-    },
-    [entries, picks, setPicks, spinnerId, spins],
-  );
+  function onResult(entry: WheelEntry) {
+    const rest = entries.filter((e) => e.id !== entry.id).map((e) => e.id);
+    // Exactly the seats left: those players are the other team, so there is nothing to spin for.
+    const seatedWithoutSpin = spinnerId !== null && rest.length === spins - picks.length - 1 ? rest : [];
+    const next = [...picks, entry.id, ...seatedWithoutSpin];
+    setRevealed(null);
+    setPicks(next);
+    if (!compact && next.length >= spins) {
+      void celebrate(next.flatMap((id) => byId.get(id)?.ballColor ?? []));
+    }
+  }
+
   const seated = spinnerId === null ? picks : [spinnerId, ...picks];
-  const toPlayers = (ids: number[]) => ids.map((id) => byId.get(id)!);
+  const toPlayers = (ids: number[]) => ids.flatMap((id) => byId.get(id) ?? []);
   const threeWay = mode === "1v1v1";
   const seatsOnA = threeWay ? 2 : needed / 2;
   const pairing: WheelPairing =
@@ -105,19 +115,27 @@ export function WheelPanel({
           sideB: toPlayers(seated.filter((_, i) => i % 2 === 1)),
         }
       : { format: mode, sideA: toPlayers(seated.slice(0, seatsOnA)), sideB: toPlayers(seated.slice(seatsOnA)) };
+  const sides = threeWay ? toPlayers(seated).map((p) => [p]) : [pairing.sideA, pairing.sideB];
+  const allSides = threeWay ? Array.from({ length: needed }, (_, i) => sides[i] ?? []) : sides;
 
   return (
     <div className="space-y-4">
-      <SpinWheel
-        ref={wheel}
-        entries={entries}
-        onResult={onResult}
-        onSpinningChange={setSpinning}
-        percentLabel={(share) => formatPercent(share, locale)}
-        className={compact ? "max-w-64" : undefined}
-      />
+      {aboveWheel}
 
-      {belowWheel}
+      <div data-spinning={spinning} className={cn(!compact && "wheel-stage relative overflow-hidden rounded-xl")}>
+        {!compact && <div aria-hidden className="wheel-rays" />}
+        <SpinWheel
+          ref={wheel}
+          entries={entries}
+          pins={pins}
+          onResult={onResult}
+          onReveal={(entry) => setRevealed(entry.id)}
+          onSpinningChange={setSpinning}
+          compact={compact}
+          className={compact ? "max-w-64" : undefined}
+        />
+        {!compact && <WinnerReveal player={revealed === null ? null : (byId.get(revealed) ?? null)} />}
+      </div>
 
       <div className="flex items-center justify-center gap-2">
         {spinning ? (
@@ -131,57 +149,23 @@ export function WheelPanel({
             {t("again")}
           </Button>
         ) : (
-          <Button size="lg" onClick={() => wheel.current?.spin()} disabled={!canSpin} className="min-w-40">
+          <Button
+            size="lg"
+            onClick={() => wheel.current?.spin()}
+            disabled={!canSpin}
+            className={cn("min-w-48 text-lg", canSpin && !compact && "animate-pulse-ring")}
+          >
             <Sparkles className="size-4" aria-hidden />
             {picks.length === 0 ? t("spin") : t("spinNext", { n: picks.length + 1, total: spins })}
           </Button>
         )}
       </div>
 
-      {(seated.length > 0 || (hydrated && !canSpin)) && (
-        <div aria-live="polite" className="rounded-lg border border-line bg-surface-2 p-3">
-          {entries.length + picks.length < spins && (
-            <p className="text-center text-sm text-loss">{t("notEnough", { n: needed })}</p>
-          )}
-          {seated.length > 0 &&
-            (threeWay ? (
-              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2">
-                {toPlayers(seated).map((p, i) => (
-                  <Fragment key={p.id}>
-                    {i > 0 && <span className="font-display text-xl font-bold text-lamp">VS</span>}
-                    <Team players={[p]} />
-                  </Fragment>
-                ))}
-              </div>
-            ) : (
-              <div className="flex items-center justify-between gap-3">
-                <Team players={pairing.sideA} />
-                <span className="font-display text-xl font-bold text-lamp">VS</span>
-                <Team players={pairing.sideB} align="right" />
-              </div>
-            ))}
-          {done && pairingActions && (
-            <div className="mt-3 flex flex-wrap justify-center gap-2">{pairingActions(pairing)}</div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
+      {hydrated && short && <p className="text-center text-sm text-loss">{t("notEnough", { n: needed })}</p>}
 
-function Team({ players, align }: { players: PlayerRef[]; align?: "right" }) {
-  return (
-    <div
-      className={
-        align === "right" ? "flex flex-1 flex-row-reverse flex-wrap gap-2 text-right" : "flex flex-1 flex-wrap gap-2"
-      }
-    >
-      {players.map((p) => (
-        <span key={p.id} className="flex items-center gap-1.5 font-bold">
-          <PlayerAvatar player={p} size="sm" />
-          {p.name}
-        </span>
-      ))}
+      <SeatBoard sides={allSides} seatsPerSide={threeWay ? 1 : needed / 2} done={done} />
+
+      {done && pairingActions && <div className="flex flex-wrap justify-center gap-2">{pairingActions(pairing)}</div>}
     </div>
   );
 }

@@ -27,6 +27,29 @@ export function probabilities(entries: WheelEntry[]): Map<number, number> {
   return new Map(active.map((e) => [e.id, total ? e.weight / total : 0]));
 }
 
+/** Admin treat: share of the draw (0 to 1) per pinned player id. Slices never show it, so it stays invisible. */
+export type TreatPins = Record<number, number>;
+
+/** Pinned players get their share; the others split the rest by weight. Falls back to weights if nothing can win. */
+export function treatedChances(entries: WheelEntry[], pins: TreatPins): Map<number, number> {
+  const active = activeEntries(entries);
+  const pinned = active.reduce((s, e) => s + (pins[e.id] ?? 0), 0);
+  const freeWeight = active.reduce((s, e) => s + (pins[e.id] === undefined ? e.weight : 0), 0);
+  const rest = Math.max(0, 1 - pinned);
+  const raw = active.map((e) => [e.id, pins[e.id] ?? (freeWeight ? (rest * e.weight) / freeWeight : 0)] as const);
+  const total = raw.reduce((s, [, share]) => s + share, 0);
+  if (!total) return probabilities(active);
+  return new Map(raw.map(([id, share]) => [id, share / total]));
+}
+
+/** Pins `id` to `share`; other pins in `pool` shrink in proportion when they no longer fit in what is left. */
+export function withPin(pins: TreatPins, id: number, share: number, pool: number[]): TreatPins {
+  const others = pool.filter((p) => p !== id && pins[p] !== undefined);
+  const sum = others.reduce((s, p) => s + pins[p]!, 0);
+  const scale = sum > 1 - share ? (1 - share) / sum : 1;
+  return { ...pins, ...Object.fromEntries(others.map((p) => [p, pins[p]! * scale])), [id]: share };
+}
+
 /** Picks one entry with probability weight / total. */
 export function pickWeighted(entries: WheelEntry[], random: () => number = cryptoRandom): WheelEntry | null {
   const active = activeEntries(entries);
