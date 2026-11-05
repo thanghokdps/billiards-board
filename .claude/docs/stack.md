@@ -11,7 +11,7 @@ Runtime: Node 20.19.0 (`.nvmrc`; run `nvm use` first, the shell default here is 
 | `next-intl` | 4.14.9 | vi/en routing and messages (`src/i18n/`, `messages/`) |
 | `tailwindcss` | 4.3.4 | `@theme` tokens in `src/styles/globals.css` |
 | `radix-ui`, `lucide-react`, `sonner`, `motion`, `recharts`, `canvas-confetti` | 1.8.1, 1.67.0, 2.0.8, 14.9.0, 3.10.1, 1.9.4 | primitives, icons, toasts, animation, charts, confetti |
-| `three` | 0.187.0 | the 3D pool table on `/leaderboard`; `import()`ed near the table only, about 140 KB gzip |
+| `three` | 0.187.0 | the 3D scenes (pool table, Elo mountain, chip stacks, wheel, rack menu); `import()`ed near each scene only, about 140 KB gzip |
 | `drizzle-orm` / `drizzle-kit`, `pg` | 0.45.4 / 0.31.11, 8.23.1 | schema, migrations, queries |
 | `langchain` | 1.6.1 | `createAgent` and the stock middleware |
 | `@langchain/core` / `@langchain/langgraph` | 1.3.4 / 1.6.0 | one copy each (pnpm `overrides`) |

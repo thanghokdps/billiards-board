@@ -14,7 +14,7 @@
 | `src/server/<aggregate>/` | `repository.ts` (all SQL via Drizzle), `schema.ts` (zod), `service.ts` where a route composes; `server/posters/` (Satori templates and fonts); `server/http.ts` (`route()`, `HttpError`, `requireAdmin`, `parseJson`); `server/env.ts` |
 | `src/server/auth/` | `session.ts` (HMAC admin cookie `anbill_admin`, 30 days, `isAdminRequest`), `login-limit.ts` (5 failures per 15 min) |
 | `src/db/` | Drizzle schema (players, sessions, matches, match_players, events, audit_log, media, highlights) and the `pg` pool |
-| `src/lib/` | Framework-free helpers shared by server, agent and UI: `domain.ts` (types, `GAME_LABEL`, formatting), `stats.ts`, `agent-results.ts` (tool names + result contract), `wheel.ts`, `names.ts` |
+| `src/lib/` | Framework-free helpers shared by server, agent and UI: `domain.ts` (types, `GAME_LABEL`, formatting), `stats.ts`, `agent-results.ts` (tool names + result contract), `wheel.ts`, `names.ts`. `table-3d/` is the shared pool-table scene (three, browser only), `import()`ed by the leaderboard and the rack menu, never by the server |
 | `src/langchain/` | The agent: `agent.ts` (createAgent + middleware, compiled once), `prompts.ts`, `context.ts`, `context-snapshot.ts`, `tools/`, `recap.ts`, `config/models.ts`, `guardrails/pii.ts`, `observability/tracing.ts`, `server/agui-agent.ts` |
 | `src/i18n/`, `messages/{vi,en}/` | next-intl routing, request config, one JSON per namespace |
 | `src/styles/globals.css` | Tailwind 4 `@theme` tokens ("felt at night") and the scoped CopilotKit theme (`.chat-theme.dark [data-copilotkit]`) |
