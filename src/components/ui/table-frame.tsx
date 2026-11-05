@@ -12,7 +12,7 @@ const sights = (rail: string, positions: number[]) =>
   ));
 
 /** A pocket table from above: wood rail with diamond sights, six cushions cut at the jaws, six pockets. */
-export function TableFrame({ children }: { children: ReactNode }) {
+export function TableFrame({ children }: { children?: ReactNode }) {
   return (
     <div className="pool-table">
       <div aria-hidden className="pool-cloth felt animate-lamp-on" />

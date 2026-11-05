@@ -9,7 +9,6 @@ import {
   WebGLRenderer,
 } from "three";
 
-import type { Point } from "./pocket-layout";
 import { easeOut, linear, RollingBall } from "./rolling-ball";
 import {
   ballTexture,
@@ -23,20 +22,31 @@ import {
   type Tokens,
 } from "./table-mesh";
 
+export interface Point {
+  x: number;
+  y: number;
+}
+
 export interface SceneBall {
   id: number;
   color: string;
-  number: number;
+  /** An empty string leaves the disc blank for an icon laid over it. */
+  number: number | string;
   /** Where the ball rests, in % of the felt. */
   point: Point;
   delayMs: number;
 }
 
+/** The break, in % of the felt. */
+export interface CuePath {
+  start: Point;
+  hit: Point;
+  rest: Point;
+}
+
 const ROLL_MS = 900;
 const CUE_MS = 300;
-const CUE_START = { x: 8, y: 50 };
-const CUE_HIT = { x: 38, y: 50 };
-const CUE_REST = { x: 20, y: 64 };
+const POCKET_TABLE_CUE: CuePath = { start: { x: 8, y: 50 }, hit: { x: 38, y: 50 }, rest: { x: 20, y: 64 } };
 const FOV = 26;
 const FIT = 0.97;
 
@@ -67,6 +77,7 @@ export class TableScene {
     private readonly canvas: HTMLCanvasElement,
     private readonly root: HTMLElement,
     private readonly layout: SceneLayout,
+    private readonly cuePath: CuePath = POCKET_TABLE_CUE,
   ) {
     this.sizes = TABLE[layout];
     this.tokens = readTokens(canvas);
@@ -79,7 +90,7 @@ export class TableScene {
     this.cue.visible = false;
   }
 
-  private addBall(color: string, number?: number): RollingBall {
+  private addBall(color: string, number?: number | string): RollingBall {
     const material = new MeshStandardMaterial({ map: ballTexture(color, this.tokens, number), roughness: 0.16 });
     const ball = new RollingBall(this.sphere, material, this.shadowGeometry, this.shadowMaterial, this.sizes.ball);
     this.scene.add(ball.mesh, ball.shadow);
@@ -154,12 +165,18 @@ export class TableScene {
   }
 
   private fireCueBall(now: number) {
-    this.cue.place(this.toWorld(CUE_START));
+    const { start, hit, rest } = this.cuePath;
+    this.cue.place(this.toWorld(start));
     this.cue.visible = true;
     this.cue.send(
-      { to: this.toWorld(CUE_HIT), startAt: now, durationMs: CUE_MS, ease: linear },
-      { to: this.toWorld(CUE_REST), startAt: now, durationMs: ROLL_MS, ease: easeOut },
+      { to: this.toWorld(hit), startAt: now, durationMs: CUE_MS, ease: linear },
+      { to: this.toWorld(rest), startAt: now, durationMs: ROLL_MS, ease: easeOut },
     );
+  }
+
+  hop(id: number) {
+    this.balls.get(id)?.hop(performance.now());
+    this.play();
   }
 
   private play() {

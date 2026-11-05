@@ -1,184 +1,174 @@
 "use client";
 
-import { useEffect, useImperativeHandle, useRef, useState, type Ref } from "react";
+import { useEffect, useImperativeHandle, useMemo, useRef, useState, type PointerEvent, type Ref } from "react";
 
 import { cn } from "@/lib/cn";
 import { clack, haptic } from "@/lib/feedback";
-import { cryptoRandom, pickWeighted, rotationFor, slicesOf, type Slice, type WheelEntry } from "@/lib/wheel";
+import {
+  cryptoRandom,
+  pickWeighted,
+  rotationFor,
+  slicesOf,
+  treatedChances,
+  type TreatPins,
+  type WheelEntry,
+} from "@/lib/wheel";
+
+import { FlatWheel } from "./flat-wheel";
+import { WheelCanvas } from "./wheel-canvas";
+import type { WheelScene } from "../lib/wheel-scene";
 
 const SPIN_MS = 2600;
-const R = 148;
-const MIN_LABEL_SHARE = 0.012;
-const REPEATED_LABEL_RADIUS = R * 0.8;
+/** How long a winner stays on the wheel before it leaves for the next spin. */
+const REVEAL_MS = 1700;
+const TICK_GAP_MS = 70;
 
-/** Fits a repeated name to its slice's width at the label radius, so ×10 stays readable on a 375 px phone. */
-function repeatedLabelSize(share: number): number {
-  const sliceWidth = 2 * Math.PI * REPEATED_LABEL_RADIUS * share;
-  return round(Math.min(17, Math.max(11, sliceWidth * 0.9)));
-}
-
-// Node and Chrome disagree on the last float digit of cos/sin, which breaks hydration; round SVG coordinates.
-const round = (n: number) => Math.round(n * 100) / 100;
-
-function arcPath(slice: Slice): string {
-  if (slice.share >= 0.9999) return `M 0 ${-R} A ${R} ${R} 0 1 1 -0.01 ${-R} Z`;
-  const toXY = (deg: number) => {
-    const rad = ((deg - 90) * Math.PI) / 180;
-    return [round(R * Math.cos(rad)), round(R * Math.sin(rad))] as const;
-  };
-  const [x1, y1] = toXY(slice.start);
-  const [x2, y2] = toXY(slice.end);
-  const large = slice.end - slice.start > 180 ? 1 : 0;
-  return `M 0 0 L ${x1} ${y1} A ${R} ${R} 0 ${large} 1 ${x2} ${y2} Z`;
-}
-
-function labelAt(slice: Slice, radius: number) {
-  const mid = (slice.start + slice.end) / 2;
-  const rad = ((mid - 90) * Math.PI) / 180;
-  return { x: round(radius * Math.cos(rad)), y: round(radius * Math.sin(rad)), rotate: round(mid) };
+/** The treat changes who wins, never what the wheel shows. */
+function draw(entries: WheelEntry[], pins: TreatPins | undefined): WheelEntry | null {
+  if (!pins) return pickWeighted(entries, cryptoRandom);
+  const chances = treatedChances(entries, pins);
+  const drawn = pickWeighted(
+    entries.map((e) => ({ ...e, weight: chances.get(e.id) ?? 0 })),
+    cryptoRandom,
+  );
+  return entries.find((e) => e.id === drawn?.id) ?? null;
 }
 
 export interface SpinWheelHandle {
   /** Draws the winner with crypto randomness, then animates to it. */
   spin: () => void;
-  /** Jumps to the end of a running spin. */
+  /** Jumps to the end of a running spin, or past the winner's moment. */
   skip: () => void;
 }
 
 interface SpinWheelProps {
   ref?: Ref<SpinWheelHandle>;
   entries: WheelEntry[];
+  /** Admin treat for this browser; the wheel draws equal slices either way. */
+  pins?: TreatPins;
   onResult: (entry: WheelEntry) => void;
+  /** The wheel has stopped on `entry`; `onResult` follows after its moment. */
+  onReveal?: (entry: WheelEntry) => void;
   onSpinningChange?: (spinning: boolean) => void;
-  percentLabel: (share: number) => string;
+  /** Stays flat with no moment, for the chat card. */
+  compact?: boolean;
   className?: string;
 }
 
-/** The felt table seen from above: one slice per player in their ball colour, the cue tip as pointer. */
-export function SpinWheel({ ref, entries, onResult, onSpinningChange, percentLabel, className }: SpinWheelProps) {
-  const slices = slicesOf(entries);
-  // With names repeated a slice's share is no longer the player's chance, and it gets too thin for sideways text.
-  const repeated = slices.length > entries.length;
+/** A 3D gameshow wheel when the device can run it, the flat wheel otherwise. */
+export function SpinWheel({
+  ref,
+  entries,
+  pins,
+  onResult,
+  onReveal,
+  onSpinningChange,
+  compact,
+  className,
+}: SpinWheelProps) {
+  const slices = useMemo(() => slicesOf(entries), [entries]);
   const [rotation, setRotation] = useState(0);
   const [duration, setDuration] = useState(SPIN_MS);
+  const [live, setLive] = useState(false);
+  const scene = useRef<WheelScene | null>(null);
   const pending = useRef<WheelEntry | null>(null);
-
-  useImperativeHandle(
-    ref,
-    () => ({
-      spin() {
-        const winner = pickWeighted(entries, cryptoRandom);
-        if (!winner || pending.current) return;
-        pending.current = winner;
-        setDuration(SPIN_MS);
-        setRotation((current) => rotationFor(slicesOf(entries), winner.id, current));
-        onSpinningChange?.(true);
-        haptic(10);
-      },
-      skip() {
-        if (pending.current) setDuration(0);
-      },
-    }),
-    [entries, onSpinningChange],
-  );
-
-  // A zero-length transition fires no transitionend, so skip finishes here.
-  useEffect(() => {
-    if (duration !== 0 || !pending.current) return;
-    const id = requestAnimationFrame(() => finish());
-    return () => cancelAnimationFrame(id);
-  });
+  const landed = useRef(false);
+  const wasLive = useRef(false);
+  const holdTimer = useRef<number | undefined>(undefined);
+  const lastTick = useRef(0);
 
   function finish() {
+    window.clearTimeout(holdTimer.current);
     const winner = pending.current;
     if (!winner) return;
     pending.current = null;
-    haptic([30, 40, 30]);
-    clack(0.7);
+    landed.current = false;
     onSpinningChange?.(false);
     onResult(winner);
   }
 
+  function land() {
+    const winner = pending.current;
+    if (!winner || landed.current) return;
+    landed.current = true;
+    haptic([30, 40, 30]);
+    clack(0.7);
+    onReveal?.(winner);
+    if (compact) finish();
+    else holdTimer.current = window.setTimeout(finish, REVEAL_MS);
+  }
+
+  function tick() {
+    const now = performance.now();
+    if (now - lastTick.current < TICK_GAP_MS) return;
+    lastTick.current = now;
+    clack(0.1);
+    haptic(4);
+  }
+
+  useImperativeHandle(ref, () => ({
+    spin() {
+      const winner = draw(entries, pins);
+      if (!winner || pending.current) return;
+      pending.current = winner;
+      const target = rotationFor(slices, winner.id, rotation);
+      setRotation(target);
+      onSpinningChange?.(true);
+      haptic(10);
+      if (scene.current && live) scene.current.spin(target, tick, land);
+      else setDuration(SPIN_MS);
+    },
+    skip() {
+      if (!pending.current) return;
+      if (landed.current) finish();
+      else if (scene.current && live) scene.current.skip();
+      else setDuration(0);
+    },
+  }));
+
+  // A zero-length transition fires no transitionend, so skip lands here.
+  useEffect(() => {
+    if (live || duration !== 0 || !pending.current) return;
+    const id = requestAnimationFrame(() => land());
+    return () => cancelAnimationFrame(id);
+  });
+
+  // The GL context died under a spin: the result still stands.
+  useEffect(() => {
+    if (wasLive.current && !live) land();
+    wasLive.current = live;
+  });
+
+  useEffect(() => () => window.clearTimeout(holdTimer.current), []);
+
+  function lean(event: PointerEvent<HTMLDivElement>) {
+    if (event.pointerType !== "mouse") return;
+    const box = event.currentTarget.getBoundingClientRect();
+    scene.current?.lean(
+      ((event.clientX - box.left) / box.width) * 2 - 1,
+      ((event.clientY - box.top) / box.height) * 2 - 1,
+    );
+  }
+
   return (
-    <div className={cn("relative mx-auto aspect-square w-full max-w-md", className)}>
-      {/* Cue tip pointer at 12 o'clock */}
-      <div aria-hidden className="absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-1">
-        <svg viewBox="0 0 24 56" className="h-12 w-6 drop-shadow-lg">
-          <rect x="8" y="0" width="8" height="36" rx="2" style={{ fill: "var(--color-ivory-muted)" }} />
-          <rect x="8" y="30" width="8" height="8" style={{ fill: "var(--color-cold)" }} />
-          <path d="M8 38 L16 38 L12 54 Z" style={{ fill: "var(--color-lamp)" }} />
-        </svg>
+    <div
+      className={cn("relative mx-auto aspect-square w-full", compact ? "max-w-md" : "max-w-160", className)}
+      onPointerMove={compact ? undefined : lean}
+      onPointerLeave={compact ? undefined : () => scene.current?.lean(0, 0)}
+    >
+      <div className={cn("size-full transition-opacity duration-500", !compact && "p-[7%]", live && "opacity-0")}>
+        <FlatWheel
+          slices={slices}
+          repeated={slices.length > entries.length}
+          label={entries.map((e) => e.label).join(", ")}
+          rotation={rotation}
+          durationMs={live ? null : duration}
+          onSpinEnd={land}
+        />
       </div>
-      <svg
-        viewBox="-160 -160 320 320"
-        className="size-full"
-        role="img"
-        aria-label={entries.map((e) => e.label).join(", ")}
-      >
-        {/* Rail and pockets */}
-        <circle r="158" style={{ fill: "var(--color-wood)" }} />
-        <circle r="152" style={{ fill: "var(--color-felt-deep)" }} />
-        {[0, 60, 120, 180, 240, 300].map((deg) => (
-          <circle
-            key={deg}
-            r="4"
-            cx={round(155 * Math.cos((deg * Math.PI) / 180))}
-            cy={round(155 * Math.sin((deg * Math.PI) / 180))}
-            style={{ fill: "var(--color-night)" }}
-          />
-        ))}
-        <g
-          style={{
-            transform: `rotate(${rotation}deg)`,
-            transition: `transform ${duration}ms cubic-bezier(0.12, 0.7, 0.1, 1)`,
-          }}
-          onTransitionEnd={finish}
-        >
-          {slices.map((slice) => {
-            const label = labelAt(slice, repeated ? REPEATED_LABEL_RADIUS : R * 0.64);
-            const pct = labelAt(slice, R * 0.86);
-            return (
-              <g key={slice.start}>
-                <path
-                  d={arcPath(slice)}
-                  style={{ fill: slice.entry.color, stroke: "var(--color-felt-deep)", strokeWidth: 2 }}
-                />
-                {slice.share > MIN_LABEL_SHARE && (
-                  <text
-                    x={label.x}
-                    y={label.y}
-                    transform={`rotate(${repeated ? label.rotate - 90 : label.rotate} ${label.x} ${label.y})`}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fontWeight="800"
-                    fontSize={repeated ? repeatedLabelSize(slice.share) : slice.share > 0.12 ? 18 : 14}
-                    style={{ fill: "var(--color-night)", fontFamily: "var(--font-display)" }}
-                  >
-                    {slice.entry.label}
-                  </text>
-                )}
-                {!repeated && slice.share > MIN_LABEL_SHARE && (
-                  <text
-                    x={pct.x}
-                    y={pct.y}
-                    transform={`rotate(${pct.rotate} ${pct.x} ${pct.y})`}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fontWeight="700"
-                    fontSize="11"
-                    style={{ fill: "var(--color-night)", fontFamily: "var(--font-display)", opacity: 0.8 }}
-                  >
-                    {percentLabel(slice.share)}
-                  </text>
-                )}
-              </g>
-            );
-          })}
-        </g>
-        {/* Centre spot */}
-        <circle r="22" style={{ fill: "var(--color-felt)", stroke: "var(--color-felt-deep)", strokeWidth: 4 }} />
-        <circle r="7" style={{ fill: "var(--color-ivory)" }} />
-      </svg>
+      {!compact && (
+        <WheelCanvas slices={slices} rotation={rotation} sceneRef={scene} live={live} onLiveChange={setLive} />
+      )}
     </div>
   );
 }

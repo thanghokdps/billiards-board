@@ -16,7 +16,7 @@ export function RecordsSection({ records: found }: { records: ReturnType<typeof 
   if (none) return <EmptyState title={t("recordsEmpty.title")} body={t("recordsEmpty.body")} />;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="stagger-in grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {biggestMargin && (
         <RecordCard
           icon={Swords}

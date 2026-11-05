@@ -42,7 +42,7 @@ Rung: **L3** for the transport — `LangChainGraphAgent extends AbstractAgent` (
 - Writes go through `src/app/api/admin/*` route handlers guarded by the admin cookie — the same routes the admin UI uses — never from inside a tool. Every write records `audit_log` (who, when, before, after).
 - Stats (streaks, Elo per game type, head-to-head, money, records, achievements) are computed in `src/server/stats/` by replaying matches in date order — 5 players, hundreds of matches/year, cheap; cached per request.
 - Posters: `next/og` `ImageResponse` (Satori) with template + avatar + real numbers; no AI image (cost/latency), noted as an extension.
-- Random wheel: weights client-side, result from `crypto.getRandomValues`, nothing stored.
+- Random wheel: weights client-side, result from `crypto.getRandomValues`, nothing stored. Admin treat (per-player %) lives in the admin's localStorage and only affects spins on that browser; viewers see no % and spin equal.
 - Deprecated imports avoided: v1 `useCopilotAction` / `renderAndWaitForResponse` named in the requirement → v2 `useRenderTool` / `useFrontendTool` from `@copilotkit/react-core/v2`.
 
 ## Built (2026-11-04)

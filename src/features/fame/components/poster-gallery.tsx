@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { HoloFrame } from "@/components/ui/holo-frame";
 import { Sheet } from "@/components/ui/sheet";
 import { formatDate } from "@/lib/domain";
 import type { SpecialReason } from "@/lib/stats";
@@ -30,7 +31,7 @@ export function PosterGallery({ posters }: { posters: GalleryPoster[] }) {
 
   return (
     <>
-      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+      <ul className="stagger-in grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {posters.map((poster, i) => (
           <li key={poster.matchId} className="min-w-0">
             <Button
@@ -39,14 +40,16 @@ export function PosterGallery({ posters }: { posters: GalleryPoster[] }) {
               onClick={() => setOpen(poster)}
               className="h-auto w-full flex-col items-stretch gap-2 whitespace-normal rounded-md p-0 text-left hover:bg-transparent"
             >
-              <PosterImage
-                src={poster.src}
-                alt={t("posterAlt", { sides: poster.sides })}
-                errorLabel={t("posterError")}
-                sizes="(min-width: 1024px) 240px, (min-width: 640px) 30vw, 45vw"
-                eager={i < 4}
-                className="border border-line"
-              />
+              <HoloFrame rounded="rounded-md">
+                <PosterImage
+                  src={poster.src}
+                  alt={t("posterAlt", { sides: poster.sides })}
+                  errorLabel={t("posterError")}
+                  sizes="(min-width: 1024px) 240px, (min-width: 640px) 30vw, 45vw"
+                  eager={i < 4}
+                  className="border border-line"
+                />
+              </HoloFrame>
               <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <Badge tone="lamp">{t(`reason.${poster.reason}`)}</Badge>
                 <time dateTime={poster.date} className="text-2xs text-ivory-muted">

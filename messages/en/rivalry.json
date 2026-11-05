@@ -2,6 +2,7 @@
   "title": "Rivalry",
   "kicker": "The most evenly matched pair",
   "hero": "Showdown",
+  "clashReplay": "Smash the two balls together again",
   "heroAria": "{a} against {b}, head-to-head {aWins} – {bWins}",
   "meetings": "{count, plural, one {# meeting} other {# meetings}}",
   "streak": "Streak within the rivalry",

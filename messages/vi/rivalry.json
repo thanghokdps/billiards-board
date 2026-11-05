@@ -2,6 +2,7 @@
   "title": "Kình địch",
   "kicker": "Cặp đấu cân nhất",
   "hero": "Đại chiến",
+  "clashReplay": "Cho hai bi đâm nhau lần nữa",
   "heroAria": "{a} đấu {b}, tỉ số đối đầu {aWins} – {bWins}",
   "meetings": "{count, plural, other {# lần gặp nhau}}",
   "streak": "Chuỗi trong cặp đấu",

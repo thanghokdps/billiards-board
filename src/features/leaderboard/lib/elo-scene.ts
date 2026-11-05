@@ -1,25 +1,27 @@
 import {
   AmbientLight,
-  BufferGeometry,
   CatmullRomCurve3,
   DirectionalLight,
-  Float32BufferAttribute,
-  GridHelper,
   Mesh,
-  MeshBasicMaterial,
   MeshStandardMaterial,
   PerspectiveCamera,
-  PlaneGeometry,
   Scene,
-  SphereGeometry,
   TubeGeometry,
-  Color,
   Vector3,
   WebGLRenderer,
-  DoubleSide,
 } from "three";
 
-import { ballTexture, readTokens } from "./table-mesh";
+import { readTokens } from "@/lib/table-3d/table-mesh";
+
+import {
+  buildClimber,
+  buildMountain,
+  climberScale,
+  groundPoint,
+  MOUNTAIN_RADIUS,
+  reachAtHeight,
+  type Climber,
+} from "./elo-mountain";
 
 export interface EloSeries {
   color: string;
@@ -28,62 +30,47 @@ export interface EloSeries {
   ratings: (number | null)[];
 }
 
-const STAGE_WIDTH = 8;
-const STAGE_HEIGHT = 2.4;
-/** Canvas aspect at which the stage needs no extra height. */
-const WIDE_ASPECT = 2;
-const MAX_HEIGHT_SCALE = 1.7;
-const NEAREST_DISTANCE = 8.5;
-const CAMERA_PITCH = 0.4;
-const LANE_DEPTH = 0.7;
-const FLOOR_MARGIN = 0.6;
-const BALL_RADIUS = 0.15;
-const TUBE_RADIUS = 0.03;
-const TUBE_SIDES = 6;
-const CURTAIN_ALPHA = 0.6;
-const DRAW_IN_MS = 1400;
-const SWAY_RADIANS = 0.22;
 const FOV = 30;
+const NEAREST_DISTANCE = 15;
+const CAMERA_PITCH = 0.2;
+const AIM_Y = 1.15;
+const FIT_MARGIN = 1.08;
+const SWAY_RADIANS = 0.5;
+const DRAW_IN_MS = 1800;
+/** How far up the mountain the lowest and the highest rating stand; the summit itself stays out of reach. */
+const BASE_CAMP = 0.1;
+const TOP_CAMP = 0.86;
+/** Bearings the routes spread over, all on the side facing the camera. */
+const ROUTES_ARC = 2.1;
+/** Each route also traverses sideways with the days, so a flat rating still reads as a walked path. */
+const TRAVERSE = 0.4;
+const TRAIL_RADIUS = 0.022;
+const TRAIL_SIDES = 6;
+const TRAIL_LIFT = 0.03;
+const SAMPLES_PER_DAY = 14;
 
-const easeOut = (t: number) => 1 - (1 - t) ** 3;
+const easeInOut = (t: number) => t * t * (3 - 2 * t);
 
-interface Ribbon {
-  points: (Vector3 | null)[];
-  curtain: Mesh;
-  tube: Mesh;
-  tubeSegments: number;
-  ball: Mesh;
+interface Camp {
+  theta: number;
+  reach: number;
 }
 
-function curtainGeometry(points: (Vector3 | null)[], color: Color): BufferGeometry {
-  const positions: number[] = [];
-  const colors: number[] = [];
-  const push = (p: Vector3, y: number, alpha: number) => {
-    positions.push(p.x, y, p.z);
-    colors.push(color.r, color.g, color.b, alpha);
-  };
-  for (let i = 1; i < points.length; i++) {
-    const [a, b] = [points[i - 1], points[i]];
-    if (!a || !b) continue;
-    push(a, 0, 0);
-    push(b, 0, 0);
-    push(b, b.y, CURTAIN_ALPHA);
-    push(a, 0, 0);
-    push(b, b.y, CURTAIN_ALPHA);
-    push(a, a.y, CURTAIN_ALPHA);
-  }
-  const geometry = new BufferGeometry();
-  geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
-  geometry.setAttribute("color", new Float32BufferAttribute(colors, 4));
-  return geometry;
+interface Route {
+  /** One camp per day; null before the player's first match. */
+  camps: (Camp | null)[];
+  firstDay: number;
+  climber: Climber;
+  trail: Mesh | null;
+  trailSegments: number;
 }
 
-/** Elo as lit curtains in depth, one lane per player, with each player's ball riding the top edge. */
+/** Elo as a climb: height on the mountain is rating, and each day's camp is a stop on the player's own route. */
 export class EloScene {
   private readonly renderer: WebGLRenderer;
   private readonly scene = new Scene();
   private readonly camera = new PerspectiveCamera(FOV, 2, 0.1, 100);
-  private readonly ribbons: Ribbon[];
+  private readonly routes: Route[];
   private readonly days: number;
   private frame = 0;
   private startedAt = 0;
@@ -91,7 +78,6 @@ export class EloScene {
   private day: number;
   private sway = 0;
   private distance = NEAREST_DISTANCE;
-  private readonly lookAtY: number;
 
   constructor(canvas: HTMLCanvasElement, series: EloSeries[]) {
     this.renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "low-power" });
@@ -103,69 +89,91 @@ export class EloScene {
     const ratings = series.flatMap((s) => s.ratings.flatMap((r) => (r === null ? [] : [r])));
     const low = Math.min(...ratings);
     const span = Math.max(Math.max(...ratings) - low, 1);
-    // A narrow canvas sits further back, so the curtains grow taller to keep filling it.
-    const aspect = canvas.clientWidth / Math.max(canvas.clientHeight, 1);
-    const stageHeight = STAGE_HEIGHT * Math.min(Math.max(WIDE_ASPECT / aspect, 1), MAX_HEIGHT_SCALE);
-    this.lookAtY = stageHeight * CAMERA_PITCH;
-    const toY = (rating: number) => 0.25 + ((rating - low) / span) * stageHeight;
-    const toX = (day: number) => (day / Math.max(this.days - 1, 1) - 0.5) * STAGE_WIDTH;
-    const laneOf = (lane: number) => (lane - (series.length - 1) / 2) * LANE_DEPTH;
+    const toReach = (rating: number) => reachAtHeight(BASE_CAMP + ((rating - low) / span) * (TOP_CAMP - BASE_CAMP));
+    const trailMaterial = (color: string) =>
+      new MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.5, roughness: 0.5 });
 
-    const depth = series.length * LANE_DEPTH + FLOOR_MARGIN;
-    const floor = new Mesh(
-      new PlaneGeometry(STAGE_WIDTH + FLOOR_MARGIN * 2, depth),
-      new MeshStandardMaterial({ color: tokens.felt, roughness: 0.95 }),
-    );
-    floor.rotation.x = -Math.PI / 2;
-    const grid = new GridHelper(STAGE_WIDTH + FLOOR_MARGIN * 2, 12, tokens.lampSoft, tokens.felt);
-    grid.position.y = 0.002;
-    grid.scale.z = depth / (STAGE_WIDTH + FLOOR_MARGIN * 2);
-    const key = new DirectionalLight(tokens.ivory, 1.6);
-    key.position.set(-3, 6, 5);
-    this.scene.add(floor, grid, new AmbientLight(tokens.ivory, 1), key);
+    const sun = new DirectionalLight(tokens.ivory, 2.4);
+    sun.position.set(-6, 7, 4);
+    const fill = new DirectionalLight(tokens.lampSoft, 0.5);
+    fill.position.set(6, 2, 3);
+    this.scene.add(buildMountain(tokens), new AmbientLight(tokens.ivory, 0.75), sun, fill);
 
-    const sphere = new SphereGeometry(BALL_RADIUS, 24, 16);
-    this.ribbons = series.map((s, lane) => {
-      const points = s.ratings.map((r, day) => (r === null ? null : new Vector3(toX(day), toY(r), laneOf(lane))));
-      const curtain = new Mesh(
-        curtainGeometry(points, new Color(s.color)),
-        new MeshBasicMaterial({ vertexColors: true, transparent: true, side: DoubleSide, depthWrite: false }),
+    this.routes = series.map((s, lane) => {
+      const bearing = ((lane + 0.5) / series.length - 0.5) * ROUTES_ARC;
+      const camps = s.ratings.map((rating, day) =>
+        rating === null
+          ? null
+          : { theta: bearing + (day / Math.max(this.days - 1, 1) - 0.5) * TRAVERSE, reach: toReach(rating) },
       );
-      const known = points.flatMap((p) => (p ? [p] : []));
-      const tubeSegments = Math.max(known.length * 3, 8);
-      const tube = new Mesh(
-        new TubeGeometry(new CatmullRomCurve3(known, false, "centripetal"), tubeSegments, TUBE_RADIUS, TUBE_SIDES),
-        new MeshStandardMaterial({ color: s.color, emissive: s.color, emissiveIntensity: 0.45, roughness: 0.4 }),
-      );
-      const ball = new Mesh(
-        sphere,
-        new MeshStandardMaterial({ map: ballTexture(s.color, tokens, s.number), roughness: 0.16 }),
-      );
-      this.scene.add(curtain, tube, ball);
-      return { points, curtain, tube, tubeSegments, ball };
+      const firstDay = camps.findIndex((camp) => camp !== null);
+      const route: Route = {
+        camps,
+        firstDay,
+        climber: buildClimber(s.color, s.number, tokens),
+        trail: null,
+        trailSegments: 0,
+      };
+      const walked = this.sampleTrail(route);
+      // A curve needs two points: a player with one rated day stands at camp with no trail.
+      if (walked.length > 1) {
+        route.trailSegments = walked.length * 2;
+        route.trail = new Mesh(
+          new TubeGeometry(new CatmullRomCurve3(walked), route.trailSegments, TRAIL_RADIUS, TRAIL_SIDES),
+          trailMaterial(s.color),
+        );
+        this.scene.add(route.trail);
+      }
+      this.scene.add(route.climber.figure);
+      return route;
     });
+  }
+
+  /** The ground under a route at a fractional day; between camps the climber eases, resting a moment at each. */
+  private routePoint({ camps, firstDay }: Route, at: number, out: Vector3): boolean {
+    if (firstDay < 0 || at < firstDay) return false;
+    const whole = Math.min(Math.floor(at), camps.length - 1);
+    const from = camps[whole];
+    if (!from) return false;
+    const to = camps[whole + 1] ?? from;
+    const t = easeInOut(at - whole);
+    groundPoint(from.theta + (to.theta - from.theta) * t, from.reach + (to.reach - from.reach) * t, out);
+    return true;
+  }
+
+  private sampleTrail(route: Route): Vector3[] {
+    const points: Vector3[] = [];
+    if (route.firstDay < 0) return points;
+    const steps = (route.camps.length - 1 - route.firstDay) * SAMPLES_PER_DAY;
+    for (let step = 0; step <= steps; step++) {
+      const point = new Vector3();
+      if (!this.routePoint(route, route.firstDay + step / SAMPLES_PER_DAY, point)) continue;
+      point.y += TRAIL_LIFT;
+      points.push(point);
+    }
+    return points;
   }
 
   resize(width: number, height: number) {
     if (!width || !height) return;
     this.renderer.setSize(width, height, false);
     this.camera.aspect = width / height;
-    // The stage's width sets the distance, so a phone sees all of it from further back.
-    const halfWidth = STAGE_WIDTH / 2 + FLOOR_MARGIN;
+    // The mountain's width sets the distance, so a phone sees all of it from further back.
     const halfView = Math.tan((FOV * Math.PI) / 360) * this.camera.aspect;
-    this.distance = Math.max(halfWidth / halfView, NEAREST_DISTANCE);
-    for (const { ball } of this.ribbons) ball.scale.setScalar(this.distance / NEAREST_DISTANCE);
+    this.distance = Math.max((MOUNTAIN_RADIUS * FIT_MARGIN) / halfView, NEAREST_DISTANCE);
+    const size = climberScale(this.distance / NEAREST_DISTANCE);
+    for (const { climber } of this.routes) climber.figure.scale.setScalar(size);
     this.camera.updateProjectionMatrix();
     this.play();
   }
 
-  /** Draws the curtains in from the left, once. */
+  /** Sends the climbers up from their first camp, once. */
   start() {
     this.startedAt = performance.now();
     this.play();
   }
 
-  /** Shows one day: the balls ride to it and the camera leans with the pointer. `day` is null for the latest. */
+  /** Shows one day: the climbers go to that day's camp and the camera circles with the pointer. `day` is null for the latest. */
   show(day: number | null, sway: number) {
     this.day = day ?? this.days - 1;
     this.sway = sway;
@@ -179,30 +187,29 @@ export class EloScene {
   private readonly loop = (now: number) => {
     this.frame = 0;
     const progress = this.startedAt ? Math.min(1, (now - this.startedAt) / DRAW_IN_MS) : 0;
-    this.drawn = easeOut(progress);
-    for (const ribbon of this.ribbons) this.place(ribbon);
-
+    this.drawn = easeInOut(progress);
     const angle = this.sway * SWAY_RADIANS;
     this.camera.position.set(
       Math.sin(angle) * this.distance,
-      this.distance * CAMERA_PITCH,
+      AIM_Y + this.distance * CAMERA_PITCH,
       Math.cos(angle) * this.distance,
     );
-    this.camera.lookAt(0, this.lookAtY, 0);
+    this.camera.lookAt(0, AIM_Y, 0);
+    for (const route of this.routes) this.place(route);
     this.renderer.render(this.scene, this.camera);
     if (progress > 0 && progress < 1) this.play();
   };
 
-  private place({ points, curtain, tube, tubeSegments, ball }: Ribbon) {
-    const verticesPerDay = 6;
-    curtain.geometry.setDrawRange(0, Math.floor((points.length - 1) * this.drawn) * verticesPerDay);
-    tube.geometry.setDrawRange(0, Math.floor(tubeSegments * this.drawn) * TUBE_SIDES * 6);
-    const shownDay = Math.min(this.day, Math.round((points.length - 1) * this.drawn));
-    const at = points.slice(0, shownDay + 1).findLast((p) => p !== null);
-    ball.visible = at !== undefined;
-    if (!at) return;
-    ball.position.copy(at).setY(at.y + BALL_RADIUS * 0.6);
-    ball.lookAt(this.camera.position);
+  private place(route: Route) {
+    const { camps, firstDay, climber, trail, trailSegments } = route;
+    const at = firstDay + Math.max(this.day - firstDay, 0) * this.drawn;
+    const onMountain = this.day >= firstDay && this.routePoint(route, at, climber.figure.position);
+    climber.figure.visible = onMountain;
+    if (onMountain) climber.head.lookAt(this.camera.position);
+    if (!trail) return;
+    const lastDay = camps.length - 1;
+    const walked = lastDay > firstDay ? (at - firstDay) / (lastDay - firstDay) : 0;
+    trail.geometry.setDrawRange(0, Math.floor(trailSegments * walked) * TRAIL_SIDES * 6);
   }
 
   dispose() {

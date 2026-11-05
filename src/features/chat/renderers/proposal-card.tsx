@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useEffectEvent, useState, useSyncExternalStore } from "react";
 
+import { Ball } from "@/components/ui/ball";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MatchRow } from "@/components/ui/match-row";
@@ -126,8 +127,9 @@ export function ProposalCard({ proposal, toolCallId }: { proposal: Proposal; too
 
   return (
     <Card
+      data-phase={state.phase}
       className={cn(
-        "my-2",
+        "chat-card my-2",
         proposal.kind === "delete" ? "border-ball/40" : "border-lamp/30",
         state.phase === "superseded" && "opacity-60",
       )}
@@ -235,7 +237,7 @@ function CardFooter({ state, kind, secondsLeft, onConfirm, onCancel, onUndo }: F
       return (
         <>
           <p className="flex flex-1 items-center gap-2 text-sm font-bold text-win">
-            <Check className="size-4" aria-hidden />
+            <Ball className="chat-sunk size-5" />
             {kind === "create" ? t("saved") : kind === "update" ? t("updated") : t("deletedDone")}
           </p>
           {state.undo && secondsLeft > 0 && (

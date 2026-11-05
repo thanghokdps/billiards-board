@@ -7,6 +7,8 @@
     "intro": "Everyone's year on the felt. Pick a player to watch their story.",
     "card": "{matches} · {winRate} won",
     "open": "Open {name}'s Wrapped {year}",
+    "prev": "Previous player",
+    "next": "Next player",
     "emptyTitle": "No matches in {year} yet",
     "emptyBody": "Log a few matches and come back, Wrapped builds itself."
   },

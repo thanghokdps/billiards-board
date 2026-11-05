@@ -12,6 +12,7 @@ import { Chip } from "@/components/ui/chip";
 import { MatchRow } from "@/components/ui/match-row";
 import { Skeleton } from "@/components/ui/misc";
 import { PlayerAvatar } from "@/components/ui/player-avatar";
+import { RollingNumber } from "@/components/ui/rolling-number";
 import { useChat } from "@/features/shell";
 import { WheelPanel } from "@/features/wheel";
 import type {
@@ -41,7 +42,7 @@ export function AskChips({ result }: { result: NeedsInput | NameProblem }) {
       ? (result.options ?? []).map((o) => ({ label: o.label, reply: o.label }))
       : result.candidates.map((p) => ({ label: p.name, reply: `${result.name} = ${p.name}` }));
   return (
-    <div className="my-2">
+    <div className="chat-card my-2">
       <p className="mb-2 text-sm font-semibold text-ivory-muted">{question}</p>
       <div className="flex flex-wrap gap-2">
         {options.map((o) => (
@@ -80,7 +81,7 @@ export function StatsCard({ result }: { result: StatsResult }) {
   }));
   const top = rows[0];
   return (
-    <Card className="my-2 p-3">
+    <Card className="chat-card my-2 p-3">
       {top && result.unit === "vnd" && <p className="mb-1 text-xs text-ivory-muted">{formatVnd(top.value, locale)}</p>}
       <div style={{ height: Math.max(rows.length * 34, 80) }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -121,7 +122,7 @@ export function HeadToHeadCard({ result }: { result: HeadToHeadResult }) {
   const t = useTranslations("chat.h2h");
   const aShare = result.played ? result.aWins / result.played : 0.5;
   return (
-    <Card className="my-2 overflow-hidden">
+    <Card className="chat-card my-2 overflow-hidden">
       <div className="felt flex items-center justify-between gap-2 px-4 py-4">
         <Fighter player={result.a} wins={result.aWins} />
         <span className="font-display text-2xl font-bold text-lamp">VS</span>
@@ -148,7 +149,9 @@ function Fighter({ player, wins, align }: { player: HeadToHeadResult["a"]; wins:
     <div className={align === "right" ? "flex flex-col items-end gap-1" : "flex flex-col items-start gap-1"}>
       <PlayerAvatar player={player} size="lg" />
       <p className="font-bold">{player.name}</p>
-      <p className="digits text-score font-bold text-lamp digits-glow">{wins}</p>
+      <p className="digits text-score font-bold text-lamp digits-glow">
+        <RollingNumber value={String(wins)} />
+      </p>
     </div>
   );
 }

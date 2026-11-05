@@ -5,9 +5,9 @@ import { useEffect, useRef, useState, type PointerEvent } from "react";
 
 import { Ball } from "@/components/ui/ball";
 import { Button } from "@/components/ui/button";
+import { TableFrame } from "@/components/ui/table-frame";
 import { prefersReducedMotion } from "@/lib/motion";
 
-import { TableFrame } from "./table-frame";
 import { BALL_TOKENS, drawTable, readPoolPalette } from "../lib/pool-draw";
 import { PoolRound, type PoolHud } from "../lib/pool-game";
 import { FIXED_STEP_MS, onTable, TABLE_HEIGHT, TABLE_WIDTH } from "../lib/pool-physics";

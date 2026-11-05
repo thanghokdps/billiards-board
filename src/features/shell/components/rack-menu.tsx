@@ -1,91 +1,122 @@
 "use client";
 
-import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Dialog } from "radix-ui";
+import { useRef, useState, type CSSProperties } from "react";
 
 import { Ball } from "@/components/ui/ball";
+import { TableFrame } from "@/components/ui/table-frame";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
+import type { TableScene } from "@/lib/table-3d/table-scene";
 
+import { RackCanvas, type RackCanvasBall } from "./rack-canvas";
 import { isActive, NAV_ITEMS, type NavItem } from "../nav-items";
 
 const RACKED = NAV_ITEMS.filter((i) => i.ball);
 const LOOSE = NAV_ITEMS.filter((i) => !i.ball);
-/** Rows of a triangular rack, apex first: start index of row n is the triangular number n(n+1)/2. */
-const RACK_ROWS = [0, 1, 2, 3].map((row) => RACKED.slice((row * (row + 1)) / 2, ((row + 1) * (row + 2)) / 2));
+/**
+ * A nine-ball rack, row then lane in half ball-widths: a 1-2-3-2-1 diamond with the first ball at the apex and the
+ * last, the 9, in the middle, as the rules place them.
+ */
+const RACK_SEATS = [
+  [0, 0],
+  [1, -1],
+  [1, 1],
+  [2, -2],
+  [2, 2],
+  [3, -1],
+  [3, 1],
+  [4, 0],
+  [2, 0],
+];
+const CANVAS_BALLS: RackCanvasBall[] = RACKED.map((item, order) => {
+  const [row = 0, lane = 0] = RACK_SEATS[order] ?? [];
+  return { color: item.ball ?? "", row, lane };
+});
 
 function RackBall({
   item,
   order,
   active,
   onPick,
+  onHop,
 }: {
   item: NavItem;
   order: number;
   active: boolean;
   onPick: () => void;
+  onHop: () => void;
 }) {
   const t = useTranslations("nav");
+  const [row, lane] = RACK_SEATS[order] ?? [0, 0];
   return (
-    <li className="w-1/4">
+    <li
+      className="rack-seat"
+      data-ball={order}
+      style={{ ["--row" as string]: row, ["--lane" as string]: lane } as CSSProperties}
+    >
       <Link
         href={item.href}
         onClick={onPick}
+        onPointerEnter={onHop}
+        onFocus={onHop}
         aria-current={active ? "page" : undefined}
         style={{ animationDelay: `${order * 25}ms` }}
-        className="group flex animate-rack-in flex-col items-center gap-1 rounded-md py-1 text-center text-xs font-semibold leading-tight"
+        className="group flex animate-rack-in flex-col items-center gap-0.5 rounded-md text-center text-2xs font-semibold leading-tight"
       >
         <span
           className={cn(
-            "relative flex size-14 items-center justify-center rounded-full transition-transform duration-150 group-hover:-translate-y-1 group-hover:scale-110 group-active:scale-95 sm:size-16",
+            "rack-ball relative flex items-center justify-center rounded-full transition-transform duration-150 group-hover:-translate-y-1 group-hover:scale-110 group-active:scale-95",
             active && "shadow-lamp ring-2 ring-lamp ring-offset-2 ring-offset-felt",
           )}
         >
-          <Ball color={item.ball} number="" className="size-full drop-shadow-lg" />
+          <Ball color={item.ball} number="" className="rack-flat-ball size-full drop-shadow-lg" />
           <item.icon className="absolute size-3.5 text-night sm:size-4" aria-hidden />
         </span>
-        <span className={cn("rounded-full px-1.5 py-0.5", active && "bg-night/70 text-lamp")}>{t(item.key)}</span>
+        <span className={cn("px-1 py-0.5", active && "text-lamp")}>{t(item.key)}</span>
       </Link>
     </li>
   );
 }
 
-/** Every page as a racked ball on the felt; the 8-ball in the dock breaks it open. */
+/** Every page as a ball racked on a real table; the 8-ball in the dock breaks it open. */
 export function RackMenu({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const close = () => onOpenChange(false);
+  const [live, setLive] = useState(false);
+  const sceneRef = useRef<TableScene | null>(null);
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="overlay-fade fixed inset-0 z-50 bg-night/75 backdrop-blur-sm" />
         <Dialog.Content
           aria-describedby={undefined}
-          className="table-rail fixed inset-x-4 bottom-[calc(var(--nav-h)+1.25rem)] z-50 mx-auto max-w-lg shadow-pop outline-none"
+          data-live={live || undefined}
+          className="rack-menu fixed z-50 outline-none"
         >
           <Dialog.Title className="sr-only">{t("mainNav")}</Dialog.Title>
-          <nav aria-label={t("mainNav")} className="felt relative rounded-md px-1 pt-4 pb-2">
-            <Dialog.Close
-              aria-label={t("closeMenu")}
-              className="absolute top-1 right-1 flex size-11 cursor-pointer items-center justify-center rounded-full hover:bg-night/40"
-            >
-              <X className="size-5" aria-hidden />
-            </Dialog.Close>
-            {RACK_ROWS.map((row, r) => (
-              <ul key={row[0]?.href} className="flex justify-center">
-                {row.map((item, c) => (
-                  <RackBall
-                    key={item.href}
-                    item={item}
-                    order={(r * (r + 1)) / 2 + c}
-                    active={isActive(pathname, item.href)}
-                    onPick={close}
-                  />
-                ))}
-              </ul>
-            ))}
-            <ul className="mt-1 flex justify-center gap-1 border-t border-ivory-faint/30 pt-1">
+          <div className="rack-table">
+            <TableFrame />
+          </div>
+          <RackCanvas balls={CANVAS_BALLS} live={live} onLiveChange={setLive} sceneRef={sceneRef} />
+          <nav aria-label={t("mainNav")} className="rack-field">
+            {/* Sighted users tap outside; a screen reader has no outside to tap. */}
+            <Dialog.Close className="sr-only">{t("closeMenu")}</Dialog.Close>
+            <ul className="rack-diamond">
+              {RACKED.map((item, order) => (
+                <RackBall
+                  key={item.href}
+                  item={item}
+                  order={order}
+                  active={isActive(pathname, item.href)}
+                  onPick={close}
+                  onHop={() => sceneRef.current?.hop(order)}
+                />
+              ))}
+            </ul>
+            <ul className="rack-loose">
               {LOOSE.map((item) => (
                 <li key={item.href}>
                   <Link
