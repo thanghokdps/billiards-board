@@ -19,6 +19,7 @@ import { cn } from "@/lib/cn";
 import { localDate } from "@/lib/domain";
 
 import { ChatView } from "./chat-view";
+import { MagicEight } from "./magic-eight";
 import { CHAT_PAGE_ID, getOpenCardIds, subscribeCards } from "../lib/card-store";
 import { DraftContext, type Draft } from "../lib/draft-context";
 import { SendContext } from "../lib/send-context";
@@ -50,10 +51,8 @@ export function ChatPanel({ pendingMessage, onPendingSent }: ChatPanelProps) {
   useAgentContext({ description: OPEN_CARDS_CONTEXT, value: openCards });
   useAgentContext({ description: CHAT_PAGE_CONTEXT, value: CHAT_PAGE_ID });
 
-  const suggestions = useMemo(
-    () => SUGGESTION_KEYS.map((key) => ({ title: t(`suggestions.${key}`), message: t(`suggestions.${key}`) })),
-    [t],
-  );
+  const ideas = useMemo(() => SUGGESTION_KEYS.map((key) => t(`suggestions.${key}`)), [t]);
+  const suggestions = useMemo(() => ideas.map((idea) => ({ title: idea, message: idea })), [ideas]);
   // Called outside CopilotChat's config provider, so the agent id is passed or it falls back to "default".
   useConfigureSuggestions({ suggestions, available: "before-first-message", consumerAgentId: AGENT_ID }, [suggestions]);
 
@@ -98,6 +97,7 @@ export function ChatPanel({ pendingMessage, onPendingSent }: ChatPanelProps) {
             welcomeScreen={{
               welcomeMessage: () => (
                 <div className="px-2 pb-4 text-center">
+                  <MagicEight ideas={ideas} onPick={onTranscript} />
                   <p className="font-display text-3xl font-bold text-ivory">{t("welcomeTitle")}</p>
                   <p className="mx-auto mt-1 max-w-sm text-sm text-ivory-muted">{t("welcomeBody")}</p>
                 </div>

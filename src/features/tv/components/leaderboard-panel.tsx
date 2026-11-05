@@ -21,7 +21,7 @@ export function LeaderboardPanel({ data }: { data: TvData }) {
       {data.top.length === 0 ? (
         <EmptyState title={t("empty")} body={t("emptyBody")} className="2xl:py-24" />
       ) : (
-        <ol className="space-y-3 2xl:space-y-5">
+        <ol className="stagger-in space-y-3 2xl:space-y-5">
           {data.top.map((row) => (
             <li
               key={row.player.id}

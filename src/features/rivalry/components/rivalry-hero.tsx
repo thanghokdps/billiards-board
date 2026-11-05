@@ -6,9 +6,11 @@ import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
 import type { HeadToHead, StatPlayer } from "@/lib/stats";
 
-function Fighter({ player }: { player: StatPlayer }) {
+import { BallClash } from "./ball-clash";
+
+function Fighter({ player, className }: { player: StatPlayer; className: string }) {
   return (
-    <Link href={`/players/${player.slug}`} className="flex min-w-0 flex-1 flex-col items-center gap-2">
+    <Link href={`/players/${player.slug}`} className={cn("flex min-w-0 flex-1 flex-col items-center gap-2", className)}>
       <PlayerAvatar player={player} size="lg" />
       <span className="w-full truncate text-center font-bold">{player.name}</span>
     </Link>
@@ -27,7 +29,7 @@ export function RivalryHero({ h }: { h: HeadToHead }) {
         {t("hero")}
       </h2>
       <div className="mt-4 flex items-center gap-2">
-        <Fighter player={h.a} />
+        <Fighter player={h.a} className="fighter-a" />
         <div
           role="img"
           aria-label={t("heroAria", { a: h.a.name, b: h.b.name, aWins: h.aWins, bWins: h.bWins })}
@@ -41,15 +43,10 @@ export function RivalryHero({ h }: { h: HeadToHead }) {
             <RollingNumber value={String(h.bWins)} />
           </span>
         </div>
-        <Fighter player={h.b} />
+        <Fighter player={h.b} className="fighter-b" />
       </div>
 
-      {h.played > 0 && (
-        <div aria-hidden className="mt-5 flex h-3 overflow-hidden rounded-full bg-night/70">
-          <div style={{ width: `${(h.aWins / h.played) * 100}%`, backgroundColor: h.a.ballColor }} />
-          <div style={{ width: `${(h.bWins / h.played) * 100}%`, backgroundColor: h.b.ballColor }} />
-        </div>
-      )}
+      {h.played > 0 && <BallClash h={h} />}
       <p className="mt-2 text-center text-sm">{t("meetings", { count: h.played })}</p>
     </section>
   );

@@ -36,9 +36,9 @@ export function GameTypeCosts({ byGameType }: { byGameType: MoneyBreakdown["byGa
                     )}
                   </p>
                 </div>
-                <div aria-hidden className="mt-2 h-2 overflow-hidden rounded-full bg-surface-3">
+                <div aria-hidden className="mt-2 h-2 overflow-clip rounded-full bg-surface-3">
                   <div
-                    className="h-full rounded-full bg-felt-bright"
+                    className="bar-fill h-full rounded-full bg-felt-bright"
                     style={{ width: max > 0 ? `${(avg / max) * 100}%` : "0%" }}
                   />
                 </div>

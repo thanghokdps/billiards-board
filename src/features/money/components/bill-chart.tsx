@@ -79,13 +79,7 @@ export function BillChart({ buckets, grain }: BillChartProps) {
             content={(props) => <ChartTooltip {...props} labelOf={labelOf} locale={locale} />}
             cursor={{ fill: "var(--color-surface-3)" }}
           />
-          <Bar
-            dataKey="total"
-            fill="var(--color-lamp)"
-            radius={[6, 6, 0, 0]}
-            maxBarSize={36}
-            isAnimationActive={false}
-          />
+          <Bar dataKey="total" fill="var(--color-lamp)" radius={[6, 6, 0, 0]} maxBarSize={36} animationDuration={700} />
         </BarChart>
       </ResponsiveContainer>
     </div>
