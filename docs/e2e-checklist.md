@@ -16,7 +16,7 @@ Run on the live app, in /vi and /en, at 375 px and desktop. The console must sta
 - [ ] Wheel treat (admin): "Tinh chỉnh" is closed by default. A slider sets a player's chance and the others share the rest evenly; Bổ at 100% wins every spin; x5/x10 repeat names, a victim stays at 1; "Đều nhau" clears all. The wheel's slices never change with a treat. Treat survives a reload, and is ignored after logout on the same browser.
 - [ ] Wheel spinner: tap a tile's cue → that player leaves the wheel and sits on side A. 4 players: one spin fills both teams. 5 players: first spin is the partner, then spin for the other team. 1v1: the winner is the opponent. 1v1v1: two spins, both winners are opponents. No spinner: everyone on the wheel, as before.
 - [ ] `POST /api/admin/matches` without the cookie → 401; `/api/copilotkit` without the cookie → 401.
-- [ ] The 8-ball in the dock opens the rack: 9 balls plus Change log and Admin links; a ball navigates and closes it; Esc, the X and a tap outside close it. The active page's ball is ringed. The dock's last slot is the wheel, not the chat.
+- [ ] The 8-ball in the dock opens the rack on a 2:1 table (upright on a phone): 9 balls in a diamond plus Change log and Admin links; a ball navigates and closes it; Esc, the X and a tap outside close it. The active page's ball is ringed. The dock's last slot is the wheel, not the chat.
 
 ## Admin
 
