@@ -1,6 +1,7 @@
 {
   "title": "Table money",
   "kicker": "Who picks up the bill",
+  "chipsReplay": "{name} paid {amount}. Tap to drop the chips again",
   "periodLabel": "Time range",
   "grainLabel": "Group by",
   "grain": { "day": "Day", "week": "Week", "month": "Month" },

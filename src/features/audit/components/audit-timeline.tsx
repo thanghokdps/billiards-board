@@ -43,7 +43,11 @@ export function AuditTimeline({ items, now }: AuditTimelineProps) {
         {t("count", { count: shown.length })}
       </p>
 
-      <ol className="relative space-y-3 before:absolute before:inset-y-2 before:left-1.5 before:w-px before:bg-line-strong">
+      {/* The key replays the entrance when a filter changes the list. */}
+      <ol
+        key={entity}
+        className="audit-rail stagger-in scroll-in relative space-y-3 before:absolute before:inset-y-2 before:left-1.5 before:w-px before:bg-line-strong"
+      >
         {shown.map((item) => (
           <AuditEntry key={item.id} item={item} now={now} />
         ))}

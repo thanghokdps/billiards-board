@@ -31,7 +31,10 @@ export function Achievements({ players, achievements }: AchievementsProps) {
           <li key={id}>
             <Card className="flex h-full flex-col gap-3 p-4">
               <div className="flex items-center gap-3">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-felt/30 text-win">
+                <span
+                  data-earned={holders.length > 0}
+                  className="medal flex size-10 shrink-0 items-center justify-center rounded-full bg-felt/30 text-win"
+                >
                   <Icon className="size-5" aria-hidden />
                 </span>
                 <div className="min-w-0">

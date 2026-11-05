@@ -48,7 +48,7 @@ export function StreakPanel({ data }: { data: TvData }) {
       {data.hot.length > 0 && (
         <div>
           <h3 className="mb-3 font-display text-2xl font-bold text-win 2xl:text-5xl">{t("hot")}</h3>
-          <ul className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5 2xl:gap-8">
+          <ul className="stagger-in grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5 2xl:gap-8">
             {data.hot.map((row) => (
               <StreakCard key={row.player.id} row={row} />
             ))}
@@ -58,7 +58,7 @@ export function StreakPanel({ data }: { data: TvData }) {
       {data.cold.length > 0 && (
         <div>
           <h3 className="mb-3 font-display text-2xl font-bold text-cold 2xl:text-5xl">{t("cold")}</h3>
-          <ul className="grid grid-cols-2 gap-4 md:grid-cols-3 2xl:gap-8">
+          <ul className="stagger-in grid grid-cols-2 gap-4 md:grid-cols-3 2xl:gap-8">
             {data.cold.map((row) => (
               <StreakCard key={row.player.id} row={row} />
             ))}

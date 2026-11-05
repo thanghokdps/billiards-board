@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { Ball } from "@/components/ui/ball";
 import { Card, CardBody } from "@/components/ui/card";
 import { FilterLinks } from "@/components/ui/filter-links";
+import { HoloFrame } from "@/components/ui/holo-frame";
 import { EmptyState, PageHeader } from "@/components/ui/misc";
 import { PlayerAvatar } from "@/components/ui/player-avatar";
 import { Link } from "@/i18n/navigation";
@@ -41,32 +43,35 @@ export default async function WrappedIndexPage({
       {index.players.length === 0 ? (
         <EmptyState title={t("index.emptyTitle", { year: index.year })} body={t("index.emptyBody")} />
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="stagger-in grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {index.players.map(({ player, played, winRate }) => (
             <li key={player.id}>
               <Link
                 href={`/wrapped/${player.slug}?year=${index.year}`}
                 aria-label={t("index.open", { name: player.name, year: index.year })}
-                className="block rounded-lg"
+                className="block h-full rounded-lg"
               >
-                <Card
-                  className="border-t-4 transition-colors hover:border-lamp/40"
-                  style={{ borderTopColor: player.ballColor }}
-                >
-                  <CardBody className="flex items-center gap-4">
-                    <PlayerAvatar player={player} size="lg" />
-                    <div className="min-w-0">
-                      <p className="truncate font-display text-2xl font-bold">{player.name}</p>
-                      {player.nickname && <p className="truncate text-xs text-ivory-muted">{player.nickname}</p>}
-                      <p className="mt-1 text-sm text-ivory-muted">
-                        {t("index.card", {
-                          matches: common("matches", { count: played }),
-                          winRate: formatPercent(winRate, locale),
-                        })}
-                      </p>
-                    </div>
-                  </CardBody>
-                </Card>
+                <HoloFrame rounded="rounded-lg">
+                  <Card
+                    className="h-full border-t-4 transition-colors hover:border-lamp/40"
+                    style={{ borderTopColor: player.ballColor }}
+                  >
+                    <CardBody className="flex items-center gap-4">
+                      <PlayerAvatar player={player} size="lg" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-display text-2xl font-bold">{player.name}</p>
+                        {player.nickname && <p className="truncate text-xs text-ivory-muted">{player.nickname}</p>}
+                        <p className="mt-1 text-sm text-ivory-muted">
+                          {t("index.card", {
+                            matches: common("matches", { count: played }),
+                            winRate: formatPercent(winRate, locale),
+                          })}
+                        </p>
+                      </div>
+                      <Ball color={player.ballColor} number={player.ballNumber} className="ball-roll size-8 shrink-0" />
+                    </CardBody>
+                  </Card>
+                </HoloFrame>
               </Link>
             </li>
           ))}

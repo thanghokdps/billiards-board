@@ -10,7 +10,7 @@ interface SlideFrameProps {
   children: ReactNode;
 }
 
-/** Shared layout of a story slide: the kicker as its heading, content centred, a gentle rise-in on mount. */
+/** Shared layout of a story slide: the kicker as its heading, content centred, turning in from the right on mount. */
 export function SlideFrame({ kicker, className, children }: SlideFrameProps) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
@@ -19,10 +19,10 @@ export function SlideFrame({ kicker, className, children }: SlideFrameProps) {
     if (reduced) return;
     const rise = ref.current?.animate(
       [
-        { opacity: 0, transform: "translateY(24px)" },
-        { opacity: 1, transform: "none" },
+        { opacity: 0, transform: "perspective(60rem) translateX(48px) rotateY(-32deg)" },
+        { opacity: 1, transform: "perspective(60rem) translateX(0) rotateY(0)" },
       ],
-      { duration: 450, easing: "cubic-bezier(0.2, 0.9, 0.25, 1)", fill: "backwards" },
+      { duration: 520, easing: "cubic-bezier(0.2, 0.9, 0.25, 1)", fill: "backwards" },
     );
     return () => rise?.cancel();
   }, [reduced]);

@@ -68,8 +68,8 @@ export function TvScreen({ data }: { data: TvData }) {
       </header>
 
       <main className="min-h-0 flex-1 overflow-y-auto">
-        {/* Remounting on each board replays the fade (neutralised under prefers-reduced-motion). */}
-        <div key={active} data-state="open" className="overlay-fade h-full">
+        {/* Remounting on each board replays the flip (neutralised under prefers-reduced-motion). */}
+        <div key={active} className="tv-flip h-full">
           {active === "scoreboard" && <ScoreboardPanel data={data} />}
           {active === "streaks" && <StreakPanel data={data} />}
           {active === "leaderboard" && <LeaderboardPanel data={data} />}

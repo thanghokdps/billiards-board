@@ -2,6 +2,7 @@
   "title": "Match assistant",
   "placeholder": "e.g. 3c real Thén beat Dũ 15-11, bill 45k",
   "disclaimer": "The assistant can make mistakes. Check the card before you tap Save.",
+  "shake": "Shake the 8-ball for an idea",
   "welcomeTitle": "Log a match in 10 seconds",
   "welcomeBody": "Type or tap the mic and say it like at the table. Every write shows a confirm card.",
   "suggestions": {

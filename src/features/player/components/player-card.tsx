@@ -1,11 +1,11 @@
 import { useTranslations } from "next-intl";
 
 import { Ball } from "@/components/ui/ball";
+import { HoloFrame } from "@/components/ui/holo-frame";
 import { PlayerAvatar, type Streak } from "@/components/ui/player-avatar";
 import { RollingNumber } from "@/components/ui/rolling-number";
 import { ELO_START, type StatPlayer } from "@/lib/stats";
 
-import { HoloFrame } from "./holo-frame";
 import {
   CLOSE_MARGIN,
   OVERALL_BASE,

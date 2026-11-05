@@ -2,11 +2,13 @@ import { ArrowRight, MessageCircle, MousePointerClick } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/cn";
 
 import { formatAbsolute, formatRelative } from "../lib/time";
 import type { AuditItem } from "../types";
 
 const ACTION_TONE = { create: "win", update: "lamp", delete: "loss", restore: "cold" } as const;
+const ACTION_DOT = { create: "bg-win", update: "bg-lamp", delete: "bg-loss", restore: "bg-cold" } as const;
 
 function isAction(value: string): value is keyof typeof ACTION_TONE {
   return value in ACTION_TONE;
@@ -25,9 +27,12 @@ export function AuditEntry({ item, now }: { item: AuditItem; now: string }) {
     <li className="relative pl-6">
       <span
         aria-hidden
-        className="absolute left-0 top-4 size-3 rounded-full border-2 border-night bg-lamp ring-2 ring-line-strong"
+        className={cn(
+          "absolute left-0 top-4 size-3 rounded-full border-2 border-night ring-2 ring-line-strong",
+          isAction(item.action) ? ACTION_DOT[item.action] : "bg-ivory-faint",
+        )}
       />
-      <article className="rounded-md border border-line bg-surface px-4 py-3">
+      <article className="rounded-md border border-line bg-surface px-4 py-3 transition duration-200 hover:-translate-y-0.5 hover:border-lamp/35">
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone={isAction(item.action) ? ACTION_TONE[item.action] : "neutral"} size="md">
             {label("action", item.action)}
