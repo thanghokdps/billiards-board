@@ -35,7 +35,7 @@ export function PlayersPanel({ players }: { players: AdminPlayer[] }) {
         {players.length === 0 ? (
           <EmptyState title={t("empty")} body={t("emptyBody")} />
         ) : (
-          <ul className="divide-y divide-line">
+          <ul className="stagger-in divide-y divide-line">
             {players.map((player) => (
               <li key={player.id} className="flex items-center gap-3 py-3">
                 <PlayerAvatar player={player} size="md" />
@@ -46,7 +46,7 @@ export function PlayersPanel({ players }: { players: AdminPlayer[] }) {
                   </p>
                   <p className="truncate text-xs text-ivory-muted">{player.nickname ?? player.slug}</p>
                 </div>
-                <Ball color={player.ballColor} number={player.ballNumber} className="size-8" />
+                <Ball color={player.ballColor} number={player.ballNumber} className="ball-roll size-8" />
                 <Button
                   variant="ghost"
                   size="icon-sm"

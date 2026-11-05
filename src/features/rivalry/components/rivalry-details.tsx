@@ -23,7 +23,7 @@ export function StreakCard({ streak }: { streak: RivalryBreakdown["streak"] }) {
           <div className="flex items-center gap-3">
             <PlayerAvatar player={streak.player} size="md" />
             <p className="flex-1 text-sm">{t("streakLine", { name: streak.player.name, count: streak.length })}</p>
-            <Flame className="size-6 shrink-0 text-lamp" aria-hidden />
+            <Flame className="size-6 shrink-0 animate-flicker text-lamp" aria-hidden />
           </div>
         ) : (
           <p className="text-sm text-ivory-muted">{t("streakNone")}</p>

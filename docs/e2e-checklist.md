@@ -11,6 +11,7 @@ Run on the live app, in /vi and /en, at 375 px and desktop. The console must sta
 - [ ] Leaderboard: podium, six-pocket table (balls break from the rack, a pocket re-ranks, a ball opens every stat, the group view, no sideways scroll at 375 px), Elo chart (hide toggle remembered), 5×5 heatmap readable at 375 px.
 - [ ] Player profile: FIFA card, form, nemesis/prey, badges.
 - [ ] Money, Hall of Fame (posters load), Rivalry (poster), Wrapped story (tap, keys, auto-advance), TV mode (rotates, full-bleed).
+- [ ] Money: chip towers lean with the pointer; a name under a tower drops its chips again with a clack. Rivalry: the balls meet at the head-to-head split; a tap replays it. Audit: the ball rolls down the timeline with the scroll. Admin login: typing rolls the ball, a wrong password shakes the card.
 - [ ] Wheel: opens in 2v2, roster tiles, 1v1/2v2/1v1v1, 3D wheel spins about 5 s with peg ticks, skip, then the winning wedge rises with a ball burst, sound and vibrate, and the winner drops into its seat. Reduced motion or no WebGL: flat wheel, three.js not loaded. Viewers: no %, no "Tinh chỉnh", no "Tạo trận".
 - [ ] Wheel treat (admin): "Tinh chỉnh" is closed by default. A slider sets a player's chance and the others share the rest evenly; Bổ at 100% wins every spin; x5/x10 repeat names, a victim stays at 1; "Đều nhau" clears all. The wheel's slices never change with a treat. Treat survives a reload, and is ignored after logout on the same browser.
 - [ ] Wheel spinner: tap a tile's cue → that player leaves the wheel and sits on side A. 4 players: one spin fills both teams. 5 players: first spin is the partner, then spin for the other team. 1v1: the winner is the opponent. 1v1v1: two spins, both winners are opponents. No spinner: everyone on the wheel, as before.
@@ -21,7 +22,7 @@ Run on the live app, in /vi and /en, at 375 px and desktop. The console must sta
 
 - [ ] `/admin`: a wrong password → error; 6 wrong tries → 429 with a wait message; the right password → dashboard.
 - [ ] Players: add one with an avatar upload (≤1.5 MB) and a colour; edit; delete (archived when they have matches).
-- [ ] Chat (dock's assistant button / ⌘K) opens as a bottom sheet on the phone and a side panel on desktop.
+- [ ] Chat (dock's assistant button / ⌘K) opens as a bottom sheet on the phone and a side panel on desktop. The 8-ball shakes and fills the composer with an idea without sending it.
 - [ ] "3c real Thén thắng Dũ 15-11, bill 45k" → confirm card → Save → clack + haptic, row on Home, Undo 30 s works.
 - [ ] "libre 1v1v1 Thén, Dũ, Bổ: Bổ bét, Thén 40 Dũ 32 Bổ 18, bill 60k" → card with three columns, each score under its player, Bổ marked "Trả bill" → Save → Undo works. On Elo 1200 each: +6, +6, −12.
 - [ ] 1v1v1 without a loser → "Ai bét?" chips with the three names; tapping one gives the card.

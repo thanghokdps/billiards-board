@@ -1,10 +1,11 @@
 "use client";
 
 import { useRenderTool } from "@copilotkit/react-core/v2";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, type ReactElement } from "react";
 
+import { Ball } from "@/components/ui/ball";
 import { AGENT_ID, parseToolResult, TOOL_NAMES, type CardDecision } from "@/lib/agent-results";
 
 import { ProposalCard } from "./proposal-card";
@@ -25,7 +26,11 @@ function Working() {
   const t = useTranslations("chat");
   return (
     <p className="my-2 inline-flex items-center gap-2 rounded-full bg-surface-2 px-3 py-1.5 text-xs text-ivory-muted">
-      <Loader2 className="size-4 animate-spin text-lamp" aria-hidden />
+      <span aria-hidden className="felt relative h-4 w-10 overflow-hidden rounded-full">
+        <span className="absolute inset-y-0 left-1/2 -ml-2 animate-roll">
+          <Ball color="var(--color-lamp)" number={1} className="block size-4" />
+        </span>
+      </span>
       {t("working")}
     </p>
   );

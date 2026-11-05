@@ -1,6 +1,7 @@
 {
   "title": "Tiền bàn",
   "kicker": "Ai chịu bill",
+  "chipsReplay": "{name} đã đóng {amount}. Bấm để chip rơi lại",
   "periodLabel": "Khoảng thời gian",
   "grainLabel": "Nhóm theo",
   "grain": { "day": "Ngày", "week": "Tuần", "month": "Tháng" },

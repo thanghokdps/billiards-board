@@ -2,18 +2,23 @@
 
 import { LoaderCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState, useTransition, type SyntheticEvent } from "react";
+import { useRef, useState, useTransition, type CSSProperties, type SyntheticEvent } from "react";
 
 import { Ball } from "@/components/ui/ball";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/field";
 import { useRouter } from "@/i18n/navigation";
+import { prefersReducedMotion } from "@/lib/motion";
 
 import { LoginError, login } from "../api";
 
 /** Minutes to show for a `retry-after` in seconds; never "0 minutes". */
 const minutesFor = (seconds: number) => Math.max(1, Math.ceil(seconds / 60));
+
+/** Characters that roll the ball to the pocket's lip; it only drops in once the password is right. */
+const FULL_ROLL_CHARS = 12;
+const SHAKE = [0, -8, 8, -5, 5, 0].map((x) => ({ transform: `translateX(${x}px)` }));
 
 export function AdminLogin() {
   const t = useTranslations("admin.login");
@@ -22,6 +27,7 @@ export function AdminLogin() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, startRefresh] = useTransition();
+  const shell = useRef<HTMLDivElement>(null);
 
   async function handleSubmit(event: SyntheticEvent) {
     event.preventDefault();
@@ -34,6 +40,7 @@ export function AdminLogin() {
       startRefresh(() => router.refresh());
     } catch (failure) {
       setBusy(false);
+      if (!prefersReducedMotion()) shell.current?.animate(SHAKE, { duration: 360 });
       if (failure instanceof LoginError && failure.code === "unauthenticated") setError(t("wrong"));
       else if (failure instanceof LoginError && failure.code === "rate_limited") {
         setError(
@@ -47,11 +54,23 @@ export function AdminLogin() {
 
   const loading = busy || refreshing;
   return (
-    <div className="mx-auto flex max-w-sm flex-col justify-center py-16">
+    <div ref={shell} className="mx-auto flex max-w-sm flex-col justify-center py-16">
       <Card>
         <CardBody className="space-y-5">
           <div className="flex flex-col items-center gap-2 text-center">
-            <Ball className="size-14" />
+            <div
+              aria-hidden
+              data-sunk={loading ? "" : undefined}
+              className="login-rail felt w-full"
+              style={
+                { ["--travel" as string]: Math.min(password.length / FULL_ROLL_CHARS, 1).toFixed(3) } as CSSProperties
+              }
+            >
+              <span className="login-pocket" />
+              <span className="login-ball">
+                <Ball className="block size-10" />
+              </span>
+            </div>
             <h1 className="font-display text-3xl font-bold leading-tight">{t("title")}</h1>
             <p className="text-sm text-ivory-muted">{t("hint")}</p>
           </div>

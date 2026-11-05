@@ -8,6 +8,7 @@ import { formatVnd, type Period } from "@/lib/domain";
 import type { MoneyBreakdown } from "@/lib/stats";
 
 import { BillChart } from "./bill-chart";
+import { ChipTowers } from "./chip-towers";
 import { Contributors } from "./contributors";
 import { GameTypeCosts } from "./game-type-costs";
 import { groupTotals } from "../lib/group";
@@ -53,18 +54,24 @@ export async function MoneyView({ money, period, grain }: MoneyViewProps) {
         <EmptyState title={t("empty.title")} body={t("empty.body")} />
       ) : (
         <>
-          <section aria-label={t("total")} className="felt rounded-lg border border-line p-5 shadow-card">
-            <p className="text-xs font-medium text-ivory-muted">{t("total")}</p>
-            <p className="mt-1 inline-block max-w-full rounded-md bg-night/70 px-3 py-1 digits text-score font-bold text-lamp digits-glow sm:text-hero">
-              <RollingNumber value={formatVnd(money.total, locale)} />
-            </p>
-            <div className="mt-3 flex flex-wrap items-end gap-x-8 gap-y-2">
-              <div>
-                <p className="text-xs font-medium text-ivory-muted">{t("avg")}</p>
-                <p className="digits text-xl font-bold">{formatVnd(money.avgPerMatch, locale)}</p>
+          <section
+            aria-label={t("total")}
+            className="felt grid gap-4 rounded-lg border border-line p-5 shadow-card md:grid-cols-2 md:items-center"
+          >
+            <div>
+              <p className="text-xs font-medium text-ivory-muted">{t("total")}</p>
+              <p className="mt-1 inline-block max-w-full rounded-md bg-night/70 px-3 py-1 digits text-score font-bold text-lamp digits-glow sm:text-hero">
+                <RollingNumber value={formatVnd(money.total, locale)} />
+              </p>
+              <div className="mt-3 flex flex-wrap items-end gap-x-8 gap-y-2">
+                <div>
+                  <p className="text-xs font-medium text-ivory-muted">{t("avg")}</p>
+                  <p className="digits text-xl font-bold">{formatVnd(money.avgPerMatch, locale)}</p>
+                </div>
+                <p className="text-sm text-ivory-muted">{t("totalHint", { count: money.matchesWithBill })}</p>
               </div>
-              <p className="text-sm text-ivory-muted">{t("totalHint", { count: money.matchesWithBill })}</p>
             </div>
+            <ChipTowers byPlayer={money.byPlayer} />
           </section>
 
           <Card>

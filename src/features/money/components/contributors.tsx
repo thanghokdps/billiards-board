@@ -55,9 +55,9 @@ export function Contributors({ byPlayer }: { byPlayer: MoneyBreakdown["byPlayer"
                     {formatVnd(paid, locale)}
                   </p>
                 </div>
-                <div aria-hidden className="mt-2 h-2 overflow-hidden rounded-full bg-surface-3">
+                <div aria-hidden className="mt-2 h-2 overflow-clip rounded-full bg-surface-3">
                   <div
-                    className="h-full rounded-full"
+                    className="bar-fill h-full rounded-full"
                     style={{ width: max > 0 ? `${(paid / max) * 100}%` : "0%", backgroundColor: player.ballColor }}
                   />
                 </div>
