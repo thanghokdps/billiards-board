@@ -314,6 +314,94 @@
     opacity 0.2s ease-in 0.3s;
 }
 
+/*
+ * Rack menu: the Home table at its true 2:1, upright on a phone so a 1-2-3-2-1 diamond and its labels fit. The frame is
+ * decoration and turns as one piece; the balls sit in an unturned layer over its felt, so their labels stay level.
+ */
+.rack-menu {
+  --cushions: 3.25rem;
+  /* Short side of the felt, whichever way up it lies. */
+  --felt: min(100vw - 2rem - var(--cushions), (100dvh - 2rem - var(--cushions)) / 2);
+  --along: min(5.5rem, calc(var(--felt) * 0.31));
+  --across: calc(var(--felt) * 0.16);
+  top: 50%;
+  left: 50%;
+  width: calc(var(--felt) + var(--cushions));
+  height: calc(var(--felt) * 2 + var(--cushions));
+  translate: -50% -50%;
+}
+.rack-table {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--felt) * 2 + var(--cushions));
+  translate: -50% -50%;
+  rotate: 90deg;
+}
+/* The Home table recedes as it scrolls away; here the page behind is not what moves. */
+.rack-table .pool-table {
+  animation: none;
+}
+.rack-field {
+  position: absolute;
+  inset: calc(var(--cushions) / 2);
+}
+.rack-diamond {
+  position: absolute;
+  inset: 0 0 auto;
+  height: calc(var(--along) * 5);
+  margin-top: calc(var(--felt) * 0.06);
+}
+.rack-seat {
+  position: absolute;
+  top: calc(50% + (var(--row) - 2) * var(--along));
+  left: calc(50% + var(--lane) * var(--across));
+  width: calc(var(--across) * 2);
+  translate: -50% -50%;
+}
+.rack-ball {
+  width: max(2.75rem, min(3.5rem, calc(var(--felt) * 0.19)));
+  height: max(2.75rem, min(3.5rem, calc(var(--felt) * 0.19)));
+}
+.rack-loose {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+}
+@media (width >= 40rem) {
+  .rack-menu {
+    --cushions: 4.25rem;
+    --felt: min(22rem, (100vw - 2rem - var(--cushions)) / 2, 100dvh - 2rem - var(--cushions));
+    --along: calc(var(--felt) * 0.28);
+    --across: calc(var(--felt) * 0.15);
+    width: calc(var(--felt) * 2 + var(--cushions));
+    height: calc(var(--felt) + var(--cushions));
+  }
+  .rack-table {
+    rotate: none;
+  }
+  /* Lying flat, the apex points at the far rail and the two loose links take the head of the table. */
+  .rack-diamond {
+    inset: 0 0 0 auto;
+    width: calc(var(--along) * 5);
+    height: auto;
+    margin: 0 calc(var(--felt) * 0.06) 0 0;
+  }
+  .rack-seat {
+    top: calc(50% + var(--lane) * var(--across));
+    left: calc(50% - (var(--row) - 2) * var(--along));
+    width: var(--along);
+    white-space: nowrap;
+  }
+  .rack-loose {
+    inset: 0 auto 0 0;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
 /* Assistant: the 8-ball idles until it is shaken for an idea. */
 .eight-idle {
   animation: eight-idle 3.6s ease-in-out infinite;
