@@ -2,6 +2,7 @@
   "title": "Hall of Fame",
   "kicker": "Bảng vàng",
   "records": "Kỷ lục toàn hội",
+  "plaque": { "showMatch": "Lật xem trận đấu", "showRecord": "Lật lại kỷ lục" },
   "recordsEmpty": {
     "title": "Chưa có kỷ lục",
     "body": "Ghi vài trận có tỉ số để lập bảng vàng."

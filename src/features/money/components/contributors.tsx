@@ -1,7 +1,9 @@
 import { Landmark } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import type { CSSProperties } from "react";
 
 import { Badge } from "@/components/ui/badge";
+import { Ball } from "@/components/ui/ball";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlayerAvatar } from "@/components/ui/player-avatar";
 import { Link } from "@/i18n/navigation";
@@ -55,11 +57,13 @@ export function Contributors({ byPlayer }: { byPlayer: MoneyBreakdown["byPlayer"
                     {formatVnd(paid, locale)}
                   </p>
                 </div>
-                <div aria-hidden className="mt-2 h-2 overflow-clip rounded-full bg-surface-3">
-                  <div
-                    className="bar-fill h-full rounded-full"
-                    style={{ width: max > 0 ? `${(paid / max) * 100}%` : "0%", backgroundColor: player.ballColor }}
-                  />
+                <div
+                  aria-hidden
+                  className="ball-groove mt-2"
+                  style={{ ["--to" as string]: max > 0 ? (paid / max) * 100 : 0 } as CSSProperties}
+                >
+                  <span className="ball-groove-trail bar-fill" style={{ backgroundColor: player.ballColor }} />
+                  <Ball color={player.ballColor} number={player.ballNumber} className="ball-groove-ball" />
                 </div>
               </li>
             );

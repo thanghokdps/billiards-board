@@ -15,13 +15,15 @@ import {
   type Scene,
 } from "three";
 
-export type SceneLayout = "tall" | "wide";
-
 /** World sizes per layout: the felt keeps the 3:4 / 8:5 of the flat table, and a ball stays about one thumb wide. */
 export const TABLE = {
   tall: { width: 3, depth: 4, ball: 0.27, rail: 0.28, tilt: 0.36 },
   wide: { width: 8, depth: 5, ball: 0.33, rail: 0.4, tilt: 0.42 },
+  "rack-tall": { width: 2, depth: 4, ball: 0.155, rail: 0.17, tilt: 0.3 },
+  "rack-wide": { width: 4, depth: 2, ball: 0.13, rail: 0.17, tilt: 0.5 },
 } as const;
+
+export type SceneLayout = keyof typeof TABLE;
 
 export const RAIL_HEIGHT = 0.16;
 export const RAIL_BASE = -0.3;
@@ -34,6 +36,7 @@ export interface Tokens {
   wood: string;
   night: string;
   ivory: string;
+  lamp: string;
   lampSoft: string;
   font: string;
 }
@@ -47,12 +50,17 @@ export function readTokens(el: Element): Tokens {
     wood: token("--color-wood"),
     night: token("--color-night"),
     ivory: token("--color-ivory"),
+    lamp: token("--color-lamp"),
     lampSoft: token("--color-lamp-soft"),
     font: token("--font-shoulders") || "sans-serif",
   };
 }
 
-function canvasTexture(width: number, height: number, paint: (ctx: CanvasRenderingContext2D) => void): CanvasTexture {
+export function canvasTexture(
+  width: number,
+  height: number,
+  paint: (ctx: CanvasRenderingContext2D) => void,
+): CanvasTexture {
   const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
@@ -63,8 +71,8 @@ function canvasTexture(width: number, height: number, paint: (ctx: CanvasRenderi
   return texture;
 }
 
-/** Solid ball colour with an ivory number disc; pass no number for the cue ball. */
-export function ballTexture(color: string, tokens: Tokens, number?: number): CanvasTexture {
+/** Solid ball colour with an ivory number disc; pass no number for the cue ball, "" for a blank disc. */
+export function ballTexture(color: string, tokens: Tokens, number?: number | string): CanvasTexture {
   return canvasTexture(512, 256, (ctx) => {
     ctx.fillStyle = color;
     ctx.fillRect(0, 0, 512, 256);
@@ -209,7 +217,7 @@ export function buildTable(scene: Scene, layout: SceneLayout, tokens: Tokens) {
   const pocket = new CircleGeometry(ball * POCKET_RATIO, 32);
   const hole = new MeshBasicMaterial({ color: tokens.night });
   const middle: [number, number][] =
-    layout === "wide"
+    width > depth
       ? [
           [0, -depth / 2],
           [0, depth / 2],

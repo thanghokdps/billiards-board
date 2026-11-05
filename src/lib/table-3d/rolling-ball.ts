@@ -13,6 +13,8 @@ const NUMBER_UP = new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0), -0.95)
 const SHADOW_OFFSET = 0.06;
 const SHADOW_Y = 0.004;
 const TURN_UP_FROM = 0.66;
+const HOP_MS = 320;
+const HOP_HEIGHT = 1.1;
 
 const AXIS = new Vector3();
 const STEP = new Quaternion();
@@ -37,6 +39,7 @@ export class RollingBall {
   private readonly previous = new Vector3();
   private leg: Leg | null = null;
   private nextLeg: Leg | null = null;
+  private hopAt = 0;
 
   constructor(
     geometry: SphereGeometry,
@@ -70,8 +73,23 @@ export class RollingBall {
     this.nextLeg = then;
   }
 
+  /** A small jump on the spot; the shadow stays on the felt. */
+  hop(now: number) {
+    this.hopAt = now;
+  }
+
   /** Moves to `now`; returns true while the ball still has somewhere to go. */
   tick(now: number): boolean {
+    const rolling = this.roll(now);
+    if (rolling || !this.hopAt) return rolling;
+    const t = (now - this.hopAt) / HOP_MS;
+    const airborne = t < 1;
+    this.mesh.position.y = this.radius * (1 + (airborne ? Math.sin(Math.PI * t) * HOP_HEIGHT : 0));
+    if (!airborne) this.hopAt = 0;
+    return airborne;
+  }
+
+  private roll(now: number): boolean {
     const { leg } = this;
     if (!leg) return false;
     if (now < leg.startAt) return true;

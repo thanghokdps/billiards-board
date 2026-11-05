@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/cn";
 import { prefersReducedMotion } from "@/lib/motion";
+import type { SceneLayout } from "@/lib/table-3d/table-mesh";
+import type { SceneBall, TableScene } from "@/lib/table-3d/table-scene";
 
 import type { Point } from "../lib/pocket-layout";
-import type { SceneLayout } from "../lib/table-mesh";
-import type { SceneBall, TableScene } from "../lib/table-scene";
 
 export interface CanvasBall extends Omit<SceneBall, "point"> {
   tall: Point;
@@ -62,6 +62,7 @@ export function TableCanvas({ balls, broken, live, onLiveChange }: TableCanvasPr
     if (!canvas || !near) return;
     const measure = () => {
       setLayout(canvas.clientWidth > canvas.clientHeight ? "wide" : "tall");
+
       sceneRef.current?.resize(canvas.clientWidth, canvas.clientHeight);
     };
     const observer = new ResizeObserver(measure);
@@ -77,7 +78,7 @@ export function TableCanvas({ balls, broken, live, onLiveChange }: TableCanvasPr
     let scene: TableScene | null = null;
     const onLost = () => onLiveChange(false);
 
-    import("../lib/table-scene")
+    import("@/lib/table-3d/table-scene")
       .then(({ TableScene: Scene }) => {
         if (cancelled) return;
         scene = new Scene(canvas, root, layout);

@@ -7,6 +7,8 @@
     "intro": "Một năm trên bàn nỉ của từng người. Chọn một người để xem story.",
     "card": "{matches} · thắng {winRate}",
     "open": "Xem Wrapped {year} của {name}",
+    "prev": "Người trước",
+    "next": "Người tiếp theo",
     "emptyTitle": "Năm {year} chưa có trận nào",
     "emptyBody": "Ghi vài trận rồi quay lại nhé, Wrapped sẽ tự dựng."
   },

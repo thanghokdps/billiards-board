@@ -1,15 +1,16 @@
 "use client";
 
-import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Dialog } from "radix-ui";
-import type { CSSProperties } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 
 import { Ball } from "@/components/ui/ball";
 import { TableFrame } from "@/components/ui/table-frame";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
+import type { TableScene } from "@/lib/table-3d/table-scene";
 
+import { RackCanvas, type RackCanvasBall } from "./rack-canvas";
 import { isActive, NAV_ITEMS, type NavItem } from "../nav-items";
 
 const RACKED = NAV_ITEMS.filter((i) => i.ball);
@@ -29,25 +30,37 @@ const RACK_SEATS = [
   [4, 0],
   [2, 0],
 ];
+const CANVAS_BALLS: RackCanvasBall[] = RACKED.map((item, order) => {
+  const [row = 0, lane = 0] = RACK_SEATS[order] ?? [];
+  return { color: item.ball ?? "", row, lane };
+});
 
 function RackBall({
   item,
   order,
   active,
   onPick,
+  onHop,
 }: {
   item: NavItem;
   order: number;
   active: boolean;
   onPick: () => void;
+  onHop: () => void;
 }) {
   const t = useTranslations("nav");
   const [row, lane] = RACK_SEATS[order] ?? [0, 0];
   return (
-    <li className="rack-seat" style={{ ["--row" as string]: row, ["--lane" as string]: lane } as CSSProperties}>
+    <li
+      className="rack-seat"
+      data-ball={order}
+      style={{ ["--row" as string]: row, ["--lane" as string]: lane } as CSSProperties}
+    >
       <Link
         href={item.href}
         onClick={onPick}
+        onPointerEnter={onHop}
+        onFocus={onHop}
         aria-current={active ? "page" : undefined}
         style={{ animationDelay: `${order * 25}ms` }}
         className="group flex animate-rack-in flex-col items-center gap-0.5 rounded-md text-center text-2xs font-semibold leading-tight"
@@ -58,10 +71,10 @@ function RackBall({
             active && "shadow-lamp ring-2 ring-lamp ring-offset-2 ring-offset-felt",
           )}
         >
-          <Ball color={item.ball} number="" className="size-full drop-shadow-lg" />
+          <Ball color={item.ball} number="" className="rack-flat-ball size-full drop-shadow-lg" />
           <item.icon className="absolute size-3.5 text-night sm:size-4" aria-hidden />
         </span>
-        <span className={cn("rounded-full px-1 py-0.5", active && "bg-night/70 text-lamp")}>{t(item.key)}</span>
+        <span className={cn("px-1 py-0.5", active && "text-lamp")}>{t(item.key)}</span>
       </Link>
     </li>
   );
@@ -72,22 +85,25 @@ export function RackMenu({ open, onOpenChange }: { open: boolean; onOpenChange: 
   const t = useTranslations("nav");
   const pathname = usePathname();
   const close = () => onOpenChange(false);
+  const [live, setLive] = useState(false);
+  const sceneRef = useRef<TableScene | null>(null);
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="overlay-fade fixed inset-0 z-50 bg-night/75 backdrop-blur-sm" />
-        <Dialog.Content aria-describedby={undefined} className="rack-menu fixed z-50 outline-none">
+        <Dialog.Content
+          aria-describedby={undefined}
+          data-live={live || undefined}
+          className="rack-menu fixed z-50 outline-none"
+        >
           <Dialog.Title className="sr-only">{t("mainNav")}</Dialog.Title>
           <div className="rack-table">
             <TableFrame />
           </div>
+          <RackCanvas balls={CANVAS_BALLS} live={live} onLiveChange={setLive} sceneRef={sceneRef} />
           <nav aria-label={t("mainNav")} className="rack-field">
-            <Dialog.Close
-              aria-label={t("closeMenu")}
-              className="absolute top-0 right-0 flex size-11 cursor-pointer items-center justify-center rounded-full hover:bg-night/40"
-            >
-              <X className="size-5" aria-hidden />
-            </Dialog.Close>
+            {/* Sighted users tap outside; a screen reader has no outside to tap. */}
+            <Dialog.Close className="sr-only">{t("closeMenu")}</Dialog.Close>
             <ul className="rack-diamond">
               {RACKED.map((item, order) => (
                 <RackBall
@@ -96,6 +112,7 @@ export function RackMenu({ open, onOpenChange }: { open: boolean; onOpenChange: 
                   order={order}
                   active={isActive(pathname, item.href)}
                   onPick={close}
+                  onHop={() => sceneRef.current?.hop(order)}
                 />
               ))}
             </ul>

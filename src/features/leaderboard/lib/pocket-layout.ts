@@ -1,12 +1,10 @@
 import type { PlayerStats } from "@/lib/stats";
+import type { Point } from "@/lib/table-3d/table-scene";
+
+export type { Point };
 
 export const POCKET_METRICS = ["winRate", "avgPoints", "streak", "paid", "bestWin", "bestLoss"] as const;
 export type PocketMetric = (typeof POCKET_METRICS)[number];
-
-export interface Point {
-  x: number;
-  y: number;
-}
 
 /** A pocket, in % of the felt, and the far point its balls line up towards. `label` offsets its name from the hole. */
 export interface PocketLine {

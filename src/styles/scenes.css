@@ -22,6 +22,225 @@
   }
 }
 
+/* Money: axis labels and the amount, pinned to the WebGL chip stacks by the scene. */
+.chip-tick {
+  position: absolute;
+  top: var(--scene-y);
+  left: var(--scene-x);
+  translate: -50% 0.25rem;
+  pointer-events: none;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-ivory);
+}
+.chip-tip {
+  position: absolute;
+  top: max(3.25rem, var(--scene-y));
+  left: clamp(3.5rem, var(--scene-x), 100% - 3.5rem);
+  translate: -50% -100%;
+  pointer-events: none;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Money: a routed wooden groove; the player's ball has rolled up it to what they paid. */
+.ball-groove {
+  --ball: 1.375rem;
+  position: relative;
+  height: 1rem;
+  margin-block: 0.75rem 0.25rem;
+  border-radius: 999px;
+  background: var(--color-wood-dark);
+  box-shadow:
+    inset 0 2px 4px rgb(0 0 0 / 0.75),
+    0 1px 0 rgb(255 255 255 / 0.08);
+}
+.ball-groove-trail {
+  position: absolute;
+  inset-block: 0.375rem;
+  left: 0.25rem;
+  width: calc((100% - var(--ball)) * var(--to) / 100);
+  border-radius: 999px;
+  opacity: 0.55;
+}
+.ball-groove-ball {
+  position: absolute;
+  top: 50%;
+  left: calc((100% - var(--ball)) * var(--to) / 100);
+  width: var(--ball);
+  height: var(--ball);
+  translate: 0 -50%;
+  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.6));
+  animation: groove-roll 0.8s cubic-bezier(0.2, 0.8, 0.3, 1) backwards;
+}
+@supports (animation-timeline: view()) {
+  .ball-groove-ball {
+    animation-fill-mode: both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 35%;
+  }
+}
+@keyframes groove-roll {
+  from {
+    left: 0;
+    rotate: calc(var(--to) * -8deg);
+  }
+}
+
+/* Hall of Fame: a brass plate with real thickness that turns over to show the match. */
+.plaque {
+  --thick: 0.625rem;
+  --brass: color-mix(in srgb, var(--color-lamp) 45%, var(--color-wood-dark));
+  height: 100%;
+  transform-style: preserve-3d;
+}
+.holo-frame:has(.plaque) {
+  transform-style: preserve-3d;
+}
+.holo-frame:has(.plaque) .holo-foil {
+  transform: translateZ(calc(var(--thick, 0.625rem) / 2 + 1px));
+}
+.plaque-body {
+  position: relative;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.3, 1.25, 0.5, 1);
+}
+.plaque[data-flipped] .plaque-body {
+  transform: rotateY(180deg);
+}
+.plaque-face {
+  position: relative;
+  height: 100%;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background:
+    radial-gradient(circle at 0.625rem 0.625rem, var(--brass) 0.1875rem, transparent 0.2rem),
+    radial-gradient(circle at calc(100% - 0.625rem) calc(100% - 0.625rem), var(--brass) 0.1875rem, transparent 0.2rem),
+    radial-gradient(circle at 0.625rem calc(100% - 0.625rem), var(--brass) 0.1875rem, transparent 0.2rem),
+    linear-gradient(
+      150deg,
+      color-mix(in srgb, var(--color-lamp) 30%, var(--color-night)),
+      color-mix(in srgb, var(--color-lamp) 10%, var(--color-night)) 55%,
+      color-mix(in srgb, var(--color-lamp) 22%, var(--color-night))
+    );
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--color-lamp) 45%, transparent),
+    inset 0 1px 0 1px rgb(255 255 255 / 0.1);
+  backface-visibility: hidden;
+  transform: translateZ(calc(var(--thick) / 2));
+}
+.plaque-back {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transform: rotateY(180deg) translateZ(calc(var(--thick) / 2));
+}
+.plaque-edge {
+  position: absolute;
+  background: var(--brass);
+}
+.plaque-edge-left,
+.plaque-edge-right {
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: var(--thick);
+}
+.plaque-edge-left {
+  left: 0;
+  transform: translateX(-50%) rotateY(90deg);
+}
+.plaque-edge-right {
+  right: 0;
+  transform: translateX(50%) rotateY(90deg);
+}
+.plaque-edge-top,
+.plaque-edge-bottom {
+  left: 0.5rem;
+  right: 0.5rem;
+  height: var(--thick);
+}
+.plaque-edge-top {
+  top: 0;
+  transform: translateY(-50%) rotateX(90deg);
+}
+.plaque-edge-bottom {
+  bottom: 0;
+  transform: translateY(50%) rotateX(90deg);
+}
+.plaque-digits {
+  text-shadow:
+    0 1px 0 rgb(255 255 255 / 0.28),
+    0 -1px 0 rgb(0 0 0 / 0.7);
+}
+
+/* Wrapped: flat cards by default; with motion allowed, the same links stand in a ring the stage turns. */
+.wrapped-ring {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+}
+.wrapped-card {
+  display: flex;
+  height: 17rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border-top: 4px solid var(--player);
+  background:
+    radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--player) 38%, transparent), transparent 62%),
+    var(--color-surface-2);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}
+.wrapped-ring-nav {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .wrapped-ring-stage {
+    height: 19rem;
+    overflow: clip;
+    perspective: 62rem;
+    touch-action: pan-y;
+    cursor: grab;
+  }
+  .wrapped-ring-stage[data-dragging] {
+    cursor: grabbing;
+  }
+  .wrapped-ring:not([data-flat]) {
+    position: relative;
+    display: block;
+    width: 12.5rem;
+    height: 17rem;
+    margin: 1rem auto 0;
+    transform-style: preserve-3d;
+    transform: translateZ(calc(var(--radius) * -1)) rotateY(calc(var(--turn) * var(--step) * -1));
+    transition: transform 0.6s cubic-bezier(0.2, 1.05, 0.35, 1);
+  }
+  .wrapped-ring-stage[data-dragging] .wrapped-ring {
+    transition: none;
+  }
+  .wrapped-ring:not([data-flat]) > li {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    transform: rotateY(calc(var(--i) * var(--step))) translateZ(var(--radius));
+    filter: brightness(0.55);
+    transition: filter 0.4s;
+  }
+  .wrapped-ring:not([data-flat]) > li[data-active] {
+    filter: none;
+  }
+  .wrapped-ring-nav:not([data-flat]) {
+    display: flex;
+  }
+}
+
 /* Money: real CSS 3D towers, one disc per step, so the pointer orbits them instead of sliding a picture. */
 .chip-scene {
   height: 10rem;
@@ -320,8 +539,8 @@
  */
 .rack-menu {
   --cushions: 3.25rem;
-  /* Short side of the felt, whichever way up it lies. */
-  --felt: min(100vw - 2rem - var(--cushions), (100dvh - 2rem - var(--cushions)) / 2);
+  /* Short side of the felt, whichever way up it lies. The wide margins leave a backdrop to tap on every side. */
+  --felt: min(100vw - 5.5rem - var(--cushions), (100dvh - 10rem - var(--cushions)) / 2);
   --along: min(5.5rem, calc(var(--felt) * 0.31));
   --across: calc(var(--felt) * 0.16);
   top: 50%;
@@ -359,9 +578,12 @@
   width: calc(var(--across) * 2);
   translate: -50% -50%;
 }
+.rack-seat {
+  --rack-ball: max(2.25rem, min(3rem, calc(var(--felt) * 0.155)));
+}
 .rack-ball {
-  width: max(2.75rem, min(3.5rem, calc(var(--felt) * 0.19)));
-  height: max(2.75rem, min(3.5rem, calc(var(--felt) * 0.19)));
+  width: var(--rack-ball);
+  height: var(--rack-ball);
 }
 .rack-loose {
   position: absolute;
@@ -373,7 +595,7 @@
 @media (width >= 40rem) {
   .rack-menu {
     --cushions: 4.25rem;
-    --felt: min(22rem, (100vw - 2rem - var(--cushions)) / 2, 100dvh - 2rem - var(--cushions));
+    --felt: min(22rem, (100vw / 1.3 - var(--cushions)) / 2, 100dvh - 7rem - var(--cushions));
     --along: calc(var(--felt) * 0.28);
     --across: calc(var(--felt) * 0.15);
     width: calc(var(--felt) * 2 + var(--cushions));
@@ -399,6 +621,59 @@
     inset: 0 auto 0 0;
     flex-direction: column;
     justify-content: center;
+  }
+}
+/* The canvas overhangs the box: a tilted table is fitted to it, and the near rail needs the extra width. */
+.rack-canvas {
+  position: absolute;
+  top: -5%;
+  left: -4%;
+  width: 108%;
+  height: 110%;
+}
+@media (width >= 40rem) {
+  .rack-canvas {
+    top: -8%;
+    left: -12%;
+    width: 124%;
+    height: 116%;
+  }
+}
+.rack-table {
+  transition: opacity 0.2s;
+}
+.rack-menu[data-live] .rack-table,
+.rack-menu[data-live] .rack-flat-ball {
+  opacity: 0;
+}
+/* Live, a seat is pinned to its ball by the scene, in the canvas's frame; the links wait for the break to settle. */
+.rack-menu[data-live] .rack-diamond {
+  inset: calc(var(--cushions) / -2);
+  width: auto;
+  height: auto;
+  margin: 0;
+}
+.rack-menu[data-live] .rack-seat {
+  top: var(--scene-y);
+  left: var(--scene-x);
+  translate: -50% calc(var(--rack-ball) / -2);
+}
+.rack-menu[data-live] .rack-seat a {
+  animation: rack-settle 0.25s 1s both;
+  animation-delay: 1s !important;
+}
+/* From the tall camera a ball's disc sits a little under its centre. */
+.rack-menu[data-live] .rack-ball > svg:not(.rack-flat-ball) {
+  translate: 0 0.25rem;
+}
+@media (width >= 40rem) {
+  .rack-menu[data-live] .rack-ball > svg:not(.rack-flat-ball) {
+    translate: none;
+  }
+}
+@keyframes rack-settle {
+  from {
+    opacity: 0;
   }
 }
 
@@ -507,6 +782,7 @@
 @media (prefers-reduced-motion: reduce) {
   /* Delays and scroll timelines would otherwise hold a first frame: a hidden chip, a flipped medal. */
   .bar-fill,
+  .ball-groove-ball,
   .chip,
   .clash-track > *,
   .clash-ball,

@@ -2,6 +2,7 @@
   "title": "Hall of Fame",
   "kicker": "The golden board",
   "records": "Club records",
+  "plaque": { "showMatch": "Turn over to see the match", "showRecord": "Turn back to the record" },
   "recordsEmpty": {
     "title": "No records yet",
     "body": "Log a few matches with scores to start the board."

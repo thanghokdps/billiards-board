@@ -1,6 +1,10 @@
 # Solutions Index
 
 ## Auto-captured
+- [sync-refused-origin-changed-repin](sync-refused-origin-changed-repin.md) — When an app's sync refuses because origin changed, ask for a re-pin instead of bypassing it with git — `low`
+- [tool-arg-errors-not-infra-failure](tool-arg-errors-not-infra-failure.md) — Report tool argument errors as bad input, not as an infrastructure failure — `med`
+- [tool-nullable-fields-need-optional](tool-nullable-fields-need-optional.md) — Tool input fields the model may omit need .optional(), not only .nullable() — `high`
+- [write-request-must-call-tool-same-turn](write-request-must-call-tool-same-turn.md) — A write request must call the write tool in the same turn, never claim a card without one — `med`
 - [rate-limit-login-failures](rate-limit-login-failures.md) — Limit failed login attempts per client and return 429 — `med`
 - [no-ref-writes-during-render](no-ref-writes-during-render.md) — Do not write refs or set state during render — `med`
 - [split-message-files-by-namespace](split-message-files-by-namespace.md) — Split i18n message files by namespace for parallel work — `med`
@@ -16,4 +20,72 @@
 - [ignore-next-build-output-before-commit](ignore-next-build-output-before-commit.md) — Add .next/ to .gitignore and .prettierignore before the first commit — `high`
 - [recap-facts-plain-values-not-codes](recap-facts-plain-values-not-codes.md) — Give recap facts plain values and forbid echoing field names — `med`
 - [playwright-sse-capture-decodes-latin1](playwright-sse-capture-decodes-latin1.md) — Playwright misdecodes event-stream bytes as Latin-1 in captures — `med`
+- [vercel-preview-needs-env-or-deploy-off](vercel-preview-needs-env-or-deploy-off.md) — Branch deploys need env vars for their environment, or they are turned off — `med`
+- [check-git-identity-before-first-commit](check-git-identity-before-first-commit.md) — Set the repo's git user.email before the first commit on a multi-identity machine — `med`
+- [read-failing-ci-log-before-naming-cause](read-failing-ci-log-before-naming-cause.md) — Read the failing CI log before naming a cause — `med`
+- [disable-controls-until-hydrated](disable-controls-until-hydrated.md) — Render interactive controls disabled until the client has hydrated — `med`
+- [shell-env-overrides-env-file](shell-env-overrides-env-file.md) — Shell environment variables override values loaded from --env-file — `high`
+- [wait-for-animation-before-screenshot](wait-for-animation-before-screenshot.md) — Wait for an entrance animation to finish before taking a screenshot — `med`
+- [preview-port-from-server-log](preview-port-from-server-log.md) — Open the port the dev server actually logged, not the preview tool's default — `med`
+- [dont-commit-next-env-dts](dont-commit-next-env-dts.md) — Never commit next-env.d.ts after a dev run — `med`
+- [partial-update-tool-schema](partial-update-tool-schema.md) — Make update-tool schemas partial so a changed-fields-only call validates — `high`
+- [migrate-db-before-merge](migrate-db-before-merge.md) — Run db:migrate on the target database before merging a schema change — `med`
+- [dev-server-own-port-not-preview](dev-server-own-port-not-preview.md) — Start your own dev server on a dedicated port when 3000 may be taken — `med`
+- [verify-gitignore-before-committing-specs](verify-gitignore-before-committing-specs.md) — Check git check-ignore before assuming specs/ is ignored — `low`
+- [sibling-formats-share-layout](sibling-formats-share-layout.md) — New match formats must reuse the sibling formats' row layout and labels — `med`
+- [container-queries-for-reused-panels](container-queries-for-reused-panels.md) — Use container queries, not viewport breakpoints, for components reused in narrow panels — `med`
+- [preview-start-worktree-launch-config](preview-start-worktree-launch-config.md) — In a git worktree, start the dev server through Bash, not preview_start — `med`
+- [verify-gitignore-before-assuming](verify-gitignore-before-assuming.md) — Check git check-ignore before assuming a path is gitignored — `med`
+- [chat-suggestions-generic-labels](chat-suggestions-generic-labels.md) — Chat suggestion chips must use generic labels, not names or figures from current data — `high`
+- [scrollbar-gutter-for-scroll-lock-shift](scrollbar-gutter-for-scroll-lock-shift.md) — Reserve the scrollbar gutter when a scroll lock hides the scrollbar — `med`
+- [hand-denied-destructive-command-to-user](hand-denied-destructive-command-to-user.md) — When a destructive command is denied, hand it to the user instead of routing around it — `med`
+- [absolute-paths-for-playwright-captures](absolute-paths-for-playwright-captures.md) — Pass absolute paths to Playwright screenshots — `med`
+- [keep-playwright-output-out-of-lint](keep-playwright-output-out-of-lint.md) — Playwright artifacts inside the repo break lint; keep them out or ignore them — `med`
+- [one-shot-animation-guard-survives-strict-mode](one-shot-animation-guard-survives-strict-mode.md) — A one-shot animation guard set on mount can be reset by dev Strict Mode's second run — `low`
+- [grid-items-min-width-zero-at-phone-width](grid-items-min-width-zero-at-phone-width.md) — Set min-width:0 on the items of each new grid, or the grid overflows at phone width — `med`
+- [dim-stacked-siblings-with-filter](dim-stacked-siblings-with-filter.md) — Dim a stacked sibling with filter, not opacity — `med`
+- [gitignore-playwright-mcp-artifacts](gitignore-playwright-mcp-artifacts.md) — Gitignore .playwright-mcp/ before committing browser checks — `med`
+- [agent-no-claim-without-tool-call](agent-no-claim-without-tool-call.md) — Agent must call the write tool before claiming a change happened — `med`
+- [retest-agent-turns-on-fresh-thread](retest-agent-turns-on-fresh-thread.md) — Retest a failing agent turn on a fresh thread before changing the prompt — `med`
+- [resolve-model-ids-from-server-state](resolve-model-ids-from-server-state.md) — Resolve model-supplied ids against server state when only one target exists — `med`
+- [tool-notice-addressed-to-model](tool-notice-addressed-to-model.md) — Write tool notices as instructions to the model, not to the user — `med`
+- [recheck-let-after-lint-autofix](recheck-let-after-lint-autofix.md) — Recheck let declarations after a lint or format autofix — `med`
+- [lint-heap-and-worktree-scan](lint-heap-and-worktree-scan.md) — Run lint with a larger heap and ignore errors under .claude/worktrees — `med`
+- [enforce-agent-write-rules-in-tool](enforce-agent-write-rules-in-tool.md) — Enforce agent write-safety rules in tool code, not only in the prompt — `med`
+- [select-items-by-ordinal-not-id](select-items-by-ordinal-not-id.md) — Let the model pick items by a short ordinal shown in context, not by long ids from history — `med`
+- [scope-chat-decisions-to-page-load](scope-chat-decisions-to-page-load.md) — Scope persisted chat decisions to the page load that produced them — `med`
+- [full-lint-needs-heap-and-worktree-check](full-lint-needs-heap-and-worktree-check.md) — Run full-repo lint with a larger Node heap, and check worktree paths in its output — `med`
+- [check-pr-state-before-follow-up-push](check-pr-state-before-follow-up-push.md) — Check the PR state before pushing a follow-up commit to its branch — `med`
+- [persist-decided-action-cards](persist-decided-action-cards.md) — A decided action card must keep its outcome after a reload — `med`
+- [enforce-confirm-target-in-tool](enforce-confirm-target-in-tool.md) — Enforce which card a bare confirmation applies to in the tool, not the prompt — `med`
+- [verify-thread-owner-before-explaining-stale-state](verify-thread-owner-before-explaining-stale-state.md) — Find which side owns the thread id before explaining a stale-conversation bug — `med`
+- [search-origin-main-when-feature-missing](search-origin-main-when-feature-missing.md) — Search origin/main when a feature is missing from the current branch — `med`
+- [measure-edges-not-eyeball-overflow](measure-edges-not-eyeball-overflow.md) — Measure element bounds numerically to check for overflow past an edge — `med`
+- [read-layout-offsets-from-dom](read-layout-offsets-from-dom.md) — Read layout offsets from the DOM instead of hardcoding pixel values — `med`
+- [resize-aware-layout-for-pixel-pet](resize-aware-layout-for-pixel-pet.md) — Pixel pet reads window width only at mount and misses resizes — `med`
+- [recheck-constants-derived-from-resized-container](recheck-constants-derived-from-resized-container.md) — After resizing a container, recheck constants derived from its size — `low`
+- [keep-decorative-overlays-small-and-off-center](keep-decorative-overlays-small-and-off-center.md) — Keep decorative overlays small and away from the content center — `low`
+- [fetch-origin-before-claiming-main-current](fetch-origin-before-claiming-main-current.md) — Fetch origin before saying local main is the latest — `med`
+- [git-cherry-before-force-delete-squashed](git-cherry-before-force-delete-squashed.md) — Use git cherry to confirm a squash-merged branch before git branch -D — `med`
+- [browser-mobile-emulation-sends-mouse](browser-mobile-emulation-sends-mouse.md) — Browser-tool mobile emulation sends mouse events, not touch — `low`
+- [stage-by-path-when-sibling-session-shares-checkout](stage-by-path-when-sibling-session-shares-checkout.md) — When another session has uncommitted edits in the same checkout, stage only your own files by path — `med`
+- [reduced-motion-flat-fallback-skips-3d-load](reduced-motion-flat-fallback-skips-3d-load.md) — Under reduced motion, render a flat fallback and do not load the 3D library — `med`
+- [force-random-outcome-to-verify-picker](force-random-outcome-to-verify-picker.md) — To verify a weighted random pick, force one option to 100% and confirm it wins — `med`
+- [admin-only-browser-setting-is-ui-gate](admin-only-browser-setting-is-ui-gate.md) — An admin-only setting that changes only the admin's browser is a UI gate, not access control — `low`
+- [reply-in-user-language-and-short](reply-in-user-language-and-short.md) — Reply in the user's language and keep answers short — `med`
+- [report-frame-time-median-and-worst](report-frame-time-median-and-worst.md) — Report animation smoothness as median and worst frame time, not by eye — `low`
+- [private-browser-when-mcp-locked](private-browser-when-mcp-locked.md) — When the shared Playwright MCP is held by another session, run a private headless Chromium — `med`
+- [reinstall-harness-when-plugin-stale](reinstall-harness-when-plugin-stale.md) — Re-run the kit install script when the installed harness plugin lags the checkout — `med`
+- [verify-library-default-in-source-before-deleting](verify-library-default-in-source-before-deleting.md) — Verify a library default in its installed source before deleting code that relies on it — `med`
+- [no-guessed-credentials-for-login-ui-tests](no-guessed-credentials-for-login-ui-tests.md) — Do not submit guessed credentials to exercise a login error state — `med`
+- [check-shared-checkout-sessions-before-branch-switch](check-shared-checkout-sessions-before-branch-switch.md) — Check other sessions on a shared checkout before switching branches — `med`
+- [split-mixed-file-hunks-before-commit](split-mixed-file-hunks-before-commit.md) — Commit only your own hunks from a file another session also changed — `med`
+- [verify-committed-branch-not-mixed-tree](verify-committed-branch-not-mixed-tree.md) — Run build and gates on the branch alone, not on a mixed working tree — `med`
+- [recharts-auto-animation-respects-reduced-motion](recharts-auto-animation-respects-reduced-motion.md) — Use recharts isAnimationActive 'auto' to honour reduced motion — `med`
+- [individual-transform-props-with-keyframes](individual-transform-props-with-keyframes.md) — Put offsets in translate and rotate, not in the transform keyframes — `med`
+- [playwright-mcp-busy-use-own-chrome](playwright-mcp-busy-use-own-chrome.md) — Drive your own headless Chrome when the Playwright MCP browser is locked — `med`
+- [worktree-build-env-placeholders](worktree-build-env-placeholders.md) — In a git worktree, build with placeholder env vars instead of copying .env — `med`
+- [next-dev-rewrites-next-env](next-dev-rewrites-next-env.md) — Keep next-env.d.ts out of commits; next dev rewrites it — `med`
+- [per-item-dates-in-multi-day-cards](per-item-dates-in-multi-day-cards.md) — Show each item's own date when a grouped card spans several days — `med`
+- [branch-from-main-after-merge](branch-from-main-after-merge.md) — Cut a new branch from origin/main once the previous branch's PR has merged — `med`
 
