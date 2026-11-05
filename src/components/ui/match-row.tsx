@@ -43,9 +43,10 @@ function Side({
       className={cn(
         "flex min-w-0 flex-1 items-center gap-2",
         align === "right" && "flex-row-reverse text-right",
-        // Beside two avatars a phone leaves room for a letter or two, so the names go underneath.
-        isTeam && "max-sm:flex-col max-sm:gap-1",
-        isTeam && (align === "right" ? "max-sm:items-end" : "max-sm:items-start"),
+        // Beside two avatars a narrow row leaves room for a letter or two, so the names go underneath. A container
+        // query: this row also sits in cards and the chat panel, where the viewport says nothing about its width.
+        isTeam && "@max-md:flex-col @max-md:gap-1",
+        isTeam && (align === "right" ? "@max-md:items-end" : "@max-md:items-start"),
       )}
     >
       <div className={cn("flex", align === "right" ? "flex-row-reverse -space-x-reverse" : "", "-space-x-2")}>
@@ -120,7 +121,7 @@ export function MatchRow({ match, streaks, footer, compact, className }: MatchRo
   const lossLabel = isGuest ? t("loss") : match.bill != null ? t("paysBill") : undefined;
   const billLabel = match.bill != null ? formatVnd(match.bill, locale) : t("noBill");
   return (
-    <article className={cn("py-3", className)}>
+    <article className={cn("@container py-3", className)}>
       <div className="mb-2 flex items-center gap-2 text-2xs text-ivory-muted">
         <GameTypeBadge gameType={match.gameType} />
         {match.playedAt && <time dateTime={match.playedAt}>{formatTime(match.playedAt, locale)}</time>}
