@@ -21,7 +21,7 @@ export default async function WheelPage() {
   const players = roster.map(toPlayerRef);
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
+    <div className="mx-auto max-w-6xl space-y-6 px-4 py-6">
       <PageHeader title={t("title")} kicker={t("kicker")} actions={<SwingLamp />} />
       <WheelStudio players={players} admin={admin} />
     </div>
