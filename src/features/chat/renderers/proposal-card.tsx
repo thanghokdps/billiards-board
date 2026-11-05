@@ -124,6 +124,8 @@ export function ProposalCard({ proposal, toolCallId }: { proposal: Proposal; too
       : proposal.kind === "update"
         ? t("updateTitle")
         : t("deleteTitle");
+  const createDates =
+    proposal.kind === "create" ? new Set(proposal.matches.map((m) => m.input.date ?? proposal.date)) : new Set();
 
   return (
     <Card
@@ -136,7 +138,7 @@ export function ProposalCard({ proposal, toolCallId }: { proposal: Proposal; too
     >
       <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-3">
         <p className="font-display text-xl font-bold leading-tight">{title}</p>
-        {proposal.kind === "create" && (
+        {proposal.kind === "create" && createDates.size === 1 && (
           <span className="text-xs text-ivory-muted">
             {t("date", { date: formatDate(proposal.matches[0]?.input.date ?? proposal.date, locale) })}
           </span>
@@ -145,25 +147,33 @@ export function ProposalCard({ proposal, toolCallId }: { proposal: Proposal; too
 
       <div className="divide-y divide-line px-3 py-1">
         {proposal.kind === "create" &&
-          proposal.matches.map((m, i) => (
-            <MatchRow
-              key={i}
-              compact={false}
-              match={{
-                gameType: m.input.gameType,
-                format: m.input.format,
-                sideA: m.sideA,
-                sideB: m.sideB,
-                winnerSide: m.input.winnerSide,
-                scoreA: m.input.scoreA ?? null,
-                scoreB: m.input.scoreB ?? null,
-                scores: m.input.scores ?? [],
-                bill: m.input.bill ?? null,
-                tags: m.input.tags ?? [],
-                note: m.input.note ?? null,
-              }}
-            />
-          ))}
+          proposal.matches.map((m, i) => {
+            const row = (
+              <MatchRow
+                key={i}
+                compact={false}
+                match={{
+                  gameType: m.input.gameType,
+                  format: m.input.format,
+                  sideA: m.sideA,
+                  sideB: m.sideB,
+                  winnerSide: m.input.winnerSide,
+                  scoreA: m.input.scoreA ?? null,
+                  scoreB: m.input.scoreB ?? null,
+                  scores: m.input.scores ?? [],
+                  bill: m.input.bill ?? null,
+                  tags: m.input.tags ?? [],
+                  note: m.input.note ?? null,
+                }}
+              />
+            );
+            if (createDates.size === 1) return row;
+            return (
+              <Labeled key={i} label={t("date", { date: formatDate(m.input.date ?? proposal.date, locale) })}>
+                {row}
+              </Labeled>
+            );
+          })}
         {proposal.kind === "update" && (
           <>
             <Labeled label={t("before")}>

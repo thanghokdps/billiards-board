@@ -30,7 +30,7 @@ Run on the live app, in /vi and /en, at 375 px and desktop. The console must sta
 - [ ] "du đấu 3c real, Thén thua guest" → card with "Du đấu" instead of a bill, Thén marked "Thua", Guest "Thắng" → Save → row on Home. Elo unchanged; win rate and streak change.
 - [ ] Guest match without a loser → chips with the player and Guest. A score or bill in the sentence is not saved.
 - [ ] "trận vừa rồi Thén thắng guest" on a guest match → before/after card → Save → Undo.
-- [ ] Batch of 2 matches in one sentence → one card, Save all.
+- [ ] Batch of 2 matches in one sentence → one card, Save all. Same day: the date sits in the card's header. Different days: each match shows its own date instead.
 - [ ] Missing game type → one question with chips; tapping a chip continues.
 - [ ] Unknown or ambiguous name → chips of candidates.
 - [ ] "trận vừa rồi bill 50k" → before/after card → Save; Undo restores.
