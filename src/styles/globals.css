@@ -754,6 +754,8 @@
       top: 5px;
       height: 2px;
       background-image: linear-gradient(to right, var(--color-wood-dark), var(--color-wood) 80%, var(--color-ivory));
+      /* A page too short to scroll has no timeline, so the keyframes never apply: hold their first frame here. */
+      transform: translateX(-100%);
       animation: cue-grow linear both;
       animation-timeline: scroll(root);
     }
@@ -765,6 +767,7 @@
       border-radius: 50%;
       background: var(--color-ivory);
       box-shadow: 0 0 6px var(--color-lamp);
+      transform: translateX(-10px);
       animation: cue-ball linear both;
       animation-timeline: scroll(root);
     }
