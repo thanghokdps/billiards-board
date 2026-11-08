@@ -12,6 +12,7 @@ export interface StatPlayer {
   ballColor: string;
   ballNumber: number;
   avatarUrl: string | null;
+  guest: boolean;
 }
 
 export interface StatMatch {
@@ -64,6 +65,9 @@ const sidesOf = (m: StatMatch) => ({
   losers: m.winnerSide === "a" ? m.sideB : m.sideA,
 });
 
+/** True when a named guest sits in any seat; the anonymous guest format has no seat to check. */
+export const hasGuest = (m: StatMatch) => [...m.sideA, ...m.sideB].some((p) => p.guest);
+
 function emptyByType(): PlayerStats["byGameType"] {
   return {
     "3c_real": { played: 0, wins: 0, winRate: 0 },
@@ -79,7 +83,8 @@ const eloGain = (winnerRating: number, loserRating: number, k: number) =>
 /**
  * Elo replayed over the matches in order. 2v2 uses team averages and every member gets the team delta.
  * In a 1v1v1 the loser plays each winner at half K: the sum stays zero and the loser risks what a 1v1 costs.
- * A guest match moves no rating but keeps its history entry: `cardStats` reads history by match index.
+ * A guest match (anonymous format or a named guest in any seat) moves no rating but keeps its history entry:
+ * `cardStats` reads history by match index.
  */
 export function computeElo(matches: StatMatch[]): {
   ratings: Map<number, number>;
@@ -90,7 +95,8 @@ export function computeElo(matches: StatMatch[]): {
   const history: { date: string; matchId: string; ratings: Record<number, number> }[] = [];
   for (const m of matches) {
     const { winners, losers } = sidesOf(m);
-    if (m.format === "1v1v1") {
+    const rated = m.format !== "guest" && !hasGuest(m);
+    if (rated && m.format === "1v1v1") {
       const loser = losers[0]!;
       const loserRating = get(loser.id);
       let lost = 0;
@@ -100,7 +106,7 @@ export function computeElo(matches: StatMatch[]): {
         lost += gain;
       }
       ratings.set(loser.id, loserRating - lost);
-    } else if (m.format !== "guest") {
+    } else if (rated) {
       const rw = winners.reduce((s, p) => s + get(p.id), 0) / winners.length;
       const rl = losers.reduce((s, p) => s + get(p.id), 0) / losers.length;
       const delta = eloGain(rw, rl, ELO_K);
@@ -252,8 +258,10 @@ export function nemesisAndPrey(player: StatPlayer, players: StatPlayer[], matche
 const margin = (m: StatMatch) => (m.scoreA != null && m.scoreB != null ? Math.abs(m.scoreA - m.scoreB) : null);
 const total = (m: StatMatch) => (m.scoreA != null && m.scoreB != null ? m.scoreA + m.scoreB : null);
 
+/** Records name players, so guest matches are left out of them; day totals still count every match. */
 export function records(matches: StatMatch[]) {
-  const scored = matches.filter((m) => margin(m) != null);
+  const memberMatches = matches.filter((m) => !hasGuest(m));
+  const scored = memberMatches.filter((m) => margin(m) != null);
   const biggestMargin = [...scored].sort((a, b) => margin(b)! - margin(a)!)[0] ?? null;
   const closest = [...scored].sort((a, b) => margin(a)! - margin(b)! || total(b)! - total(a)!)[0] ?? null;
   const longest = [...scored].sort((a, b) => total(b)! - total(a)!)[0] ?? null;
@@ -267,7 +275,7 @@ export function records(matches: StatMatch[]) {
   const days = [...byDay.entries()];
   const busiestDay = days.sort((a, b) => b[1].count - a[1].count)[0] ?? null;
   const priciestDay = [...byDay.entries()].sort((a, b) => b[1].bill - a[1].bill)[0] ?? null;
-  const comebacks = matches.filter((m) => m.tags.includes("#comeback"));
+  const comebacks = memberMatches.filter((m) => m.tags.includes("#comeback"));
   return {
     biggestMargin: biggestMargin ? { match: biggestMargin, margin: margin(biggestMargin)! } : null,
     closest: closest ? { match: closest, margin: margin(closest)! } : null,
@@ -283,11 +291,13 @@ export interface MoneyBreakdown {
   matchesWithBill: number;
   avgPerMatch: number;
   byPlayer: { player: StatPlayer; paid: number }[];
+  /** Guests who paid something, biggest first. */
+  guests: { player: StatPlayer; paid: number }[];
   byGameType: Record<GameType, { total: number; count: number; avg: number }>;
   byDate: { date: string; total: number }[];
 }
 
-export function money(players: StatPlayer[], matches: StatMatch[]): MoneyBreakdown {
+export function money(players: StatPlayer[], matches: StatMatch[], guests: StatPlayer[] = []): MoneyBreakdown {
   const stats = computePlayerStats(players, matches);
   const byGameType = {
     "3c_real": { total: 0, count: 0, avg: 0 },
@@ -311,6 +321,10 @@ export function money(players: StatPlayer[], matches: StatMatch[]): MoneyBreakdo
     matchesWithBill: count,
     avgPerMatch: count ? Math.round(totalBill / count) : 0,
     byPlayer: stats.map((s) => ({ player: s.player, paid: s.paid })).sort((a, b) => b.paid - a.paid),
+    guests: computePlayerStats(guests, matches)
+      .filter((s) => s.paid > 0)
+      .map((s) => ({ player: s.player, paid: s.paid }))
+      .sort((a, b) => b.paid - a.paid),
     byGameType,
     byDate: [...byDate.entries()].map(([date, t]) => ({ date, total: t })).sort((a, b) => a.date.localeCompare(b.date)),
   };
@@ -349,7 +363,8 @@ export function wanted(stats: PlayerStats[], monthMatches: StatMatch[], players:
 }
 
 /** The most balanced pair with enough history (≥ 4 meetings). */
-export function rivalry(players: StatPlayer[], matches: StatMatch[]): HeadToHead | null {
+export function rivalry(players: StatPlayer[], allMatches: StatMatch[]): HeadToHead | null {
+  const matches = allMatches.filter((m) => !hasGuest(m));
   let best: HeadToHead | null = null;
   let bestScore = Infinity;
   for (let i = 0; i < players.length; i++) {
@@ -371,7 +386,10 @@ export type SpecialReason = "streak_broken" | "comeback" | "derby" | "blowout";
 /** Why a match deserves a poster (requirement: special-match rules), or null. */
 export function specialReason(match: StatMatch, before: StatMatch[]): SpecialReason | null {
   const { winners, losers } = sidesOf(match);
-  const statsBefore = computePlayerStats(losers, before);
+  const statsBefore = computePlayerStats(
+    losers.filter((p) => !p.guest),
+    before,
+  );
   if (statsBefore.some((s) => s.current?.result === "W" && s.current.length >= 4)) return "streak_broken";
   if (match.tags.includes("#comeback")) return "comeback";
   const m = margin(match);

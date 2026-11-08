@@ -23,7 +23,11 @@
     "emptyBody": "Thêm người đầu tiên để bắt đầu ghi trận.",
     "inactive": "Đã nghỉ",
     "edit": "Sửa {name}",
-    "remove": "Xóa {name}"
+    "remove": "Xóa {name}",
+    "membersTitle": "Thành viên",
+    "guestsTitle": "Khách",
+    "addGuest": "Thêm khách",
+    "guestsEmpty": "Chưa có khách nào. Thêm ở đây hoặc ngay trên vòng quay."
   },
   "form": {
     "addTitle": "Thêm người chơi",
@@ -51,6 +55,12 @@
     },
     "ballNumber": "Số bi (1–15)",
     "catchphrase": "Câu cửa miệng",
+    "note": "Ghi chú",
+    "noteHint": "Chỉ admin thấy, vd. bạn của ai.",
+    "kind": "Loại",
+    "kindMember": "Thành viên",
+    "kindGuest": "Khách",
+    "kindHint": "Khách không có trang riêng và không tính Elo; phần bill vẫn tính.",
     "status": "Trạng thái",
     "activeOn": "Đang chơi",
     "activeOff": "Đã nghỉ",
@@ -66,6 +76,7 @@
       "ballColor": "Màu phải có dạng #RRGGBB.",
       "ballNumber": "Số bi là số nguyên từ 1 đến 15.",
       "catchphrase": "Câu cửa miệng tối đa 120 ký tự.",
+      "note": "Ghi chú tối đa 280 ký tự.",
       "active": "Trạng thái không hợp lệ."
     }
   },

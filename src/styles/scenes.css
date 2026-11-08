@@ -297,6 +297,40 @@
   }
 }
 
+/* Money: guests' towers are house chips, grey with a stripe in the guest's colour, on a shorter floor. */
+.chip-scene[data-compact] {
+  height: 7rem;
+}
+.chip-tower[data-guest] .chip {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--color-house) 0 0.375rem,
+    color-mix(in srgb, var(--color-ivory) 40%, var(--chip)) 0.375rem 0.75rem
+  );
+}
+.chip-tower[data-guest] .chip:last-child {
+  background:
+    radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.4), transparent 55%),
+    repeating-linear-gradient(
+      45deg,
+      var(--color-house) 0 0.375rem,
+      color-mix(in srgb, var(--color-ivory) 40%, var(--chip)) 0.375rem 0.75rem
+    );
+}
+
+/* Wheel: the slate a guest's name is chalked on. */
+.chalk-slate {
+  background:
+    radial-gradient(ellipse at 15% 0%, color-mix(in srgb, var(--color-chalk) 16%, transparent), transparent 60%),
+    radial-gradient(ellipse at 95% 100%, color-mix(in srgb, var(--color-ivory) 7%, transparent), transparent 55%),
+    var(--color-night);
+}
+.chalk-slate input {
+  font-family: var(--font-display);
+  font-style: italic;
+  letter-spacing: 0.04em;
+}
+
 /* Rivalry: the two balls meet exactly where the head-to-head splits. */
 .clash {
   --contact: clamp(2.25rem, var(--split), calc(100% - 2.25rem));

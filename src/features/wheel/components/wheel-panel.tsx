@@ -82,7 +82,7 @@ export function WheelPanel({
     () =>
       players
         .filter((p) => !picks.includes(p.id) && p.id !== spinnerId)
-        .map((p) => ({ id: p.id, label: p.name, color: p.ballColor, weight: weights[p.id] ?? 1 }))
+        .map((p) => ({ id: p.id, label: p.name, color: p.ballColor, weight: weights[p.id] ?? 1, guest: p.guest }))
         .filter((e) => e.weight > 0),
     [players, picks, weights, spinnerId],
   );

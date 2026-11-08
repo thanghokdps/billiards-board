@@ -15,7 +15,7 @@ const MAX_BYTES = 1_500_000;
 interface AvatarFieldProps {
   id: string;
   value: string | null;
-  preview: { name: string; ballColor: string; ballNumber: number };
+  preview: { name: string; ballColor: string; ballNumber: number; guest?: boolean };
   onChange: (url: string | null) => void;
 }
 

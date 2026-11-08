@@ -126,6 +126,7 @@ export interface PlayerRef {
   ballColor: string;
   ballNumber: number;
   avatarUrl: string | null;
+  guest: boolean;
 }
 
 /** The DTO every API and the UI use for one match. */

@@ -28,15 +28,20 @@ export interface StatsFilter {
 /** One load of players + matches per request; every page derives from it. */
 export const loadBoard = cache(async (period: Period = "all", gameType: GameType | null = null) => {
   const today = localDate(new Date());
-  const [roster, all] = await Promise.all([listPlayers(), findMatches({})]);
+  const [roster, guestRows, all] = await Promise.all([
+    listPlayers({ guests: "exclude" }),
+    listPlayers({ guests: "only" }),
+    findMatches({}),
+  ]);
   const players = roster.map(toPlayerRef);
+  const guests = guestRows.map(toPlayerRef);
   const from = periodStart(period, today);
   const filtered = all.filter((m) => (!from || m.date >= from) && (!gameType || m.gameType === gameType));
-  return { today, roster, players, all, matches: filtered };
+  return { today, roster, players, guests, all, matches: filtered };
 });
 
 export async function getOverview(filter: StatsFilter = {}) {
-  const { today, players, all, matches } = await loadBoard(filter.period ?? "all", filter.gameType ?? null);
+  const { today, players, guests, all, matches } = await loadBoard(filter.period ?? "all", filter.gameType ?? null);
   const stats = computePlayerStats(players, matches);
   const monthStart = periodStart("month", today)!;
   const monthMatches = all.filter((m) => m.date >= monthStart);
@@ -46,7 +51,7 @@ export async function getOverview(filter: StatsFilter = {}) {
     stats,
     matrix: headToHeadMatrix(players, matches),
     records: records(matches),
-    money: money(players, matches),
+    money: money(players, matches, guests),
     achievements: achievements(computePlayerStats(players, all), all),
     wanted: wanted(computePlayerStats(players, all), monthMatches, players),
     rivalry: rivalry(players, all),

@@ -71,7 +71,7 @@ export async function MoneyView({ money, period, grain }: MoneyViewProps) {
                 <p className="text-sm text-ivory-muted">{t("totalHint", { count: money.matchesWithBill })}</p>
               </div>
             </div>
-            <ChipTowers byPlayer={money.byPlayer} />
+            <ChipTowers byPlayer={money.byPlayer} guests={money.guests} />
           </section>
 
           <Card>

@@ -19,13 +19,15 @@ interface PlayerFormProps {
   /** The player being edited, or null for a new one. */
   player: AdminPlayer | null;
   nextBallNumber: number;
+  /** A new player who starts as a guest (the Guests section's add button). */
+  newGuest?: boolean;
   onClose: () => void;
 }
 
-export function PlayerForm({ player, nextBallNumber, onClose }: PlayerFormProps) {
+export function PlayerForm({ player, nextBallNumber, newGuest, onClose }: PlayerFormProps) {
   const t = useTranslations("admin");
   const { pending, run } = useAdminAction();
-  const [form, setForm] = useState(() => initialForm(player, nextBallNumber));
+  const [form, setForm] = useState(() => initialForm(player, nextBallNumber, newGuest));
   // An existing slug is a public URL, so it only follows the name for a new player.
   const [slugTouched, setSlugTouched] = useState(player !== null);
   const [invalid, setInvalid] = useState<Set<PlayerField>>(new Set());
@@ -48,6 +50,12 @@ export function PlayerForm({ player, nextBallNumber, onClose }: PlayerFormProps)
     if (saved) onClose();
   }
 
+  function toggleGuest() {
+    // A guest is saved with ball 0; a member made from one needs a real number.
+    if (form.guest && Number(form.ballNumber) < 1) set("ballNumber", String(nextBallNumber));
+    set("guest", !form.guest);
+  }
+
   const ballNumber = Number(form.ballNumber) || 1;
   const nameError = error("name");
   const slugError = error("slug");
@@ -66,7 +74,7 @@ export function PlayerForm({ player, nextBallNumber, onClose }: PlayerFormProps)
             <AvatarField
               id="player-avatar"
               value={form.avatarUrl}
-              preview={{ name: form.name || "?", ballColor: form.ballColor, ballNumber }}
+              preview={{ name: form.name || "?", ballColor: form.ballColor, ballNumber, guest: form.guest }}
               onChange={(url) => set("avatarUrl", url)}
             />
           </FormField>
@@ -122,23 +130,26 @@ export function PlayerForm({ player, nextBallNumber, onClose }: PlayerFormProps)
               id="player-colour"
               value={form.ballColor}
               ballNumber={ballNumber}
+              guest={form.guest}
               error={error("ballColor")}
               onChange={(hex) => set("ballColor", hex)}
             />
           </FormField>
 
-          <FormField id="player-number" label={t("form.ballNumber")} error={numberError}>
-            <Input
-              id="player-number"
-              type="number"
-              inputMode="numeric"
-              min={1}
-              max={15}
-              value={form.ballNumber}
-              onChange={(e) => set("ballNumber", e.target.value)}
-              {...describedBy("player-number", Boolean(numberError), numberError)}
-            />
-          </FormField>
+          {!form.guest && (
+            <FormField id="player-number" label={t("form.ballNumber")} error={numberError}>
+              <Input
+                id="player-number"
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={15}
+                value={form.ballNumber}
+                onChange={(e) => set("ballNumber", e.target.value)}
+                {...describedBy("player-number", Boolean(numberError), numberError)}
+              />
+            </FormField>
+          )}
 
           <FormField id="player-catchphrase" label={t("form.catchphrase")} error={error("catchphrase")}>
             <Textarea
@@ -149,6 +160,25 @@ export function PlayerForm({ player, nextBallNumber, onClose }: PlayerFormProps)
               className="min-h-20"
             />
           </FormField>
+
+          <FormField id="player-note" label={t("form.note")} hint={t("form.noteHint")} error={error("note")}>
+            <Textarea
+              id="player-note"
+              value={form.note}
+              maxLength={280}
+              onChange={(e) => set("note", e.target.value)}
+              className="min-h-20"
+              {...describedBy("player-note", true, error("note"))}
+            />
+          </FormField>
+
+          <div>
+            <p className="mb-1.5 text-sm font-semibold text-ivory-muted">{t("form.kind")}</p>
+            <Chip selected={form.guest} onClick={toggleGuest}>
+              {form.guest ? t("form.kindGuest") : t("form.kindMember")}
+            </Chip>
+            <p className="mt-1 text-xs text-ivory-faint">{t("form.kindHint")}</p>
+          </div>
 
           <div>
             <p className="mb-1.5 text-sm font-semibold text-ivory-muted">{t("form.status")}</p>

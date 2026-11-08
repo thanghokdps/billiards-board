@@ -35,6 +35,10 @@ export const players = pgTable("players", {
   ballNumber: integer("ball_number").notNull(),
   catchphrase: text("catchphrase"),
   active: boolean("active").notNull().default(true),
+  /** A named guest: plays any format but earns no Elo and stays off the leaderboards. */
+  guest: boolean("guest").notNull().default(false),
+  /** Admin-only remark (who the guest is); never part of PlayerRef. */
+  note: text("note"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

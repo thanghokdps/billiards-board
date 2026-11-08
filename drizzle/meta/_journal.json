@@ -43,6 +43,13 @@
       "when": 1793797509000,
       "tag": "0005_drop_unused_session_features",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794161820929,
+      "tag": "0006_guest_players",
+      "breakpoints": true
     }
   ]
 }

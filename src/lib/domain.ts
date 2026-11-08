@@ -24,6 +24,7 @@ export const GUEST_SEAT = {
   ballColor: "#8a8f98",
   ballNumber: 0,
   avatarUrl: null,
+  guest: true,
 };
 
 /** Side B as shown: its players, or the guest. */

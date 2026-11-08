@@ -44,5 +44,16 @@
   "picked": "Đã trúng",
   "resting": "Nghỉ",
   "emptyTitle": "Chưa có người chơi",
-  "emptyBody": "Thêm người chơi ở trang quản trị để dùng vòng quay."
+  "emptyBody": "Thêm người chơi ở trang quản trị để dùng vòng quay.",
+  "guestPlaceholder": "Thêm khách…",
+  "guestAdd": "Thêm khách vào vòng quay",
+  "guestHintAdmin": "Gõ tên rồi Enter: khách được lưu lại và lên vòng quay ngay. Sửa ghi chú, màu bi ở trang quản trị.",
+  "guestHintViewer": "Khách tạm chỉ có trên máy này, tải lại trang là mất.",
+  "guestTaken": "Tên này đã có trên vòng quay.",
+  "guestConflict": "Tên này là thành viên.",
+  "guestInvalid": "Tên từ 1 đến 40 ký tự.",
+  "guestExpired": "Phiên đăng nhập đã hết, đăng nhập lại nhé.",
+  "guestFailed": "Chưa thêm được khách, thử lại nhé.",
+  "tempRemove": "Bỏ khách tạm",
+  "tempRemoveLabel": "Bỏ khách tạm {name} khỏi vòng quay"
 }

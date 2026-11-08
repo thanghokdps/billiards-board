@@ -18,7 +18,7 @@ const SIZES = {
 } as const;
 
 interface PlayerAvatarProps {
-  player: Pick<PlayerRef, "name" | "ballColor" | "ballNumber" | "avatarUrl">;
+  player: Pick<PlayerRef, "name" | "ballColor" | "ballNumber" | "avatarUrl"> & { guest?: boolean };
   size?: keyof typeof SIZES;
   /** A flame after 3 wins in a row; after losses the avatar greys out, and wears the chicken hat from 3. */
   streak?: Streak | null;
@@ -48,7 +48,12 @@ export function PlayerAvatar({ player, size = "md", streak, className }: PlayerA
         {player.avatarUrl ? (
           <Image src={player.avatarUrl} alt="" fill sizes="112px" className="object-cover" unoptimized />
         ) : (
-          <CartoonBall color={player.ballColor} initial={player.name.slice(0, 1)} className={s.text} />
+          <CartoonBall
+            color={player.ballColor}
+            initial={player.guest ? "G" : player.name.slice(0, 1)}
+            guest={player.guest}
+            className={s.text}
+          />
         )}
       </span>
       {(hot || chicken) && (
@@ -66,13 +71,24 @@ export function PlayerAvatar({ player, size = "md", streak, className }: PlayerA
 }
 
 /** The "cartoon" avatar: the player's ball, their initial in the ivory disc. */
-function CartoonBall({ color, initial, className }: { color: string; initial: string; className: string }) {
+function CartoonBall({
+  color,
+  initial,
+  guest,
+  className,
+}: {
+  color: string;
+  initial: string;
+  guest?: boolean;
+  className: string;
+}) {
+  const shine = "radial-gradient(circle at 32% 28%, rgb(255 255 255 / 0.5), transparent 38%)";
+  // A guest's house ball: grey body, a stripe in their ball colour (data), a G in the disc.
+  const stripe = `linear-gradient(transparent 28%, color-mix(in srgb, var(--color-ivory) 40%, ${color}) 28% 72%, transparent 72%)`;
   return (
     <span
       className="flex size-full items-center justify-center"
-      style={{
-        background: `radial-gradient(circle at 32% 28%, rgb(255 255 255 / 0.5), transparent 38%), ${color}` /* ball colour is data */,
-      }}
+      style={{ background: guest ? `${shine}, ${stripe}, var(--color-house)` : `${shine}, ${color}` }}
     >
       <span
         className={cn(

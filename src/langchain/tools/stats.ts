@@ -20,7 +20,7 @@ import {
   type StatMatch,
 } from "@/lib/stats";
 
-import { json, loadBoard, requireContext, resolveNames, todayIn } from "./shared";
+import { guestHasNoStats, json, loadBoard, requireContext, resolveNames, todayIn } from "./shared";
 
 const METRICS = [
   "paid",
@@ -110,6 +110,8 @@ export const queryStatsTool = tool(
       if (input.players?.length) {
         const resolved = resolveNames(input.players, roster);
         if (!resolved.ok) return json(resolved.problem);
+        const guest = guestHasNoStats(resolved.refs);
+        if (guest) return json(guest);
         subset = players.filter((p) => resolved.ids.includes(p.id));
       }
       rows = computePlayerStats(subset, scoped)
@@ -194,6 +196,8 @@ export const trashTalkTool = tool(
     const { roster, players, matches } = await loadBoard();
     const resolved = resolveNames([input.player], roster);
     if (!resolved.ok) return json(resolved.problem);
+    const guest = guestHasNoStats(resolved.refs);
+    if (guest) return json(guest);
     const player = resolved.refs[0]!;
     const all = computePlayerStats(players, matches).find((s) => s.player.id === player.id)!;
     const month = computePlayerStats(players, inPeriod(matches, "month", todayIn(context), null)).find(

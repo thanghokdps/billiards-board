@@ -45,6 +45,7 @@ export interface WheelTokens {
   ivory: string;
   lamp: string;
   chalk: string;
+  house: string;
   font: string;
 }
 
@@ -59,6 +60,7 @@ export function readWheelTokens(el: Element): WheelTokens {
     ivory: token("--color-ivory"),
     lamp: token("--color-lamp"),
     chalk: token("--color-chalk"),
+    house: token("--color-house"),
     font: token("--font-shoulders") || "sans-serif",
   };
 }

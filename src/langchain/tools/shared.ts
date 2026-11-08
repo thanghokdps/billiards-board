@@ -41,9 +41,21 @@ export function confirmBlockedThisTurn(messages: BaseMessage[]): boolean {
 
 export const todayIn = (context: AgentContext) => localDate(new Date(), context.timeZone);
 
+/** `roster` (guests included) resolves names; `players` (members only) is what stats and rankings are computed over. */
 export async function loadBoard() {
   const [roster, matches] = await Promise.all([listPlayers(), findMatches({})]);
-  return { roster, players: roster.map(toPlayerRef), matches };
+  return { roster, players: roster.filter((p) => !p.guest).map(toPlayerRef), matches };
+}
+
+/** Guests have no stats, Elo or profile; a stats tool asked about one tells the model to say so. */
+export function guestHasNoStats(refs: PlayerRef[]): ToolFailure | null {
+  const guest = refs.find((r) => r.guest);
+  return guest
+    ? {
+        status: "error",
+        message: `${guest.name} is a guest: guests have no stats, Elo or profile. Tell the admin that in one short line; do not call another tool for it.`,
+      }
+    : null;
 }
 
 export type Resolved = { ok: true; ids: number[]; refs: PlayerRef[] } | { ok: false; problem: NameProblem };
