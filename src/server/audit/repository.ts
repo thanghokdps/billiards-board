@@ -10,8 +10,8 @@ type Tx = Pick<typeof Database, "insert" | "select">;
 export interface AuditEntry {
   actor: string;
   via: "chat" | "ui";
-  action: "create" | "update" | "delete" | "restore";
-  entity: "match" | "player" | "highlight";
+  action: "create" | "update" | "delete" | "restore" | "approve" | "reject";
+  entity: "match" | "player" | "highlight" | "submission";
   entityId: string;
   before?: unknown;
   after?: unknown;

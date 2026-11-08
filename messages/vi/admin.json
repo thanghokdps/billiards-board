@@ -29,6 +29,29 @@
     "addGuest": "Thêm khách",
     "guestsEmpty": "Chưa có khách nào. Thêm ở đây hoặc ngay trên vòng quay."
   },
+  "pending": {
+    "title": "Trận chờ duyệt",
+    "count": "{count, plural, other {# trận đang chờ}}",
+    "empty": {
+      "title": "Không có trận nào chờ duyệt",
+      "body": "Khi có người gửi trận từ trang Ghi trận, phiếu điểm sẽ hiện ở đây."
+    },
+    "approve": "Duyệt",
+    "reject": "Từ chối",
+    "edit": "Sửa",
+    "editTitle": "Sửa trận trước khi duyệt",
+    "stamp": "Đã duyệt",
+    "newGuest": "mới",
+    "sentBy": "Gửi bởi {name}",
+    "anonymous": "ai đó",
+    "errors": {
+      "unauthenticated": "Phiên đăng nhập đã hết, đăng nhập lại nhé.",
+      "invalid_body": "Trận này chưa hợp lệ nên chưa duyệt được.",
+      "conflict": "Trận này đã có người xử lý rồi, đang cập nhật danh sách.",
+      "not_found": "Không tìm thấy trận này, đang cập nhật danh sách.",
+      "internal": "Có lỗi, thử lại nhé."
+    }
+  },
   "form": {
     "addTitle": "Thêm người chơi",
     "editTitle": "Sửa người chơi",

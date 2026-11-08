@@ -23,14 +23,17 @@
     "create": "Tạo",
     "update": "Sửa",
     "delete": "Xóa",
-    "restore": "Khôi phục"
+    "restore": "Khôi phục",
+    "approve": "Duyệt",
+    "reject": "Từ chối"
   },
   "entity": {
     "match": "Trận",
     "player": "Người chơi",
     "session": "Buổi chơi",
     "prediction": "Kèo",
-    "highlight": "Khoảnh khắc"
+    "highlight": "Khoảnh khắc",
+    "submission": "Trận gửi lên"
   },
   "fields": {
     "date": "Ngày",

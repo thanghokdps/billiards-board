@@ -12,7 +12,12 @@ import { listPlayers, toPlayerRef } from "@/server/players/repository";
 
 import { readTrustedContext, type AgentContext } from "../context";
 
-const PROPOSE_TOOLS = new Set<string>([TOOL_NAMES.proposeMatches, TOOL_NAMES.proposeUpdate, TOOL_NAMES.proposeDelete]);
+const PROPOSE_TOOLS = new Set<string>([
+  TOOL_NAMES.proposeMatches,
+  TOOL_NAMES.proposeUpdate,
+  TOOL_NAMES.proposeDelete,
+  TOOL_NAMES.proposeSubmissionDecision,
+]);
 
 export const GAME_TYPE_OPTIONS: NeedsInput["options"] = [
   { label: "3C Real", value: "3c_real" },

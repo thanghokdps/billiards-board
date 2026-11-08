@@ -5,14 +5,23 @@ import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/misc";
+import type { SubmissionView } from "@/server/submissions/schema";
 
+import { PendingStack } from "./pending-stack";
 import { PlayersPanel } from "./players-panel";
 import { QuickLinks } from "./quick-links";
 import { adminApi } from "../api";
 import { useAdminAction } from "../hooks/use-admin-action";
 import type { AdminPlayer } from "../types";
 
-export function AdminDashboard({ players }: { players: AdminPlayer[] }) {
+interface AdminDashboardProps {
+  players: AdminPlayer[];
+  submissions: SubmissionView[];
+  /** Server time, for the slips' "3 minutes ago". */
+  now: string;
+}
+
+export function AdminDashboard({ players, submissions, now }: AdminDashboardProps) {
   const t = useTranslations("admin");
   const { pending, run } = useAdminAction();
 
@@ -34,6 +43,7 @@ export function AdminDashboard({ players }: { players: AdminPlayer[] }) {
           </Button>
         }
       />
+      <PendingStack pending={submissions} now={now} players={players} />
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <PlayersPanel players={players} />

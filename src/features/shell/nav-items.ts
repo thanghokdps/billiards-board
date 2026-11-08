@@ -3,6 +3,7 @@ import {
   Crown,
   Gift,
   House,
+  PenLine,
   ScrollText,
   Shield,
   Swords,
@@ -40,6 +41,7 @@ export const NAV_ITEMS: NavItem[] = [
   WHEEL_ITEM,
   { href: "/wrapped", key: "wrapped", icon: Gift, ball: "var(--color-pool-teal)" },
   { href: "/tv", key: "tv", icon: Tv, ball: "var(--color-pool-ivory)" },
+  { href: "/submit", key: "submit", icon: PenLine },
   { href: "/audit", key: "audit", icon: ScrollText },
   { href: "/admin", key: "admin", icon: Shield },
 ];

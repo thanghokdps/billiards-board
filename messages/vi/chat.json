@@ -22,7 +22,13 @@
     "createTitle": "{count, plural, other {Ghi # trận}}",
     "updateTitle": "Sửa trận",
     "deleteTitle": "Xóa trận này?",
+    "approveTitle": "Duyệt trận được gửi?",
+    "rejectTitle": "Từ chối trận được gửi?",
     "save": "Lưu",
+    "approve": "Duyệt",
+    "reject": "Từ chối",
+    "approved": "Đã duyệt, trận đã được ghi",
+    "rejected": "Đã từ chối",
     "saveAll": "Lưu tất cả",
     "confirmDelete": "Xóa",
     "cancel": "Bỏ",
@@ -46,6 +52,12 @@
       "derby": "Đại chiến cuối tháng!",
       "blowout": "Hủy diệt!"
     }
+  },
+  "submission": {
+    "pending": "{count, plural, other {# trận chờ duyệt}}",
+    "by": "Gửi bởi {name}",
+    "newGuests": "Khách mới: {names}",
+    "more": "+{count} trận nữa ở trang Admin"
   },
   "ask": {
     "game_type": "Thể loại gì?",

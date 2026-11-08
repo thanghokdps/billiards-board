@@ -1,0 +1,116 @@
+{
+  "title": "Log a match",
+  "kicker": "Just finished? Log it, and once the admin approves it hits the board",
+  "titles": {
+    "game": "Which game?",
+    "seats": "Who is at the table?",
+    "winner": "Who won?",
+    "score": "Score and bill",
+    "note": "Note",
+    "send": "Send this match"
+  },
+  "steps": {
+    "label": "Steps to log a match",
+    "back": "Back",
+    "next": "Next",
+    "game": "Game",
+    "seats": "Players",
+    "winner": "Winner",
+    "score": "Score",
+    "note": "Note",
+    "send": "Send"
+  },
+  "game": {
+    "title": "Game",
+    "hint": "Pick the game, then tap the format below.",
+    "format": "Format",
+    "players": "{count, plural, one {# player} other {# players}}"
+  },
+  "seats": {
+    "status": "Seated {filled}/{total}",
+    "hint": "Tap a ball to seat it, tap again to send it back. Someone new? Add a guest.",
+    "newGuests": "New guests",
+    "removeGuest": "Remove guest {name}"
+  },
+  "guest": {
+    "placeholder": "Guest name",
+    "add": "Add guest",
+    "taken": "That name is already at the table",
+    "hint": "A new guest is only created once the admin approves."
+  },
+  "table": {
+    "new": "new",
+    "wins": "{name} wins",
+    "loses": "{name} loses",
+    "sit": "Seat {name}",
+    "back": "Send {name} back to the rail",
+    "sideA": "Side A",
+    "sideB": "Side B",
+    "seat": "Empty seat {mark}"
+  },
+  "winner": {
+    "title": "Winning side",
+    "hintSide": "Tap the winning side.",
+    "hintLoser": "Tap whoever came last. They pay the bill.",
+    "wins": "{names} win",
+    "loses": "{names} came last"
+  },
+  "score": {
+    "title": "Score",
+    "hint": "Don't remember the score? Leave it empty.",
+    "orderWinner": "The winning side needs the higher score.",
+    "orderLoser": "The loser needs the lowest score.",
+    "billTitle": "Bill",
+    "of": "Score of {names}",
+    "empty": "Not entered",
+    "minus": "Lower the score of {names}",
+    "plus": "Raise the score of {names}"
+  },
+  "bill": {
+    "chips": "Quick amounts",
+    "add": "Add {amount}",
+    "label": "Bill amount",
+    "placeholder": "Enter an amount",
+    "clear": "Clear bill",
+    "none": "No bill"
+  },
+  "note": {
+    "label": "Note (optional)",
+    "placeholder": "e.g. lost the last bet, sank the black",
+    "submitter": "Your name",
+    "submitterPlaceholder": "So the admin knows who sent it",
+    "submitterHint": "Optional."
+  },
+  "send": {
+    "send": "Send to admin",
+    "approve": "Save and approve",
+    "sending": "Sending…",
+    "hint": "The match only reaches the leaderboard once the admin approves it.",
+    "hintEdit": "Saving approves this match right away.",
+    "errors": {
+      "rate_limited": "Too many submissions, try again in {minutes, plural, one {# minute} other {# minutes}}.",
+      "too_large": "That is too long, shorten the note and send again.",
+      "invalid_body": "This match is not valid yet, check the steps marked in red.",
+      "conflict": "This match has already been handled.",
+      "not_found": "This match was not found, it may have been removed.",
+      "unauthenticated": "Your session has expired, please sign in again.",
+      "failed": "Could not send it, please try again."
+    }
+  },
+  "sent": {
+    "title": "Waiting for admin",
+    "body": "Sent. Once the admin approves it, the match goes on the board.",
+    "again": "Log another match"
+  },
+  "strip": {
+    "vs": "vs",
+    "loserPays": "{name} pays the bill"
+  },
+  "issues": {
+    "memberName": "That name belongs to a member, seat their ball instead of adding a guest.",
+    "unknownPlayer": "A player is no longer on the roster, pick again.",
+    "duplicate": "The same person appears twice in this match.",
+    "scoreOrder": "The scores do not match the winner.",
+    "invalid": "This part is not valid yet, please check it."
+  }
+}

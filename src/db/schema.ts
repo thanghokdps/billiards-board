@@ -154,7 +154,34 @@ export const highlights = pgTable(
   (t) => [index("highlights_match_idx").on(t.matchId)],
 );
 
+export const submissionStatusEnum = pgEnum("submission_status", ["pending", "approved", "rejected"]);
+
+/** A match anyone can propose from the public form; it becomes a `matches` row only when the admin approves. */
+export const matchSubmissions = pgTable(
+  "match_submissions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    status: submissionStatusEnum("status").notNull().default("pending"),
+    /** The submitted body, validated by `submissionInputSchema` (seats are `{ playerId }` or `{ guestName }`). */
+    payload: jsonb("payload").notNull(),
+    /** The admin's corrected body, set on "edit then approve"; the payload stays as submitted. */
+    edited: jsonb("edited"),
+    submitter: text("submitter"),
+    /** HMAC of the client IP; the raw IP is never stored. */
+    ipHash: text("ip_hash").notNull(),
+    matchId: uuid("match_id").references(() => matches.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    decidedAt: timestamp("decided_at", { withTimezone: true }),
+  },
+  (t) => [
+    index("match_submissions_status_created_idx").on(t.status, t.createdAt),
+    index("match_submissions_ip_created_idx").on(t.ipHash, t.createdAt),
+  ],
+);
+
 export type Player = typeof players.$inferSelect;
+export type MatchSubmissionRow = typeof matchSubmissions.$inferSelect;
+export type SubmissionStatus = (typeof submissionStatusEnum.enumValues)[number];
 export type Highlight = typeof highlights.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
 export type MatchRow = typeof matches.$inferSelect;
