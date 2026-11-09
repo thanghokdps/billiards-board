@@ -54,6 +54,8 @@ export function MemberSubmit({ roster, me, match }: MemberSubmitProps) {
       onSubmit={sendResult}
       onAgain={() => {
         matchId.current = null;
+        // Drop `?id=` so the page stops holding the match just sent (its cancel button and schedule).
+        if (match) router.replace("/submit");
       }}
       schedule={
         match?.input ? undefined : { at: match?.schedule.scheduledAt ?? null, saved: unplayed, onSchedule: plan }
