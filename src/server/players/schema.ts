@@ -26,6 +26,8 @@ export const playerInputSchema = z.object({
   active: z.boolean().optional(),
   guest: z.boolean().optional(),
   note: z.string().trim().max(280).nullable().optional(),
+  /** Google sign-in email; stored lowercase so the callback's lookup is exact. */
+  email: z.string().trim().toLowerCase().max(120).pipe(z.email()).nullable().optional(),
 });
 
 /** Quick-add of a named guest: the server picks slug, colour and ball number. */

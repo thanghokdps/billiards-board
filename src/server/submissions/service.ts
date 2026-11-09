@@ -1,78 +1,45 @@
 import "server-only";
 
-import { createHmac } from "node:crypto";
-
 import type { z } from "zod";
 
 import { db } from "@/db/client";
 import type { MatchSubmissionRow, Player } from "@/db/schema";
 import { GUEST_SEAT } from "@/lib/domain";
 import { recordAudit } from "@/server/audit/repository";
-import { clientKey } from "@/server/auth/login-limit";
-import { getServerEnv } from "@/server/env";
 import { HttpError, issuesOf, type FieldIssue } from "@/server/http";
 import { matchInputSchema } from "@/server/matches/schema";
 import { createMatches } from "@/server/matches/service";
 import { listPlayers, toPlayerRef } from "@/server/players/repository";
 import { createGuest } from "@/server/players/service";
 
-import { countRecentByIpHash, getById, insertSubmission, listPending, markDecided } from "./repository";
+import { getById, listPending, markDecided } from "./repository";
 import {
   placeholderGuestIds,
   submissionInputSchema,
-  submitBodySchema,
   toMatchInput,
   type SeatView,
   type SubmissionInput,
   type SubmissionView,
 } from "./schema";
 
-const MAX_BODY_BYTES = 8192;
-const WINDOW_MS = 15 * 60_000;
-const MAX_PER_WINDOW = 5;
-
 interface Actor {
   actor: string;
   via: "chat" | "ui";
 }
 
-type Seat = SubmissionInput["sideA"][number];
-
-/** Reads at most `maxBytes` of the body, so a huge or endless upload is cut off instead of buffered. */
-async function readCappedText(request: Request, maxBytes: number): Promise<string> {
-  if (Number(request.headers.get("content-length")) > maxBytes) throw new HttpError("too_large");
-  const reader = request.body?.getReader();
-  if (!reader) return "";
-  const chunks: Uint8Array[] = [];
-  let total = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    total += value.byteLength;
-    if (total > maxBytes) {
-      await reader.cancel();
-      throw new HttpError("too_large");
-    }
-    chunks.push(value);
-  }
-  return Buffer.concat(chunks).toString("utf8");
-}
-
-/** Keyed hash of the client IP; the key derives from SESSION_SECRET, so no new env var and no raw IP at rest. */
-export function ipHash(request: Request): string {
-  const key = createHmac("sha256", getServerEnv().SESSION_SECRET).update("match-submission-ip").digest();
-  return createHmac("sha256", key).update(clientKey(request)).digest("hex");
-}
+export type Seat = SubmissionInput["sideA"][number];
 
 function invalid(error: z.ZodError): HttpError {
   return new HttpError("invalid_body", error.issues.map((i) => i.message).join("; "), { issues: issuesOf(error) });
 }
 
-function invalidIssues(issues: FieldIssue[]): HttpError {
+export function invalidIssues(issues: FieldIssue[]): HttpError {
   return new HttpError("invalid_body", issues.map((i) => i.message).join("; "), { issues });
 }
 
-function seatsOf(input: SubmissionInput): { path: (string | number)[]; seat: Seat }[] {
+type Seated = Pick<SubmissionInput, "sideA" | "sideB">;
+
+export function seatsOf(input: Seated): { path: (string | number)[]; seat: Seat }[] {
   return (["sideA", "sideB"] as const).flatMap((side) =>
     input[side].map((seat, index) => ({ path: [side, index], seat })),
   );
@@ -80,7 +47,7 @@ function seatsOf(input: SubmissionInput): { path: (string | number)[]; seat: Sea
 
 const lower = (name: string) => name.trim().toLowerCase();
 
-function unknownPlayerIssues(input: SubmissionInput, roster: Player[]): FieldIssue[] {
+function unknownPlayerIssues(input: Seated, roster: Player[]): FieldIssue[] {
   const ids = new Set(roster.map((p) => p.id));
   return seatsOf(input).flatMap(({ path, seat }) =>
     "playerId" in seat && !ids.has(seat.playerId)
@@ -89,7 +56,7 @@ function unknownPlayerIssues(input: SubmissionInput, roster: Player[]): FieldIss
   );
 }
 
-function memberNameIssues(input: SubmissionInput, roster: Player[]): FieldIssue[] {
+function memberNameIssues(input: Seated, roster: Player[]): FieldIssue[] {
   const members = new Set(roster.filter((p) => !p.guest).map((p) => lower(p.name)));
   return seatsOf(input).flatMap(({ path, seat }) =>
     "guestName" in seat && members.has(lower(seat.guestName))
@@ -105,48 +72,16 @@ function duplicateIssues(input: SubmissionInput, roster: Player[]): FieldIssue[]
   return mapped.success ? [] : issuesOf(mapped.error);
 }
 
-async function enforceRateLimit(hash: string): Promise<void> {
-  const now = Date.now();
-  // shortcut: count-then-insert is not atomic, so parallel requests can overshoot 5; fine for a lunch scoreboard, add an advisory lock if abused.
-  const { count, oldest } = await countRecentByIpHash(hash, new Date(now - WINDOW_MS));
-  if (count < MAX_PER_WINDOW) return;
-  const waitMs = oldest ? oldest.getTime() + WINDOW_MS - now : WINDOW_MS;
-  throw new HttpError("rate_limited", undefined, { retryAfter: Math.max(1, Math.ceil(waitMs / 1000)) });
-}
-
-/** The public form's write: stores a pending row only; nothing reaches `matches` or `players` before the admin approves. */
-export async function submitMatch(request: Request): Promise<{ ok: true } | { id: string; status: "pending" }> {
-  const text = await readCappedText(request, MAX_BODY_BYTES);
-  let body: unknown;
-  try {
-    body = JSON.parse(text);
-  } catch {
-    throw new HttpError("invalid_body");
-  }
-  const parsed = submitBodySchema.safeParse(body);
-  if (!parsed.success) throw invalid(parsed.error);
-  const { website, ...input } = parsed.data;
-  if (website?.trim()) return { ok: true };
-
-  const hash = ipHash(request);
-  await enforceRateLimit(hash);
-
-  const roster = await listPlayers();
+/** Seats against the live roster: known active players, no member's name typed as a guest, nobody twice. */
+export function rosterIssues(input: SubmissionInput, roster: Player[]): FieldIssue[] {
   const issues = [...unknownPlayerIssues(input, roster), ...memberNameIssues(input, roster)];
-  if (issues.length === 0) issues.push(...duplicateIssues(input, roster));
-  if (issues.length > 0) throw invalidIssues(issues);
-
-  const row = await insertSubmission({ payload: input, submitter: input.submitter || null, ipHash: hash });
-  return { id: row.id, status: "pending" };
+  return issues.length > 0 ? issues : duplicateIssues(input, roster);
 }
 
 function toView(row: MatchSubmissionRow, refs: Map<number, SeatView>): SubmissionView {
   // Cast: the column is written only by this service from a validated body.
   const input = (row.edited ?? row.payload) as SubmissionInput;
-  const seatView = (seat: Seat): SeatView =>
-    "guestName" in seat
-      ? { name: seat.guestName, guest: true, isNew: true }
-      : (refs.get(seat.playerId) ?? { ...GUEST_SEAT, id: seat.playerId, name: "?" });
+  const toSeat = (seat: Seat) => seatView(seat, refs);
   return {
     id: row.id,
     status: row.status,
@@ -157,8 +92,8 @@ function toView(row: MatchSubmissionRow, refs: Map<number, SeatView>): Submissio
     input,
     gameType: input.gameType,
     format: input.format,
-    sideA: input.sideA.map(seatView),
-    sideB: input.sideB.map(seatView),
+    sideA: input.sideA.map(toSeat),
+    sideB: input.sideB.map(toSeat),
     winnerSide: input.winnerSide,
     scoreA: input.scoreA ?? null,
     scoreB: input.scoreB ?? null,
@@ -169,10 +104,20 @@ function toView(row: MatchSubmissionRow, refs: Map<number, SeatView>): Submissio
   };
 }
 
+export async function seatRefs(): Promise<Map<number, SeatView>> {
+  const roster = await listPlayers({ includeInactive: true });
+  return new Map<number, SeatView>(roster.map((p) => [p.id, toPlayerRef(p)]));
+}
+
+export function seatView(seat: Seat, refs: Map<number, SeatView>): SeatView {
+  return "guestName" in seat
+    ? { name: seat.guestName, guest: true, isNew: true }
+    : (refs.get(seat.playerId) ?? { ...GUEST_SEAT, id: seat.playerId, name: "?" });
+}
+
 async function viewsOf(rows: MatchSubmissionRow[]): Promise<SubmissionView[]> {
   if (rows.length === 0) return [];
-  const roster = await listPlayers({ includeInactive: true });
-  const refs = new Map<number, SeatView>(roster.map((p) => [p.id, toPlayerRef(p)]));
+  const refs = await seatRefs();
   return rows.map((row) => toView(row, refs));
 }
 

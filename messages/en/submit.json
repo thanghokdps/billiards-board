@@ -76,26 +76,48 @@
   },
   "note": {
     "label": "Note (optional)",
-    "placeholder": "e.g. lost the last bet, sank the black",
-    "submitter": "Your name",
-    "submitterPlaceholder": "So the admin knows who sent it",
-    "submitterHint": "Optional."
+    "placeholder": "e.g. lost the last bet, sank the black"
   },
   "send": {
-    "send": "Send to admin",
+    "send": "Send result",
     "approve": "Save and approve",
     "sending": "Sending…",
     "hint": "The match only reaches the leaderboard once the admin approves it.",
-    "hintEdit": "Saving approves this match right away.",
-    "errors": {
-      "rate_limited": "Too many submissions, try again in {minutes, plural, one {# minute} other {# minutes}}.",
-      "too_large": "That is too long, shorten the note and send again.",
-      "invalid_body": "This match is not valid yet, check the steps marked in red.",
-      "conflict": "This match has already been handled.",
-      "not_found": "This match was not found, it may have been removed.",
-      "unauthenticated": "Your session has expired, please sign in again.",
-      "failed": "Could not send it, please try again."
-    }
+    "hintEdit": "Saving approves this match right away."
+  },
+  "errors": {
+    "busy": "You or someone in this match already has a match without a result. Enter that result or cancel it first.",
+    "busyLink": "See the waiting match",
+    "too_large": "That is too long, shorten the note and send again.",
+    "invalid_body": "This match is not valid yet, check the steps marked in red.",
+    "conflict": "This match has already been handled.",
+    "not_found": "This match was not found, it may have been cancelled.",
+    "unauthenticated": "Your session has expired, please sign in again.",
+    "failed": "Could not send it, please try again."
+  },
+  "schedule": {
+    "title": "Schedule now, result later",
+    "hint": "Once the table is full, schedule it; after the game anyone in it can enter the result.",
+    "at": "Play time",
+    "atHint": "Optional.",
+    "submit": "Schedule",
+    "save": "Save schedule",
+    "saving": "Saving…",
+    "done": "Scheduled, it is on the home page now.",
+    "saved": "Schedule saved."
+  },
+  "signIn": {
+    "title": "Sign in to log a match",
+    "body": "Only members can create matches, and only ones they play in.",
+    "unavailable": "Google sign-in is not set up yet, ask the admin to log the match."
+  },
+  "cancel": {
+    "open": "Cancel match",
+    "title": "Cancel this match?",
+    "body": "An unplayed match leaves the home page, and everyone in it can create a new one.",
+    "keep": "Keep it",
+    "confirm": "Cancel match",
+    "done": "Match cancelled."
   },
   "sent": {
     "title": "Waiting for admin",
@@ -111,6 +133,7 @@
     "unknownPlayer": "A player is no longer on the roster, pick again.",
     "duplicate": "The same person appears twice in this match.",
     "scoreOrder": "The scores do not match the winner.",
+    "notSeated": "You have to be one of the players in this match.",
     "invalid": "This part is not valid yet, please check it."
   }
 }

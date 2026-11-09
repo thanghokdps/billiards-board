@@ -1,6 +1,6 @@
 import { PLAYERS_IN_FORMAT, type GameType, type PairingFormat } from "@/lib/domain";
 import type { PlayerRef } from "@/server/matches/schema";
-import type { SubmissionInput } from "@/server/submissions/schema";
+import type { ScheduleInput, SubmissionInput } from "@/server/submissions/schema";
 
 /** 1v1 and 2v2 pick a winning side; a 1v1v1 picks the one loser, by seat. */
 export type Result = { side: "a" | "b" } | { loser: number };
@@ -154,10 +154,15 @@ export function toInput(draft: Draft, people: PlayerRef[]): SubmissionInput {
   };
 }
 
-/** The scene prefilled from a stored submission, for the admin's Edit. */
-export function fromInput(input: SubmissionInput): Draft {
+/** A fresh 1v1 with the signed-in member already in the first seat. */
+export function memberDraft(me: PlayerRef): Draft {
+  return { ...emptyDraft(), seats: [me.id, null] };
+}
+
+/** The seats' player ids in order, with a typed guest turned into a new-guest ref (one per name). */
+function seatsFrom(schedule: Pick<ScheduleInput, "sideA" | "sideB">): Pick<Draft, "seats" | "newGuests"> {
   let newGuests: PlayerRef[] = [];
-  const idOf = (seat: SubmissionInput["sideA"][number]): number => {
+  const idOf = (seat: ScheduleInput["sideA"][number]): number => {
     if ("playerId" in seat) return seat.playerId;
     const known = newGuests.find((g) => sameName(g.name, seat.guestName));
     if (known) return known.id;
@@ -165,14 +170,26 @@ export function fromInput(input: SubmissionInput): Draft {
     newGuests = [...newGuests, guest];
     return guest.id;
   };
-  const seats = [...input.sideA, ...input.sideB].map(idOf);
+  const seats = [...schedule.sideA, ...schedule.sideB].map(idOf);
+  return { seats, newGuests };
+}
+
+/** The scene prefilled from a match still to be played: who and what, with no result yet. */
+export function fromSchedule(schedule: ScheduleInput): Draft {
+  return { ...emptyDraft(), gameType: schedule.gameType, format: schedule.format, ...seatsFrom(schedule) };
+}
+
+/** The sides as the server stores them for a match before its result. `at` is an ISO time or none. */
+export function toSchedule(draft: Draft, people: PlayerRef[], at: string | null): ScheduleInput {
+  const { gameType, format, sideA, sideB } = toInput(draft, people);
+  return { gameType, format, sideA, sideB, scheduledAt: at };
+}
+
+/** The scene prefilled from a stored submission: the admin's Edit, or a member fixing a result. */
+export function fromInput(input: SubmissionInput): Draft {
   const threeWay = input.format === "1v1v1";
   return {
-    ...emptyDraft(),
-    gameType: input.gameType,
-    format: input.format,
-    seats,
-    newGuests,
+    ...fromSchedule(input),
     result: threeWay ? { loser: 2 } : { side: input.winnerSide },
     scoreA: input.scoreA ?? null,
     scoreB: input.scoreB ?? null,

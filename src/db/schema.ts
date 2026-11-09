@@ -39,6 +39,8 @@ export const players = pgTable("players", {
   guest: boolean("guest").notNull().default(false),
   /** Admin-only remark (who the guest is); never part of PlayerRef. */
   note: text("note"),
+  /** Google sign-in email, stored lowercase; only members with one can sign in. Never part of PlayerRef. */
+  email: text("email").unique(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -154,9 +156,18 @@ export const highlights = pgTable(
   (t) => [index("highlights_match_idx").on(t.matchId)],
 );
 
-export const submissionStatusEnum = pgEnum("submission_status", ["pending", "approved", "rejected"]);
+export const submissionStatusEnum = pgEnum("submission_status", [
+  "pending",
+  "approved",
+  "rejected",
+  "scheduled",
+  "cancelled",
+]);
 
-/** A match anyone can propose from the public form; it becomes a `matches` row only when the admin approves. */
+/**
+ * A temp match a signed-in member created: `scheduled` (no result yet) → `pending` (result in) → the admin
+ * approves it into a `matches` row, or rejects it. Rows from the old anonymous form have `ip_hash` set.
+ */
 export const matchSubmissions = pgTable(
   "match_submissions",
   {
@@ -167,8 +178,12 @@ export const matchSubmissions = pgTable(
     /** The admin's corrected body, set on "edit then approve"; the payload stays as submitted. */
     edited: jsonb("edited"),
     submitter: text("submitter"),
-    /** HMAC of the client IP; the raw IP is never stored. */
-    ipHash: text("ip_hash").notNull(),
+    /** HMAC of the client IP (old anonymous rows only); the raw IP is never stored. */
+    ipHash: text("ip_hash"),
+    /** The member who created it; null on old anonymous rows. */
+    createdBy: integer("created_by").references(() => players.id, { onDelete: "set null" }),
+    /** When the players plan to play; optional. */
+    scheduledAt: timestamp("scheduled_at", { withTimezone: true }),
     matchId: uuid("match_id").references(() => matches.id, { onDelete: "set null" }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     decidedAt: timestamp("decided_at", { withTimezone: true }),
@@ -176,6 +191,7 @@ export const matchSubmissions = pgTable(
   (t) => [
     index("match_submissions_status_created_idx").on(t.status, t.createdAt),
     index("match_submissions_ip_created_idx").on(t.ipHash, t.createdAt),
+    index("match_submissions_created_by_idx").on(t.createdBy),
   ],
 );
 

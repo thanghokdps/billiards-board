@@ -3,11 +3,13 @@
 import { LogIn, ShieldCheck } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { Ball } from "@/components/ui/ball";
+import { GoogleSignIn, LoginNotice, MemberMenu } from "@/features/auth";
 import { MatchMomentOverlay } from "@/features/matches";
 import { Link, usePathname } from "@/i18n/navigation";
+import type { PlayerRef } from "@/server/matches/schema";
 
 import { FloatingDock } from "./floating-dock";
 import { LampSmoke } from "./lamp-smoke";
@@ -20,12 +22,16 @@ const AdminChat = dynamic(() => import("@/features/chat").then((m) => m.AdminCha
 
 interface AppShellProps {
   admin: boolean;
+  /** The signed-in member, if any. */
+  member: PlayerRef | null;
+  /** Google sign-in is set up; without it no sign-in button shows. */
+  googleEnabled: boolean;
   /** Painting behind the page, from the server; left out on full-bleed screens. */
   art: ReactNode;
   children: ReactNode;
 }
 
-export function AppShell({ admin, art, children }: AppShellProps) {
+export function AppShell({ admin, member, googleEnabled, art, children }: AppShellProps) {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const [chatOpen, setChatOpen] = useState(false);
@@ -75,6 +81,11 @@ export function AppShell({ admin, art, children }: AppShellProps) {
           <Brand />
           <div className="ml-auto flex items-center gap-2">
             <LanguageSwitch />
+            {member ? (
+              <MemberMenu player={member} />
+            ) : (
+              googleEnabled && <GoogleSignIn compact variant="subtle" size="md" />
+            )}
             {admin ? (
               <Link
                 href="/admin"
@@ -106,6 +117,9 @@ export function AppShell({ admin, art, children }: AppShellProps) {
         {children}
       </main>
 
+      <Suspense>
+        <LoginNotice />
+      </Suspense>
       <FloatingDock admin={admin} onOpenChat={open} />
       <PixelPet />
 

@@ -97,10 +97,12 @@ function refineWithMatchRules(sub: SubmissionFields, ctx: z.RefinementCtx): void
 export const submissionInputSchema = submissionFields.superRefine(refineWithMatchRules);
 export type SubmissionInput = z.infer<typeof submissionInputSchema>;
 
-/** The public POST body: the input plus `website`, a honeypot real users never see or fill. */
-export const submitBodySchema = submissionFields
-  .extend({ website: z.string().optional() })
-  .superRefine(refineWithMatchRules);
+/** A temp match before its result: who plays what, and optionally when. Seats follow the same rules as a match. */
+export const scheduleInputSchema = submissionFields
+  .pick({ gameType: true, format: true, sideA: true, sideB: true })
+  .extend({ scheduledAt: z.iso.datetime({ offset: true }).nullable().optional() })
+  .superRefine((schedule, ctx) => refineWithMatchRules({ ...schedule, winnerSide: "a" }, ctx));
+export type ScheduleInput = z.infer<typeof scheduleInputSchema>;
 
 export const approveBodySchema = z.object({
   edited: submissionInputSchema.optional(),
@@ -118,10 +120,41 @@ export interface NewGuestRef {
 
 export type SeatView = PlayerRef | NewGuestRef;
 
+export type TempStatus = "scheduled" | "pending";
+
+/** A temp match as everyone sees it on Home: no note, no submitter, never an email. */
+export interface TempMatchView {
+  id: string;
+  status: TempStatus;
+  createdAt: string;
+  scheduledAt: string | null;
+  gameType: SubmissionInput["gameType"];
+  format: SubmissionInput["format"];
+  sideA: SeatView[];
+  sideB: SeatView[];
+  /** Member ids seated in it: who may enter the result, edit or cancel. */
+  seatedIds: number[];
+  /** Set once a result is entered (`pending`). */
+  result: {
+    winnerSide: "a" | "b";
+    scoreA: number | null;
+    scoreB: number | null;
+    scores: number[] | null;
+    bill: number | null;
+  } | null;
+}
+
+/** What a seated member gets back to prefill the scene: the schedule, plus the result once entered. */
+export interface TempMatchDetail {
+  view: TempMatchView;
+  schedule: ScheduleInput;
+  input: SubmissionInput | null;
+}
+
 /** What the admin sees for a submission; never holds the IP hash. */
 export interface SubmissionView {
   id: string;
-  status: "pending" | "approved" | "rejected";
+  status: "pending" | "approved" | "rejected" | "scheduled" | "cancelled";
   createdAt: string;
   decidedAt: string | null;
   /** Set once approved. */

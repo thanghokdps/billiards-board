@@ -1,6 +1,6 @@
 import "server-only";
 
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq, isNotNull } from "drizzle-orm";
 
 import { db } from "@/db/client";
 import { players, type Player } from "@/db/schema";
@@ -31,6 +31,26 @@ export async function listPlayers(
 
 export async function getPlayerBySlug(slug: string): Promise<Player | undefined> {
   const [row] = await db.select().from(players).where(eq(players.slug, slug)).limit(1);
+  return row;
+}
+
+/** A member who may sign in with this (lowercase) Google email: active, not a guest. */
+export async function findMemberByEmail(email: string): Promise<Player | undefined> {
+  const [row] = await db
+    .select()
+    .from(players)
+    .where(and(eq(players.email, email), eq(players.active, true), eq(players.guest, false)))
+    .limit(1);
+  return row;
+}
+
+/** The signed-in member behind a session, re-checked each request so removing the email signs them out. */
+export async function findSignedInMember(id: number): Promise<Player | undefined> {
+  const [row] = await db
+    .select()
+    .from(players)
+    .where(and(eq(players.id, id), eq(players.active, true), eq(players.guest, false), isNotNull(players.email)))
+    .limit(1);
   return row;
 }
 
