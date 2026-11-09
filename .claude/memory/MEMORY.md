@@ -28,3 +28,4 @@
 <!-- - [Sessions YYYY-MM-DD](sessions/YYYY-MM-DD.md) — work log for YYYY-MM-DD -->
 - [Sessions 2026-11-04](sessions/2026-11-04.md) — work log for 2026-11-04
 - [Sessions 2026-11-05](sessions/2026-11-05.md) — work log for 2026-11-05
+- [Sessions 2026-11-09](sessions/2026-11-09.md) — work log for 2026-11-09

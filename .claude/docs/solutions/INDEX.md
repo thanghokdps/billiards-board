@@ -88,4 +88,5 @@
 - [next-dev-rewrites-next-env](next-dev-rewrites-next-env.md) — Keep next-env.d.ts out of commits; next dev rewrites it — `med`
 - [per-item-dates-in-multi-day-cards](per-item-dates-in-multi-day-cards.md) — Show each item's own date when a grouped card spans several days — `med`
 - [branch-from-main-after-merge](branch-from-main-after-merge.md) — Cut a new branch from origin/main once the previous branch's PR has merged — `med`
+- [tube-geometry-needs-two-points](tube-geometry-needs-two-points.md) — Guard TubeGeometry paths to at least two points before building the mesh — `med`
 
