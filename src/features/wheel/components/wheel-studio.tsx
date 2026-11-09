@@ -16,6 +16,7 @@ import { RosterGrid } from "./roster-grid";
 import { TreatPanel } from "./treat-panel";
 import { WheelPanel } from "./wheel-panel";
 import { useHydrated } from "../hooks/use-hydrated";
+import { useRoster } from "../hooks/use-roster";
 import { useTreatPins } from "../hooks/use-treat-pins";
 
 const MODE_HINTS = { "1v1": "modeHint1v1", "2v2": "modeHint2v2", "1v1v1": "modeHint1v1v1" } as const;
@@ -37,13 +38,14 @@ const toEntry = (player: PlayerRef, weights: Record<number, number>): WheelEntry
   label: player.name,
   color: player.ballColor,
   weight: weights[player.id] ?? 1,
+  guest: player.guest,
 });
 
 /** The Random Wheel screen: the show on the left (desktop), who plays on the right; stacked on phones. Nothing is saved. */
-export function WheelStudio({ players, admin }: WheelStudioProps) {
+export function WheelStudio({ players: saved, admin }: WheelStudioProps) {
   const t = useTranslations("wheel");
   const chat = useChat();
-  const [included, setIncluded] = useState<number[]>(() => players.map((p) => p.id));
+  const { roster: players, included, arrivedId, toggle, include, markSaved, addTemp, removeTemp } = useRoster(saved);
   const [weights, setWeights] = useState<Record<number, number>>({});
   const [mode, setMode] = useState<PairingFormat>("2v2");
   const [spinnerId, setSpinnerId] = useState<number | null>(null);
@@ -55,7 +57,7 @@ export function WheelStudio({ players, admin }: WheelStudioProps) {
   const hydrated = useHydrated();
   const spinning = isSpinning || !hydrated;
 
-  if (players.length === 0) return <EmptyState title={t("emptyTitle")} body={t("emptyBody")} />;
+  if (saved.length === 0) return <EmptyState title={t("emptyTitle")} body={t("emptyBody")} />;
 
   const participants = players.filter((p) => included.includes(p.id));
   const spinner = participants.find((p) => p.id === spinnerId) ?? null;
@@ -72,8 +74,15 @@ export function WheelStudio({ players, admin }: WheelStudioProps) {
   }
 
   function toggleParticipant(id: number) {
-    setIncluded((ids) => (ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]));
+    toggle(id);
     if (victimId === id) setVictimId(null);
+    if (spinnerId === id) setSpinnerId(null);
+    setPicks([]);
+  }
+
+  function removeTempGuest(id: number) {
+    removeTemp(id);
+    if (victimId === id) changeVictim(null);
     if (spinnerId === id) setSpinnerId(null);
     setPicks([]);
   }
@@ -92,7 +101,7 @@ export function WheelStudio({ players, admin }: WheelStudioProps) {
       return;
     }
     if (id === spinnerId) changeSpinner(null);
-    if (!included.includes(id)) setIncluded((ids) => [...ids, id]);
+    include(id);
     if (multiplier !== null) reweigh(id, multiplier);
   }
 
@@ -160,9 +169,14 @@ export function WheelStudio({ players, admin }: WheelStudioProps) {
             included={included}
             spinnerId={spinner?.id ?? null}
             picks={picks}
+            arrivedId={arrivedId}
+            admin={admin}
             disabled={spinning}
             onToggle={toggleParticipant}
             onSpinner={changeSpinner}
+            onAddTemp={addTemp}
+            onSaved={markSaved}
+            onRemoveTemp={removeTempGuest}
           />
           {admin && (
             <TreatPanel

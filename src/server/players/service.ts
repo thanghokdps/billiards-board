@@ -1,5 +1,7 @@
 import "server-only";
 
+import { randomBytes } from "node:crypto";
+
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db/client";
@@ -7,6 +9,7 @@ import { matchPlayers, players, type Player } from "@/db/schema";
 import { recordAudit } from "@/server/audit/repository";
 import { HttpError } from "@/server/http";
 
+import { listPlayers } from "./repository";
 import type { PlayerInput, PlayerPatch } from "./schema";
 
 const who = { actor: "admin", via: "ui" as const };
@@ -32,6 +35,44 @@ export async function createPlayer(input: PlayerInput): Promise<Player> {
     if (isUniqueViolation(error)) throw new HttpError("conflict");
     throw error;
   }
+}
+
+const GUEST_PALETTE = ["#8b9bb4", "#a08cb8", "#7fae9d", "#b8a27f", "#b88a8a", "#7f9fb8", "#9aae7f", "#b8947f"];
+
+function guestSlug(name: string): string {
+  const ascii = name
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .replace(/đ/gi, "d")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 12)
+    .replace(/-$/, "");
+  return `g-${ascii || "guest"}-${randomBytes(2).toString("hex")}`;
+}
+
+function guestColor(name: string): string {
+  let hash = 0;
+  for (const ch of name.toLowerCase()) hash = (hash * 31 + ch.codePointAt(0)!) >>> 0;
+  return GUEST_PALETTE[hash % GUEST_PALETTE.length]!;
+}
+
+/** Idempotent quick-add: an active guest with this name (case-insensitive) is returned, an active member's name is a conflict. */
+export async function createGuest(name: string): Promise<Player> {
+  const wanted = name.trim().toLowerCase();
+  const same = (await listPlayers()).find((p) => p.name.trim().toLowerCase() === wanted);
+  if (same) {
+    if (same.guest) return same;
+    throw new HttpError("conflict");
+  }
+  return createPlayer({
+    name: name.trim(),
+    slug: guestSlug(name),
+    ballColor: guestColor(name),
+    ballNumber: 0,
+    guest: true,
+  });
 }
 
 export async function updatePlayer(id: number, patch: PlayerPatch): Promise<Player> {

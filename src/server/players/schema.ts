@@ -21,10 +21,15 @@ export const playerInputSchema = z.object({
     .nullable()
     .optional(),
   ballColor: hex,
-  ballNumber: z.number().int().min(1).max(15),
+  ballNumber: z.number().int().min(0).max(15),
   catchphrase: z.string().trim().max(120).nullable().optional(),
   active: z.boolean().optional(),
+  guest: z.boolean().optional(),
+  note: z.string().trim().max(280).nullable().optional(),
 });
+
+/** Quick-add of a named guest: the server picks slug, colour and ball number. */
+export const guestQuickSchema = z.object({ name: z.string().trim().min(1).max(40) });
 
 export type PlayerInput = z.infer<typeof playerInputSchema>;
 

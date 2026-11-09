@@ -44,5 +44,16 @@
   "picked": "Drawn",
   "resting": "Out",
   "emptyTitle": "No players yet",
-  "emptyBody": "Add players in the admin area to use the wheel."
+  "emptyBody": "Add players in the admin area to use the wheel.",
+  "guestPlaceholder": "Add a guest…",
+  "guestAdd": "Add a guest to the wheel",
+  "guestHintAdmin": "Type a name and press Enter: the guest is saved and goes on the wheel at once. Edit the note and ball colour in Admin.",
+  "guestHintViewer": "A temporary guest exists only on this device and is gone when you reload.",
+  "guestTaken": "That name is already on the wheel.",
+  "guestConflict": "That name belongs to a member.",
+  "guestInvalid": "The name must be 1 to 40 characters.",
+  "guestExpired": "Your session has expired, please sign in again.",
+  "guestFailed": "Could not add the guest, please try again.",
+  "tempRemove": "Remove temp guest",
+  "tempRemoveLabel": "Remove temporary guest {name} from the wheel"
 }

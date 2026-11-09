@@ -26,6 +26,8 @@
   --color-ivory-muted: rgb(243 238 220 / 0.74);
   --color-ivory-faint: rgb(243 238 220 / 0.56);
   --color-eight: #121212;
+  /* The grey of a guest's "house ball"; the stripe takes the ball colour chosen in Admin. */
+  --color-house: #8a8f98;
   --color-wood: #6b3a22;
   --color-wood-dark: #44230f;
   --color-chalk: #4fa8dc;

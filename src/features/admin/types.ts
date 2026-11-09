@@ -10,4 +10,7 @@ export interface AdminPlayer {
   ballNumber: number;
   catchphrase: string | null;
   active: boolean;
+  guest: boolean;
+  /** Admin-only text about a guest (or anyone); never sent to public pages. */
+  note: string | null;
 }

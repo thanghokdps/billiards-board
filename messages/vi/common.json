@@ -11,6 +11,8 @@
   "noBill": "Chưa có bill",
   "noScore": "Không ghi điểm",
   "guestMatch": "Du đấu",
+  "guest": "Khách",
+  "guestTemp": "tạm",
   "matches": "{count, plural, other {# trận}}",
   "players": "Người chơi",
   "today": "Hôm nay",

@@ -23,7 +23,11 @@
     "emptyBody": "Add the first player to start logging matches.",
     "inactive": "Inactive",
     "edit": "Edit {name}",
-    "remove": "Delete {name}"
+    "remove": "Delete {name}",
+    "membersTitle": "Members",
+    "guestsTitle": "Guests",
+    "addGuest": "Add guest",
+    "guestsEmpty": "No guests yet. Add one here or right on the wheel."
   },
   "form": {
     "addTitle": "Add player",
@@ -51,6 +55,12 @@
     },
     "ballNumber": "Ball number (1–15)",
     "catchphrase": "Catchphrase",
+    "note": "Note",
+    "noteHint": "Admin only, e.g. who brought them along.",
+    "kind": "Kind",
+    "kindMember": "Member",
+    "kindGuest": "Guest",
+    "kindHint": "A guest has no profile and no Elo; their bill share still counts.",
     "status": "Status",
     "activeOn": "Playing",
     "activeOff": "Inactive",
@@ -66,6 +76,7 @@
       "ballColor": "Colour must look like #RRGGBB.",
       "ballNumber": "Ball number is a whole number from 1 to 15.",
       "catchphrase": "Catchphrase is at most 120 characters.",
+      "note": "Note is at most 280 characters.",
       "active": "Invalid status."
     }
   },

@@ -8,7 +8,7 @@ import { matchTitle, PAIRING_FORMATS, PLAYERS_IN_FORMAT } from "@/lib/domain";
 import { computePlayerStats, wanted } from "@/lib/stats";
 import { toPlayerRef } from "@/server/players/repository";
 
-import { findTargetMatch, json, loadBoard, requireContext, resolveNames } from "./shared";
+import { findTargetMatch, guestHasNoStats, json, loadBoard, requireContext, resolveNames } from "./shared";
 
 export const spinWheelTool = tool(
   async (input, runtime) => {
@@ -82,6 +82,8 @@ export const generatePosterTool = tool(
       if (input.player) {
         const resolved = resolveNames([input.player], roster);
         if (!resolved.ok) return json(resolved.problem);
+        const guest = guestHasNoStats(resolved.refs);
+        if (guest) return json(guest);
         slug = resolved.refs[0]!.slug;
       } else {
         slug = wanted(computePlayerStats(players, matches), [], players)[0]?.player.slug;

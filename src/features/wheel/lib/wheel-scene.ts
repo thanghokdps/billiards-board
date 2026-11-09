@@ -144,7 +144,7 @@ export class WheelScene {
     this.pegStep = null;
     const { slicesGroup, wheel, brass } = this.parts;
     if (slices.length > 0) {
-      this.texture = faceTexture(slices, this.tokens.font);
+      this.texture = faceTexture(slices, this.tokens);
       this.texture.repeat.setScalar(1 / (2 * WHEEL_RADIUS));
       this.texture.offset.setScalar(0.5);
       this.wedges = buildWedges(slicesGroup, slices, this.texture);

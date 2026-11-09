@@ -24,9 +24,15 @@ function fitFont(ctx: CanvasRenderingContext2D, label: string, font: string, roo
   return Math.max(MIN_FONT, Math.min(cap, Math.floor((cap * room) / width)));
 }
 
-function paintSlice(ctx: CanvasRenderingContext2D, slice: Slice, radius: number, font: string) {
+/** The outer rim band of a guest's slice: the house ball's stripe, in their ball colour lifted toward ivory. */
+const STRIPE_FROM = 0.8;
+const STRIPE_TO = 0.93;
+
+function paintSlice(ctx: CanvasRenderingContext2D, slice: Slice, radius: number, paint: FacePaint) {
+  const { font, house, ivory } = paint;
   const startRad = ((slice.start - 90) * Math.PI) / 180;
   const endRad = ((slice.end - 90) * Math.PI) / 180;
+  const guest = slice.entry.guest === true;
   ctx.beginPath();
   ctx.moveTo(0, 0);
   ctx.arc(0, 0, radius, startRad, endRad);
@@ -35,10 +41,22 @@ function paintSlice(ctx: CanvasRenderingContext2D, slice: Slice, radius: number,
   shade.addColorStop(0, "rgb(0 0 0 / 0.42)");
   shade.addColorStop(0.55, "rgb(0 0 0 / 0.04)");
   shade.addColorStop(1, "rgb(255 255 255 / 0.2)");
-  ctx.fillStyle = slice.entry.color;
+  ctx.fillStyle = guest ? house : slice.entry.color;
   ctx.fill();
   ctx.fillStyle = shade;
   ctx.fill();
+  if (guest) {
+    ctx.beginPath();
+    ctx.arc(0, 0, radius * STRIPE_TO, startRad, endRad);
+    ctx.arc(0, 0, radius * STRIPE_FROM, endRad, startRad, true);
+    ctx.closePath();
+    ctx.fillStyle = ivory;
+    ctx.fill();
+    ctx.globalAlpha = 0.6;
+    ctx.fillStyle = slice.entry.color;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
 
   const sideways = slice.share >= SIDEWAYS_SHARE;
   const mid = (slice.start + slice.end) / 2;
@@ -52,20 +70,27 @@ function paintSlice(ctx: CanvasRenderingContext2D, slice: Slice, radius: number,
   ctx.font = `800 ${fitFont(ctx, slice.entry.label, font, room, cap)}px ${font}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillStyle = isLight(slice.entry.color) ? "#0b1410" : "#f3eedc";
+  ctx.fillStyle = isLight(guest ? house : slice.entry.color) ? "#0b1410" : "#f3eedc";
   ctx.fillText(slice.entry.label, 0, 0);
   ctx.restore();
 }
 
+/** What the canvas cannot read from CSS itself: the font family and the colours of the guest stripe. */
+export interface FacePaint {
+  font: string;
+  house: string;
+  ivory: string;
+}
+
 /** One texture for the whole wheel: wedges read it by their own x, y, so it maps 1:1 onto the face. */
-export function faceTexture(slices: Slice[], font: string): CanvasTexture {
+export function faceTexture(slices: Slice[], paint: FacePaint): CanvasTexture {
   const canvas = document.createElement("canvas");
   canvas.width = FACE_SIZE;
   canvas.height = FACE_SIZE;
   const ctx = canvas.getContext("2d");
   if (ctx) {
     ctx.translate(FACE_SIZE / 2, FACE_SIZE / 2);
-    for (const slice of slices) paintSlice(ctx, slice, FACE_SIZE / 2, font);
+    for (const slice of slices) paintSlice(ctx, slice, FACE_SIZE / 2, paint);
   }
   const texture = new CanvasTexture(canvas);
   texture.colorSpace = SRGBColorSpace;

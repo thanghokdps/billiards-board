@@ -25,6 +25,18 @@ function arcPath(slice: Slice): string {
   return `M 0 0 L ${x1} ${y1} A ${R} ${R} 0 ${large} 1 ${x2} ${y2} Z`;
 }
 
+/** A guest's stripe: the rim band of the slice, like the 3D wheel's. Skipped for a full circle (one entry). */
+function stripePath(slice: Slice): string | null {
+  if (slice.share >= 0.9999) return null;
+  const at = (deg: number, radius: number) => {
+    const rad = ((deg - 90) * Math.PI) / 180;
+    return `${round(radius * Math.cos(rad))} ${round(radius * Math.sin(rad))}`;
+  };
+  const [outer, inner] = [R * 0.93, R * 0.8];
+  const large = slice.end - slice.start > 180 ? 1 : 0;
+  return `M ${at(slice.start, outer)} A ${outer} ${outer} 0 ${large} 1 ${at(slice.end, outer)} L ${at(slice.end, inner)} A ${inner} ${inner} 0 ${large} 0 ${at(slice.start, inner)} Z`;
+}
+
 function labelAt(slice: Slice, radius: number) {
   const mid = (slice.start + slice.end) / 2;
   const rad = ((mid - 90) * Math.PI) / 180;
@@ -76,12 +88,23 @@ export function FlatWheel({ slices, repeated, label, rotation, durationMs, onSpi
         >
           {slices.map((slice) => {
             const at = labelAt(slice, repeated ? REPEATED_LABEL_RADIUS : R * 0.7);
+            const stripe = slice.entry.guest ? stripePath(slice) : null;
             return (
               <g key={slice.start}>
                 <path
                   d={arcPath(slice)}
-                  style={{ fill: slice.entry.color, stroke: "var(--color-felt-deep)", strokeWidth: 2 }}
+                  style={{
+                    fill: slice.entry.guest ? "var(--color-house)" : slice.entry.color,
+                    stroke: "var(--color-felt-deep)",
+                    strokeWidth: 2,
+                  }}
                 />
+                {stripe && (
+                  <path
+                    d={stripe}
+                    style={{ fill: `color-mix(in srgb, var(--color-ivory) 40%, ${slice.entry.color})` }}
+                  />
+                )}
                 {slice.share > MIN_LABEL_SHARE && (
                   <text
                     x={at.x}

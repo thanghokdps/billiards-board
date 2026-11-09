@@ -25,7 +25,7 @@ export async function loadContextSnapshot(context: AgentContext, now: Date): Pro
     locale: context.locale,
     roster: roster.map(
       (p) =>
-        `${p.id} · ${p.name} · ${p.nickname ?? "-"} · ${p.aliases.length ? p.aliases.join(", ") : "-"} · ball ${p.ballNumber}`,
+        `${p.id} · ${p.name} · ${p.nickname ?? "-"} · ${p.aliases.length ? p.aliases.join(", ") : "-"} · ball ${p.ballNumber}${p.guest ? " · guest" : ""}`,
     ),
     todaysMatches: todays.map((m) => {
       const side = (list: typeof m.sideA) => list.map((p) => p.name).join(" & ");

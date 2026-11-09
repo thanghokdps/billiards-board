@@ -1,11 +1,12 @@
 import { useLocale, useTranslations } from "next-intl";
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 
 import { cn } from "@/lib/cn";
-import { formatTime, formatVnd, shownSideB } from "@/lib/domain";
+import { formatTime, formatVnd, GUEST_SEAT, shownSideB } from "@/lib/domain";
 import type { MatchView, PlayerRef } from "@/server/matches/schema";
 
 import { GameTypeBadge } from "./game-type-badge";
+import { GuestBadge } from "./guest-badge";
 import { PlayerAvatar, type Streak } from "./player-avatar";
 
 interface MatchRowProps {
@@ -57,7 +58,14 @@ function Side({
       <div className="min-w-0 max-w-full">
         {/* A 2v2 side wraps: truncating two names on a phone left only initials next to the avatars. */}
         <p className={cn("font-bold leading-tight wrap-anywhere", won ? "text-ivory" : "text-ivory-muted")}>
-          {players.map((p) => p.name).join(" & ")}
+          {players.map((p, i) => (
+            <Fragment key={p.id}>
+              {i > 0 && " & "}
+              {p.name}
+              {/* No profile link for a guest. The anonymous "Du đấu" seat already says what it is. */}
+              {p.guest && p.id !== GUEST_SEAT.id && <GuestBadge className="ml-1 align-middle" />}
+            </Fragment>
+          ))}
         </p>
         {won && <p className="text-2xs font-semibold text-lamp">{winLabel}</p>}
         {!won && lossLabel && <p className="text-2xs font-semibold text-loss">{lossLabel}</p>}

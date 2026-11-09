@@ -7,6 +7,7 @@ import { players, type Player } from "@/db/schema";
 
 import type { PlayerRef } from "../matches/schema";
 
+/** `note` is admin-only, so it stays out of the ref every public page and the agent receive. */
 export function toPlayerRef(p: Player): PlayerRef {
   return {
     id: p.id,
@@ -16,12 +17,16 @@ export function toPlayerRef(p: Player): PlayerRef {
     ballColor: p.ballColor,
     ballNumber: p.ballNumber,
     avatarUrl: p.avatarUrl,
+    guest: p.guest,
   };
 }
 
-export async function listPlayers(options: { includeInactive?: boolean } = {}): Promise<Player[]> {
-  const rows = await db.select().from(players).orderBy(asc(players.ballNumber));
-  return options.includeInactive ? rows : rows.filter((p) => p.active);
+export async function listPlayers(
+  options: { includeInactive?: boolean; guests?: "include" | "exclude" | "only" } = {},
+): Promise<Player[]> {
+  const { includeInactive, guests = "include" } = options;
+  const rows = await db.select().from(players).orderBy(asc(players.ballNumber), asc(players.id));
+  return rows.filter((p) => (includeInactive || p.active) && (guests === "include" || p.guest === (guests === "only")));
 }
 
 export async function getPlayerBySlug(slug: string): Promise<Player | undefined> {

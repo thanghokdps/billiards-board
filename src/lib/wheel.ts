@@ -8,6 +8,8 @@ export interface WheelEntry {
   label: string;
   color: string;
   weight: number;
+  /** A guest's slice is drawn as a house ball: grey with a stripe in `color`. */
+  guest?: boolean;
 }
 
 /** Uniform float in [0, 1) from the Web Crypto API (53 random bits). */

@@ -13,13 +13,17 @@ export interface PlayerFormState {
   ballNumber: string;
   catchphrase: string;
   active: boolean;
+  guest: boolean;
+  note: string;
   avatarUrl: string | null;
 }
 
 export type PlayerField = keyof PlayerInput;
 
-export function initialForm(player: AdminPlayer | null, nextBallNumber: number): PlayerFormState {
+export function initialForm(player: AdminPlayer | null, nextBallNumber: number, newGuest = false): PlayerFormState {
   return {
+    guest: player?.guest ?? newGuest,
+    note: player?.note ?? "",
     name: player?.name ?? "",
     slug: player?.slug ?? "",
     nickname: player?.nickname ?? "",
@@ -65,9 +69,12 @@ export function toInput(form: PlayerFormState): PlayerInput {
     aliases: splitAliases(form.aliases),
     avatarUrl: form.avatarUrl,
     ballColor: form.ballColor.trim(),
-    ballNumber: Number(form.ballNumber),
+    // A guest has no number: the house ball shows a G, and 0 keeps it out of the members' numbering.
+    ballNumber: form.guest ? 0 : Number(form.ballNumber),
     catchphrase: form.catchphrase.trim() || null,
     active: form.active,
+    guest: form.guest,
+    note: form.note.trim() || null,
   };
 }
 

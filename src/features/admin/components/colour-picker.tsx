@@ -13,12 +13,14 @@ interface ColourPickerProps {
   id: string;
   value: string;
   ballNumber: number;
+  /** Show the swatches as house balls: the colour is the stripe. */
+  guest?: boolean;
   error?: string;
   onChange: (hex: string) => void;
 }
 
 /** The five regulars' ball colours as swatches, plus a free `#RRGGBB` field checked with the server's rule. */
-export function ColourPicker({ id, value, ballNumber, error, onChange }: ColourPickerProps) {
+export function ColourPicker({ id, value, ballNumber, guest, error, onChange }: ColourPickerProps) {
   const t = useTranslations("admin.form");
   const valid = isValidColour(value);
   return (
@@ -36,13 +38,13 @@ export function ColourPicker({ id, value, ballNumber, error, onChange }: ColourP
               onClick={() => onChange(hex)}
               className={cn("p-1", selected && "ring-2 ring-lamp ring-offset-2 ring-offset-surface")}
             >
-              <Ball color={hex} number={ballNumber} className="size-full" />
+              <Ball color={hex} number={ballNumber} guest={guest} className="size-full" />
             </Button>
           );
         })}
       </div>
       <div className="flex items-center gap-3">
-        <Ball color={valid ? value.trim() : undefined} number={ballNumber} className="size-11" />
+        <Ball color={valid ? value.trim() : undefined} number={ballNumber} guest={guest} className="size-11" />
         <Input
           id={id}
           value={value}

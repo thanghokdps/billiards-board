@@ -30,6 +30,8 @@ export default async function AdminPage() {
           ballNumber: p.ballNumber,
           catchphrase: p.catchphrase,
           active: p.active,
+          guest: p.guest,
+          note: p.note,
         }))}
       />
     </div>
