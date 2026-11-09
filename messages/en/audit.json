@@ -23,14 +23,17 @@
     "create": "Created",
     "update": "Edited",
     "delete": "Deleted",
-    "restore": "Restored"
+    "restore": "Restored",
+    "approve": "Approved",
+    "reject": "Rejected"
   },
   "entity": {
     "match": "Match",
     "player": "Player",
     "session": "Session",
     "prediction": "Prediction",
-    "highlight": "Highlight"
+    "highlight": "Highlight",
+    "submission": "Submission"
   },
   "fields": {
     "date": "Date",

@@ -7,8 +7,22 @@ import { cn } from "@/lib/cn";
 import { formatAbsolute, formatRelative } from "../lib/time";
 import type { AuditItem } from "../types";
 
-const ACTION_TONE = { create: "win", update: "lamp", delete: "loss", restore: "cold" } as const;
-const ACTION_DOT = { create: "bg-win", update: "bg-lamp", delete: "bg-loss", restore: "bg-cold" } as const;
+const ACTION_TONE = {
+  create: "win",
+  update: "lamp",
+  delete: "loss",
+  restore: "cold",
+  approve: "win",
+  reject: "loss",
+} as const;
+const ACTION_DOT = {
+  create: "bg-win",
+  update: "bg-lamp",
+  delete: "bg-loss",
+  restore: "bg-cold",
+  approve: "bg-win",
+  reject: "bg-loss",
+} as const;
 
 function isAction(value: string): value is keyof typeof ACTION_TONE {
   return value in ACTION_TONE;

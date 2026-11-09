@@ -10,10 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MatchRow } from "@/components/ui/match-row";
 import { AdminApiError, matchesApi, revertPatch, useMatchMoment } from "@/features/matches";
+import { submissionsApi } from "@/features/submissions";
 import type { Proposal } from "@/lib/agent-results";
 import { cn } from "@/lib/cn";
 import { formatDate } from "@/lib/domain";
 
+import { SubmissionBody } from "./submission-card";
 import {
   getCardState,
   registerCard,
@@ -23,6 +25,12 @@ import {
   UNDO_WINDOW_MS,
   type CardState,
 } from "../lib/card-store";
+
+/** What a card does: a proposal kind, or for a submission whether it approves or rejects. */
+type CardAction = "create" | "update" | "delete" | "approve" | "reject";
+
+const actionOf = (proposal: Proposal): CardAction =>
+  proposal.kind === "submission" ? proposal.decision : proposal.kind;
 
 function useCardState(id: string): CardState {
   return useSyncExternalStore(
@@ -63,8 +71,17 @@ export function ProposalCard({ proposal, toolCallId }: { proposal: Proposal; too
     if (phase !== "idle" && phase !== "failed" && phase !== "requested") return;
     setCardState(toolCallId, { phase: "saving" });
     try {
-      let undo: () => Promise<void>;
-      if (proposal.kind === "create") {
+      let undo: (() => Promise<void>) | null = null;
+      if (proposal.kind === "submission") {
+        // Both calls are idempotent on the server, so a retry after a dropped response is safe. No undo: the admin
+        // deletes an approved match from the match itself, and a rejection is final.
+        if (proposal.decision === "approve") {
+          await submissionsApi.approve(proposal.submissionId, { via: "chat" });
+          playMoment([]);
+        } else {
+          await submissionsApi.reject(proposal.submissionId, { via: "chat" });
+        }
+      } else if (proposal.kind === "create") {
         const created = await matchesApi.create(
           proposal.matches.map((m) => m.input),
           "chat",
@@ -118,30 +135,35 @@ export function ProposalCard({ proposal, toolCallId }: { proposal: Proposal; too
     }
   }
 
+  const action = actionOf(proposal);
   const title =
     proposal.kind === "create"
       ? t("createTitle", { count: proposal.matches.length })
       : proposal.kind === "update"
         ? t("updateTitle")
-        : t("deleteTitle");
+        : t(action === "approve" ? "approveTitle" : action === "reject" ? "rejectTitle" : "deleteTitle");
   const createDates =
     proposal.kind === "create" ? new Set(proposal.matches.map((m) => m.input.date ?? proposal.date)) : new Set();
+  const headerDate =
+    proposal.kind === "create" && createDates.size === 1
+      ? (proposal.matches[0]?.input.date ?? proposal.date)
+      : proposal.kind === "submission"
+        ? proposal.submission.date
+        : null;
 
   return (
     <Card
       data-phase={state.phase}
       className={cn(
         "chat-card my-2",
-        proposal.kind === "delete" ? "border-ball/40" : "border-lamp/30",
+        action === "delete" || action === "reject" ? "border-ball/40" : "border-lamp/30",
         state.phase === "superseded" && "opacity-60",
       )}
     >
       <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-3">
         <p className="font-display text-xl font-bold leading-tight">{title}</p>
-        {proposal.kind === "create" && createDates.size === 1 && (
-          <span className="text-xs text-ivory-muted">
-            {t("date", { date: formatDate(proposal.matches[0]?.input.date ?? proposal.date, locale) })}
-          </span>
+        {headerDate && (
+          <span className="text-xs text-ivory-muted">{t("date", { date: formatDate(headerDate, locale) })}</span>
         )}
       </div>
 
@@ -185,12 +207,13 @@ export function ProposalCard({ proposal, toolCallId }: { proposal: Proposal; too
           </>
         )}
         {proposal.kind === "delete" && <MatchRow match={proposal.match} />}
+        {proposal.kind === "submission" && <SubmissionBody submission={proposal.submission} />}
       </div>
 
       <div className="flex flex-wrap items-center gap-2 border-t border-line px-3 py-3" aria-live="polite">
         <CardFooter
           state={state}
-          kind={proposal.kind}
+          action={action}
           secondsLeft={secondsLeft}
           onConfirm={confirm}
           onCancel={() => setCardState(toolCallId, { phase: "cancelled" })}
@@ -212,22 +235,45 @@ function Labeled({ label, children }: { label: string; children: React.ReactNode
 
 interface FooterProps {
   state: CardState;
-  kind: Proposal["kind"];
+  action: CardAction;
   secondsLeft: number;
   onConfirm: () => void;
   onCancel: () => void;
   onUndo: () => void;
 }
 
-function CardFooter({ state, kind, secondsLeft, onConfirm, onCancel, onUndo }: FooterProps) {
+const CONFIRM_LABEL = {
+  create: "save",
+  update: "save",
+  delete: "confirmDelete",
+  approve: "approve",
+  reject: "reject",
+} as const;
+
+const DONE_LABEL = {
+  create: "saved",
+  update: "updated",
+  delete: "deletedDone",
+  approve: "approved",
+  reject: "rejected",
+} as const;
+
+function CardFooter({ state, action, secondsLeft, onConfirm, onCancel, onUndo }: FooterProps) {
   const t = useTranslations("chat.card");
+  const destructive = action === "delete" || action === "reject";
   switch (state.phase) {
     case "idle":
       return (
         <>
-          <Button variant={kind === "delete" ? "danger" : "primary"} onClick={onConfirm} className="flex-1">
-            {kind === "delete" ? <Trash2 className="size-4" aria-hidden /> : <Check className="size-4" aria-hidden />}
-            {kind === "delete" ? t("confirmDelete") : t("save")}
+          <Button variant={destructive ? "danger" : "primary"} onClick={onConfirm} className="flex-1">
+            {action === "delete" ? (
+              <Trash2 className="size-4" aria-hidden />
+            ) : action === "reject" ? (
+              <X className="size-4" aria-hidden />
+            ) : (
+              <Check className="size-4" aria-hidden />
+            )}
+            {t(CONFIRM_LABEL[action])}
           </Button>
           <Button variant="ghost" onClick={onCancel}>
             <X className="size-4" aria-hidden />
@@ -248,7 +294,7 @@ function CardFooter({ state, kind, secondsLeft, onConfirm, onCancel, onUndo }: F
         <>
           <p className="flex flex-1 items-center gap-2 text-sm font-bold text-win">
             <Ball className="chat-sunk size-5" />
-            {kind === "create" ? t("saved") : kind === "update" ? t("updated") : t("deletedDone")}
+            {t(DONE_LABEL[action])}
           </p>
           {state.undo && secondsLeft > 0 && (
             <Button variant="outline" size="sm" onClick={onUndo}>

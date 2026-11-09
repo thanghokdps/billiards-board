@@ -3,6 +3,7 @@
  * (TOOL_CALL_RESULT content), so this file is the one contract between the tools and the cards.
  */
 import type { MatchInput, MatchPatch, MatchView, PlayerRef } from "@/server/matches/schema";
+import type { SubmissionView } from "@/server/submissions/schema";
 
 import type { GameType, PairingFormat, Period, Side } from "./domain";
 
@@ -14,6 +15,8 @@ export const TOOL_NAMES = {
   proposeMatches: "propose_matches",
   proposeUpdate: "propose_update",
   proposeDelete: "propose_delete",
+  listSubmissions: "list_submissions",
+  proposeSubmissionDecision: "propose_submission_decision",
   resolveCard: "resolve_card",
   queryStats: "query_stats",
   headToHead: "head_to_head",
@@ -80,7 +83,33 @@ export interface DeleteProposal {
   supersedes: string[];
 }
 
-export type Proposal = CreateProposal | UpdateProposal | DeleteProposal;
+/** What a submission card shows. No note and no IP: the card and the model's context hold only what approving needs. */
+export type SubmissionCardData = Pick<
+  SubmissionView,
+  | "gameType"
+  | "format"
+  | "sideA"
+  | "sideB"
+  | "winnerSide"
+  | "scoreA"
+  | "scoreB"
+  | "scores"
+  | "bill"
+  | "date"
+  | "submitter"
+>;
+
+/** Approve or reject one pending submission; `submissionId` is resolved on the server, never taken from the model. */
+export interface SubmissionProposal {
+  status: "proposal";
+  kind: "submission";
+  decision: "approve" | "reject";
+  submissionId: string;
+  submission: SubmissionCardData;
+  supersedes: string[];
+}
+
+export type Proposal = CreateProposal | UpdateProposal | DeleteProposal | SubmissionProposal;
 
 /**
  * The admin answered an open card in chat: the card acts on it as if its button was tapped.
@@ -102,6 +131,22 @@ export interface CardNotice {
 export interface MatchList {
   status: "ok";
   matches: (MatchView & { time: string; label: string })[];
+}
+
+/** Pending submissions, oldest first so a new one never renumbers the others; `label` is the #n the admin and the model use. */
+export interface SubmissionList {
+  status: "ok";
+  total: number;
+  submissions: {
+    label: string;
+    title: string;
+    gameType: SubmissionView["gameType"];
+    score: string | null;
+    bill: number | null;
+    submitter: string | null;
+    newGuests: string[];
+    ageMinutes: number;
+  }[];
 }
 
 export type StatsMetric =
@@ -166,6 +211,7 @@ export type AnyToolResult =
   | CardDecision
   | CardNotice
   | MatchList
+  | SubmissionList
   | StatsResult
   | HeadToHeadResult
   | WheelSetup

@@ -10,6 +10,7 @@ import { AGENT_ID, parseToolResult, TOOL_NAMES, type CardDecision } from "@/lib/
 
 import { ProposalCard } from "./proposal-card";
 import { AskChips, HeadToHeadCard, PosterCard, StatsCard, WheelCard } from "./result-cards";
+import { SubmissionsList } from "./submission-card";
 import { applyCardDecision } from "../lib/card-store";
 
 interface ToolRenderProps {
@@ -73,6 +74,7 @@ function ToolResult({ name, toolCallId, status, result }: ToolRenderProps): Reac
       break;
   }
   if (TEXT_ONLY.has(name)) return null;
+  if (name === TOOL_NAMES.listSubmissions && "submissions" in parsed) return <SubmissionsList result={parsed} />;
   if (name === TOOL_NAMES.queryStats && "rows" in parsed) return <StatsCard result={parsed} />;
   if (name === TOOL_NAMES.headToHead && "aWins" in parsed) return <HeadToHeadCard result={parsed} />;
   if (name === TOOL_NAMES.spinWheel && "participants" in parsed) return <WheelCard result={parsed} />;

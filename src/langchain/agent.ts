@@ -43,6 +43,7 @@ const DECIDING_TOOLS = new Set<string>([
   TOOL_NAMES.proposeMatches,
   TOOL_NAMES.proposeUpdate,
   TOOL_NAMES.proposeDelete,
+  TOOL_NAMES.proposeSubmissionDecision,
   TOOL_NAMES.resolveCard,
 ]);
 

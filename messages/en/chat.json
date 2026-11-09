@@ -22,7 +22,13 @@
     "createTitle": "{count, plural, one {Log # match} other {Log # matches}}",
     "updateTitle": "Edit match",
     "deleteTitle": "Delete this match?",
+    "approveTitle": "Approve this submission?",
+    "rejectTitle": "Reject this submission?",
     "save": "Save",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approved": "Approved, match recorded",
+    "rejected": "Rejected",
     "saveAll": "Save all",
     "confirmDelete": "Delete",
     "cancel": "Discard",
@@ -46,6 +52,12 @@
       "derby": "Month-end derby!",
       "blowout": "Blowout!"
     }
+  },
+  "submission": {
+    "pending": "{count, plural, one {# match waiting for approval} other {# matches waiting for approval}}",
+    "by": "Sent by {name}",
+    "newGuests": "New guest: {names}",
+    "more": "+{count} more on the Admin page"
   },
   "ask": {
     "game_type": "Which game?",

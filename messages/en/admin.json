@@ -29,6 +29,29 @@
     "addGuest": "Add guest",
     "guestsEmpty": "No guests yet. Add one here or right on the wheel."
   },
+  "pending": {
+    "title": "Matches awaiting approval",
+    "count": "{count, plural, one {# match waiting} other {# matches waiting}}",
+    "empty": {
+      "title": "No matches waiting",
+      "body": "When someone sends a match from the Log a match page, its score slip shows up here."
+    },
+    "approve": "Approve",
+    "reject": "Reject",
+    "edit": "Edit",
+    "editTitle": "Edit the match before approving",
+    "stamp": "Approved",
+    "newGuest": "new",
+    "sentBy": "Sent by {name}",
+    "anonymous": "someone",
+    "errors": {
+      "unauthenticated": "Your session has expired, please sign in again.",
+      "invalid_body": "This match is not valid, so it cannot be approved.",
+      "conflict": "Someone has already handled this match, updating the list.",
+      "not_found": "This match was not found, updating the list.",
+      "internal": "Something went wrong, please try again."
+    }
+  },
   "form": {
     "addTitle": "Add player",
     "editTitle": "Edit player",

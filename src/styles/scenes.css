@@ -623,6 +623,7 @@
   position: absolute;
   inset: auto 0 0;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 0.25rem;
 }
@@ -654,6 +655,7 @@
   .rack-loose {
     inset: 0 auto 0 0;
     flex-direction: column;
+    flex-wrap: nowrap;
     justify-content: center;
   }
 }

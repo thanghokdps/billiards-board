@@ -1,0 +1,116 @@
+{
+  "title": "Ghi trận",
+  "kicker": "Vừa đánh xong? Ghi lại, admin duyệt là lên bảng",
+  "titles": {
+    "game": "Chơi thể loại nào?",
+    "seats": "Ai ngồi bàn?",
+    "winner": "Ai thắng?",
+    "score": "Điểm số và bill",
+    "note": "Ghi chú",
+    "send": "Gửi trận này"
+  },
+  "steps": {
+    "label": "Các bước ghi trận",
+    "back": "Quay lại",
+    "next": "Tiếp",
+    "game": "Thể loại",
+    "seats": "Người chơi",
+    "winner": "Thắng",
+    "score": "Điểm",
+    "note": "Ghi chú",
+    "send": "Gửi"
+  },
+  "game": {
+    "title": "Thể loại",
+    "hint": "Chọn thể loại, rồi chạm vào kiểu đấu bên dưới.",
+    "format": "Kiểu đấu",
+    "players": "{count} người"
+  },
+  "seats": {
+    "status": "Đã ngồi {filled}/{total}",
+    "hint": "Chạm vào bi để xếp vào ghế, chạm lại để gọi về. Người lạ thì thêm khách.",
+    "newGuests": "Khách mới thêm",
+    "removeGuest": "Bỏ khách {name}"
+  },
+  "guest": {
+    "placeholder": "Tên khách",
+    "add": "Thêm khách",
+    "taken": "Tên này có trên bàn rồi",
+    "hint": "Khách mới chỉ được tạo khi admin duyệt."
+  },
+  "table": {
+    "new": "mới",
+    "wins": "{name} thắng",
+    "loses": "{name} thua",
+    "sit": "Xếp {name} vào ghế",
+    "back": "Gọi {name} về ghế chờ",
+    "sideA": "Bên A",
+    "sideB": "Bên B",
+    "seat": "Ghế trống {mark}"
+  },
+  "winner": {
+    "title": "Bên thắng",
+    "hintSide": "Chạm vào bên thắng.",
+    "hintLoser": "Chạm vào người bét, người đó trả bill.",
+    "wins": "{names} thắng",
+    "loses": "{names} bét"
+  },
+  "score": {
+    "title": "Tỷ số",
+    "hint": "Không nhớ tỷ số thì bỏ trống cũng được.",
+    "orderWinner": "Bên thắng phải có điểm cao hơn.",
+    "orderLoser": "Người bét phải có điểm thấp nhất.",
+    "billTitle": "Bill",
+    "of": "Điểm của {names}",
+    "empty": "Chưa nhập",
+    "minus": "Giảm điểm của {names}",
+    "plus": "Tăng điểm của {names}"
+  },
+  "bill": {
+    "chips": "Chọn nhanh số tiền",
+    "add": "Thêm {amount}",
+    "label": "Số tiền bill",
+    "placeholder": "Nhập số tiền",
+    "clear": "Xóa bill",
+    "none": "Chưa có bill"
+  },
+  "note": {
+    "label": "Ghi chú (không bắt buộc)",
+    "placeholder": "Vd. thua kèo cuối, ăn bi đen",
+    "submitter": "Tên bạn",
+    "submitterPlaceholder": "Để admin biết ai gửi",
+    "submitterHint": "Không bắt buộc."
+  },
+  "send": {
+    "send": "Gửi cho admin",
+    "approve": "Lưu và duyệt",
+    "sending": "Đang gửi…",
+    "hint": "Admin duyệt xong trận mới lên bảng xếp hạng.",
+    "hintEdit": "Lưu sẽ duyệt trận này luôn.",
+    "errors": {
+      "rate_limited": "Gửi nhiều quá rồi, thử lại sau {minutes, plural, other {# phút}} nhé.",
+      "too_large": "Dữ liệu quá dài, rút gọn ghi chú rồi gửi lại.",
+      "invalid_body": "Trận này chưa hợp lệ, kiểm tra lại các bước đang đánh dấu đỏ.",
+      "conflict": "Trận này đã được xử lý rồi.",
+      "not_found": "Không tìm thấy trận này, có thể đã bị xóa.",
+      "unauthenticated": "Phiên đăng nhập đã hết, đăng nhập lại nhé.",
+      "failed": "Chưa gửi được, thử lại nhé."
+    }
+  },
+  "sent": {
+    "title": "Chờ admin duyệt",
+    "body": "Đã gửi. Admin duyệt xong là trận lên bảng.",
+    "again": "Ghi trận khác"
+  },
+  "strip": {
+    "vs": "vs",
+    "loserPays": "{name} trả bill"
+  },
+  "issues": {
+    "memberName": "Tên này là thành viên, chọn bi của bạn ấy thay vì thêm khách.",
+    "unknownPlayer": "Có người chơi không còn trong danh sách, chọn lại nhé.",
+    "duplicate": "Một người xuất hiện hai lần trong trận.",
+    "scoreOrder": "Điểm số không khớp với người thắng.",
+    "invalid": "Mục này chưa hợp lệ, kiểm tra lại nhé."
+  }
+}

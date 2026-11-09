@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { AdminDashboard, AdminLogin } from "@/features/admin";
 import { isAdmin } from "@/server/auth/session";
 import { listPlayers } from "@/server/players/repository";
+import { listPendingSubmissions } from "@/server/submissions/service";
 
 export const dynamic = "force-dynamic";
 
@@ -15,10 +16,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AdminPage() {
   if (!(await isAdmin())) return <AdminLogin />;
 
-  const roster = await listPlayers({ includeInactive: true });
+  const [roster, pending] = await Promise.all([listPlayers({ includeInactive: true }), listPendingSubmissions()]);
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-6">
       <AdminDashboard
+        submissions={pending}
+        now={new Date().toISOString()}
         players={roster.map((p) => ({
           id: p.id,
           slug: p.slug,

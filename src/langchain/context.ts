@@ -11,7 +11,9 @@ export const agentContextSchema = z.object({
   timeZone: z.string().min(1),
   // Not identity. The client only names ids; each entry is rebuilt from this thread's own checkpoint.
   openCards: z
-    .array(z.object({ id: z.string(), kind: z.enum(["create", "update", "delete"]), proposal: z.string() }))
+    .array(
+      z.object({ id: z.string(), kind: z.enum(["create", "update", "delete", "submission"]), proposal: z.string() }),
+    )
     .default([]),
   // Not identity either: only echoed back to the browser in a card decision.
   pageId: z.string().max(64).default(""),
