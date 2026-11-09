@@ -13,4 +13,6 @@ coverage/
 .DS_Store
 .claude/memory/user.md
 .claude/memory/sessions/
-specs/HANDOFF.md
+specs/
+.claude/launch.json
+.playwright-mcp/
