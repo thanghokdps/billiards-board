@@ -55,6 +55,7 @@ export default async function HomePage() {
         <div className={cn("space-y-8", hasWanted && "lg:col-span-2")}>
           {showTemp && (
             <Section
+              anchor="temp"
               title={t("temp.title")}
               action={
                 member && (

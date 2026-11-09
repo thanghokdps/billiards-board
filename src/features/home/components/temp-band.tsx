@@ -3,6 +3,7 @@
 import { CalendarClock, Hourglass, PenLine } from "lucide-react";
 import { motion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
+import { useEffect } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -119,6 +120,10 @@ function TempSlip({ match, mine }: { match: TempMatchView; mine: boolean }) {
 /** Temp matches everyone can see: still to be played, or played and waiting for the admin; nothing counts yet. */
 export function TempBand({ matches, meId }: { matches: TempMatchView[]; meId: number | null }) {
   const t = useTranslations("home.temp");
+  // A client link to `/#temp` lands while [locale]/loading.tsx still shows, so Next finds no target to scroll to.
+  useEffect(() => {
+    if (window.location.hash === "#temp") document.getElementById("temp")?.scrollIntoView();
+  }, []);
   if (matches.length === 0) {
     return <p className="text-sm text-ivory-muted">{t("empty")}</p>;
   }

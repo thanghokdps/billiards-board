@@ -13,7 +13,10 @@ export function FailureAlert({ failure }: { failure: Failure }) {
     <div role="alert" className="space-y-1 rounded-md border border-loss/50 bg-loss/10 px-3 py-2 text-sm text-loss">
       <p>{t(key)}</p>
       {key === "busy" && (
-        <Link href="/" className="inline-flex min-h-11 items-center font-semibold underline underline-offset-2">
+        <Link
+          href={{ pathname: "/", hash: "temp" }}
+          className="inline-flex min-h-11 items-center font-semibold underline underline-offset-2"
+        >
           {t("busyLink")}
         </Link>
       )}
