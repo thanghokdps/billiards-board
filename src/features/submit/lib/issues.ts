@@ -1,3 +1,5 @@
+import type { ApiIssue } from "@/features/submissions";
+
 import { inputOrder, isFull, scoreProblem, type Draft } from "./draft";
 
 export const STEPS = ["game", "seats", "winner", "score", "note", "send"] as const;
@@ -11,18 +13,13 @@ export function reachOf(draft: Draft): number {
   return STEPS.length - 1;
 }
 
-export type IssueKey = "memberName" | "unknownPlayer" | "duplicate" | "scoreOrder" | "invalid";
+export type IssueKey = "memberName" | "unknownPlayer" | "duplicate" | "scoreOrder" | "notSeated" | "invalid";
 
 export interface StepIssue {
   step: Step;
   key: IssueKey;
   /** The seat to highlight, when the issue names one. */
   seat?: number;
-}
-
-export interface ServerIssue {
-  path: (string | number)[];
-  message: string;
 }
 
 const STEP_OF_FIELD: Record<string, Step> = {
@@ -38,8 +35,10 @@ const STEP_OF_FIELD: Record<string, Step> = {
   submitter: "note",
 };
 
-function keyOf({ path, message }: ServerIssue): IssueKey {
+function keyOf({ path, message }: ApiIssue): IssueKey {
   const last = path[path.length - 1];
+  // The member API refuses a match its caller is not in, at `["sideA"]` with no seat index.
+  if (path.length === 1 && message.includes("one of the players")) return "notSeated";
   if (last === "guestName") return "memberName";
   if (last === "playerId") return "unknownPlayer";
   if (path[0] === "sideB" && message.includes("twice")) return "duplicate";
@@ -48,7 +47,7 @@ function keyOf({ path, message }: ServerIssue): IssueKey {
 }
 
 /** Points a server `invalid_body` back at the step that owns the field, and at the seat when it names one. */
-export function stepIssues(issues: ServerIssue[], draft: Draft): StepIssue[] {
+export function stepIssues(issues: ApiIssue[], draft: Draft): StepIssue[] {
   const order = inputOrder(draft);
   return issues.map((issue) => {
     const [field, index] = issue.path;

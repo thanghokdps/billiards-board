@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { AdminDashboard, AdminLogin } from "@/features/admin";
+import { googleConfigured } from "@/server/auth/google";
 import { isAdmin } from "@/server/auth/session";
 import { listPlayers } from "@/server/players/repository";
 import { listPendingSubmissions } from "@/server/submissions/service";
@@ -14,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AdminPage() {
-  if (!(await isAdmin())) return <AdminLogin />;
+  if (!(await isAdmin())) return <AdminLogin googleEnabled={googleConfigured()} />;
 
   const [roster, pending] = await Promise.all([listPlayers({ includeInactive: true }), listPendingSubmissions()]);
   return (
@@ -35,6 +36,7 @@ export default async function AdminPage() {
           active: p.active,
           guest: p.guest,
           note: p.note,
+          email: p.email,
         }))}
       />
     </div>

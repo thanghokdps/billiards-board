@@ -10,7 +10,8 @@
     "wrong": "Sai mật khẩu, thử lại nhé.",
     "rateLimited": "Sai quá nhiều lần. Thử lại sau {minutes, plural, other {# phút}}.",
     "rateLimitedUnknown": "Sai quá nhiều lần. Thử lại sau ít phút.",
-    "failed": "Không đăng nhập được, thử lại nhé."
+    "failed": "Không đăng nhập được, thử lại nhé.",
+    "or": "hoặc"
   },
   "logout": {
     "button": "Đăng xuất",
@@ -80,6 +81,8 @@
     "catchphrase": "Câu cửa miệng",
     "note": "Ghi chú",
     "noteHint": "Chỉ admin thấy, vd. bạn của ai.",
+    "email": "Email Google",
+    "emailHint": "Để người này đăng nhập bằng Google và tự tạo trận của mình. Chỉ admin thấy.",
     "kind": "Loại",
     "kindMember": "Thành viên",
     "kindGuest": "Khách",
@@ -100,6 +103,7 @@
       "ballNumber": "Số bi là số nguyên từ 1 đến 15.",
       "catchphrase": "Câu cửa miệng tối đa 120 ký tự.",
       "note": "Ghi chú tối đa 280 ký tự.",
+      "email": "Email chưa đúng dạng.",
       "active": "Trạng thái không hợp lệ."
     }
   },
@@ -124,7 +128,7 @@
   "errors": {
     "unauthenticated": "Phiên đăng nhập đã hết, đăng nhập lại nhé.",
     "invalid_body": "Dữ liệu chưa hợp lệ, kiểm tra lại các ô.",
-    "conflict": "Slug này đã có người dùng, chọn slug khác.",
+    "conflict": "Slug hoặc email này đã có người dùng, chọn cái khác.",
     "not_found": "Không tìm thấy, có thể đã bị xóa.",
     "internal": "Có lỗi, thử lại nhé."
   }

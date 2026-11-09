@@ -10,6 +10,8 @@ import { Toaster } from "sonner";
 
 import { AppShell, MatchArt, toMatchStrokes } from "@/features/shell";
 import { routing } from "@/i18n/routing";
+import { googleConfigured } from "@/server/auth/google";
+import { readPlayer } from "@/server/auth/player-session";
 import { isAdmin } from "@/server/auth/session";
 import { findMatches } from "@/server/matches/repository";
 
@@ -67,7 +69,7 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
-  const admin = await isAdmin();
+  const [admin, member] = await Promise.all([isAdmin(), readPlayer()]);
 
   return (
     <html lang={locale} className={`${shoulders.variable} ${beVietnam.variable}`}>
@@ -75,6 +77,8 @@ export default async function LocaleLayout({
         <NextIntlClientProvider>
           <AppShell
             admin={admin}
+            member={member?.player ?? null}
+            googleEnabled={googleConfigured()}
             art={
               <Suspense>
                 <RecentMatchArt />

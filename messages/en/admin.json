@@ -10,7 +10,8 @@
     "wrong": "Wrong password, try again.",
     "rateLimited": "Too many wrong tries. Try again in {minutes, plural, one {# minute} other {# minutes}}.",
     "rateLimitedUnknown": "Too many wrong tries. Try again in a few minutes.",
-    "failed": "Could not log in, please try again."
+    "failed": "Could not log in, please try again.",
+    "or": "or"
   },
   "logout": {
     "button": "Log out",
@@ -80,6 +81,8 @@
     "catchphrase": "Catchphrase",
     "note": "Note",
     "noteHint": "Admin only, e.g. who brought them along.",
+    "email": "Google email",
+    "emailHint": "Lets this person sign in with Google and create their own matches. Admin only.",
     "kind": "Kind",
     "kindMember": "Member",
     "kindGuest": "Guest",
@@ -100,6 +103,7 @@
       "ballNumber": "Ball number is a whole number from 1 to 15.",
       "catchphrase": "Catchphrase is at most 120 characters.",
       "note": "Note is at most 280 characters.",
+      "email": "That is not a valid email.",
       "active": "Invalid status."
     }
   },
@@ -124,7 +128,7 @@
   "errors": {
     "unauthenticated": "Your session expired, please log in again.",
     "invalid_body": "Some fields are not valid, check them.",
-    "conflict": "That slug is already taken, pick another.",
+    "conflict": "That slug or email is already taken, pick another.",
     "not_found": "Not found, it may have been deleted.",
     "internal": "Something went wrong, try again."
   }

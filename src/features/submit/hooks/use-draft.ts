@@ -2,11 +2,8 @@ import { useMemo, useState } from "react";
 
 import type { GameType, PairingFormat } from "@/lib/domain";
 import type { PlayerRef } from "@/server/matches/schema";
-import type { SubmissionInput } from "@/server/submissions/schema";
 
 import {
-  emptyDraft,
-  fromInput,
   MAX_BILL,
   MAX_SCORE,
   makeNewGuest,
@@ -26,8 +23,8 @@ const bump = (value: number | null, delta: 1 | -1): number | null => {
 };
 
 /** The draft of one match and every way the scene changes it. Each setter takes the latest draft, so a held button never reads a stale one. */
-export function useDraft(roster: PlayerRef[], initial?: SubmissionInput) {
-  const [draft, setDraft] = useState<Draft>(() => (initial ? fromInput(initial) : emptyDraft()));
+export function useDraft(roster: PlayerRef[], initial: Draft, blank: Draft) {
+  const [draft, setDraft] = useState<Draft>(initial);
   const [target, setTarget] = useState<number | null>(null);
   const people = useMemo(() => [...roster, ...draft.newGuests], [roster, draft.newGuests]);
   const patch = (changes: Partial<Draft>) => setDraft((d) => ({ ...d, ...changes }));
@@ -70,9 +67,8 @@ export function useDraft(roster: PlayerRef[], initial?: SubmissionInput) {
     addBill: (amount: number) => setDraft((d) => ({ ...d, bill: Math.min(MAX_BILL, (d.bill ?? 0) + amount) })),
     setBill: (bill: number | null) => patch({ bill }),
     setNote: (note: string) => patch({ note }),
-    setSubmitter: (submitter: string) => patch({ submitter }),
     reset: () => {
-      setDraft(emptyDraft());
+      setDraft(blank);
       setTarget(null);
     },
   };

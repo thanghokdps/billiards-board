@@ -51,6 +51,16 @@
       "blowout": "Blowout"
     }
   },
+  "temp": {
+    "title": "Up next · Awaiting approval",
+    "schedule": "Schedule a match",
+    "scheduled": "Up next",
+    "scheduledAt": "Up next · {when}",
+    "pending": "Awaiting approval",
+    "enterResult": "Enter result",
+    "editResult": "Edit result",
+    "empty": "Nothing waiting yet. Schedule a match."
+  },
   "wanted": {
     "title": "Wanted",
     "badge": "Wanted",

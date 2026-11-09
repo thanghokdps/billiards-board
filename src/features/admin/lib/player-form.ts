@@ -15,6 +15,7 @@ export interface PlayerFormState {
   active: boolean;
   guest: boolean;
   note: string;
+  email: string;
   avatarUrl: string | null;
 }
 
@@ -24,6 +25,7 @@ export function initialForm(player: AdminPlayer | null, nextBallNumber: number, 
   return {
     guest: player?.guest ?? newGuest,
     note: player?.note ?? "",
+    email: player?.email ?? "",
     name: player?.name ?? "",
     slug: player?.slug ?? "",
     nickname: player?.nickname ?? "",
@@ -75,6 +77,8 @@ export function toInput(form: PlayerFormState): PlayerInput {
     active: form.active,
     guest: form.guest,
     note: form.note.trim() || null,
+    // A guest never signs in.
+    email: form.guest ? null : form.email.trim() || null,
   };
 }
 

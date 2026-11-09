@@ -3,16 +3,19 @@ import "server-only";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { readPlayerFromRequest, type SignedInPlayer } from "@/server/auth/player-session";
 import { isAdminRequest } from "@/server/auth/session";
 
 export type ErrorCode =
-  "invalid_body" | "unauthenticated" | "not_found" | "conflict" | "too_large" | "rate_limited" | "internal";
+  "invalid_body" | "unauthenticated" | "not_found" | "conflict" | "busy" | "too_large" | "rate_limited" | "internal";
 
 const STATUS: Record<ErrorCode, number> = {
   invalid_body: 400,
   unauthenticated: 401,
   not_found: 404,
   conflict: 409,
+  /** A seated member already has an unplayed temp match. */
+  busy: 409,
   too_large: 413,
   rate_limited: 429,
   internal: 500,
@@ -60,6 +63,13 @@ export function route<C>(handler: Handler<C>): Handler<C> {
       return NextResponse.json({ error: "internal" }, { status: 500 });
     }
   };
+}
+
+/** Member routes: 401 unless the player cookie verifies and the member still may sign in. */
+export async function requirePlayer(request: Request): Promise<SignedInPlayer> {
+  const signedIn = await readPlayerFromRequest(request);
+  if (!signedIn) throw new HttpError("unauthenticated");
+  return signedIn;
 }
 
 /** Admin-only routes: 401 unless the signed admin cookie verifies. */

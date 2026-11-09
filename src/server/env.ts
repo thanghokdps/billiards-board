@@ -19,6 +19,20 @@ export const serverEnvSchema = z
     /** HMAC key for the admin session cookie. */
     SESSION_SECRET: z.string().min(32, "SESSION_SECRET must be at least 32 characters"),
 
+    /** Google sign-in for members; both unset hides the button. */
+    GOOGLE_CLIENT_ID: nonEmpty.optional(),
+    GOOGLE_CLIENT_SECRET: nonEmpty.optional(),
+    /** Comma-separated Google emails that also get the admin cookie on sign-in. */
+    ADMIN_EMAILS: z
+      .string()
+      .optional()
+      .transform((v) =>
+        (v ?? "")
+          .split(",")
+          .map((e) => e.trim().toLowerCase())
+          .filter(Boolean),
+      ),
+
     APP_TIMEZONE: nonEmpty.default("Asia/Ho_Chi_Minh"),
 
     TRACING_PROVIDER: z.enum(["none", "langsmith"]).default("none"),
@@ -35,6 +49,13 @@ export const serverEnvSchema = z
     PII_REDACTION: z.enum(["on", "off"]).default("on"),
   })
   .superRefine((env, ctx) => {
+    if (!env.GOOGLE_CLIENT_ID !== !env.GOOGLE_CLIENT_SECRET) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["GOOGLE_CLIENT_ID"],
+        message: "set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET together",
+      });
+    }
     if (env.TRACING_PROVIDER === "langsmith" && !env.LANGSMITH_API_KEY) {
       ctx.addIssue({ code: "custom", path: ["TRACING_PROVIDER"], message: "langsmith needs LANGSMITH_API_KEY" });
     }

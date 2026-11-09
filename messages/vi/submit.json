@@ -76,26 +76,48 @@
   },
   "note": {
     "label": "Ghi chú (không bắt buộc)",
-    "placeholder": "Vd. thua kèo cuối, ăn bi đen",
-    "submitter": "Tên bạn",
-    "submitterPlaceholder": "Để admin biết ai gửi",
-    "submitterHint": "Không bắt buộc."
+    "placeholder": "Vd. thua kèo cuối, ăn bi đen"
   },
   "send": {
-    "send": "Gửi cho admin",
+    "send": "Gửi kết quả",
     "approve": "Lưu và duyệt",
     "sending": "Đang gửi…",
     "hint": "Admin duyệt xong trận mới lên bảng xếp hạng.",
-    "hintEdit": "Lưu sẽ duyệt trận này luôn.",
-    "errors": {
-      "rate_limited": "Gửi nhiều quá rồi, thử lại sau {minutes, plural, other {# phút}} nhé.",
-      "too_large": "Dữ liệu quá dài, rút gọn ghi chú rồi gửi lại.",
-      "invalid_body": "Trận này chưa hợp lệ, kiểm tra lại các bước đang đánh dấu đỏ.",
-      "conflict": "Trận này đã được xử lý rồi.",
-      "not_found": "Không tìm thấy trận này, có thể đã bị xóa.",
-      "unauthenticated": "Phiên đăng nhập đã hết, đăng nhập lại nhé.",
-      "failed": "Chưa gửi được, thử lại nhé."
-    }
+    "hintEdit": "Lưu sẽ duyệt trận này luôn."
+  },
+  "errors": {
+    "busy": "Bạn hoặc một người trong trận đang có trận chưa nhập kết quả. Nhập kết quả hoặc huỷ trận đó trước nhé.",
+    "busyLink": "Xem trận đang chờ",
+    "too_large": "Dữ liệu quá dài, rút gọn ghi chú rồi gửi lại.",
+    "invalid_body": "Trận này chưa hợp lệ, kiểm tra lại các bước đang đánh dấu đỏ.",
+    "conflict": "Trận này đã được xử lý rồi.",
+    "not_found": "Không tìm thấy trận này, có thể đã bị huỷ.",
+    "unauthenticated": "Phiên đăng nhập đã hết, đăng nhập lại nhé.",
+    "failed": "Chưa gửi được, thử lại nhé."
+  },
+  "schedule": {
+    "title": "Lên lịch, nhập kết quả sau",
+    "hint": "Đủ người rồi thì lên lịch trước, đánh xong ai trong trận cũng nhập kết quả được.",
+    "at": "Giờ đánh",
+    "atHint": "Không bắt buộc.",
+    "submit": "Lên lịch",
+    "save": "Lưu lịch",
+    "saving": "Đang lưu…",
+    "done": "Đã lên lịch, trận hiện ở trang chủ.",
+    "saved": "Đã lưu lịch."
+  },
+  "signIn": {
+    "title": "Đăng nhập để ghi trận",
+    "body": "Chỉ thành viên mới tạo được trận, và chỉ trận có mình trong đó.",
+    "unavailable": "Đăng nhập Google chưa được bật, nhờ admin ghi trận giúp nhé."
+  },
+  "cancel": {
+    "open": "Huỷ trận",
+    "title": "Huỷ trận này?",
+    "body": "Trận chưa đánh sẽ biến mất khỏi trang chủ, và mọi người trong trận lại tạo được trận mới.",
+    "keep": "Giữ lại",
+    "confirm": "Huỷ trận",
+    "done": "Đã huỷ trận."
   },
   "sent": {
     "title": "Chờ admin duyệt",
@@ -111,6 +133,7 @@
     "unknownPlayer": "Có người chơi không còn trong danh sách, chọn lại nhé.",
     "duplicate": "Một người xuất hiện hai lần trong trận.",
     "scoreOrder": "Điểm số không khớp với người thắng.",
+    "notSeated": "Bạn phải là một người chơi trong trận này.",
     "invalid": "Mục này chưa hợp lệ, kiểm tra lại nhé."
   }
 }

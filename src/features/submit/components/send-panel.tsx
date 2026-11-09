@@ -4,11 +4,10 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import type { PlayerRef } from "@/server/matches/schema";
 
+import { FailureAlert } from "./failure-alert";
 import { MatchStrip } from "./match-strip";
 import type { Failure } from "../hooks/use-submit";
 import type { Draft } from "../lib/draft";
-
-const KNOWN_ERRORS = ["rate_limited", "too_large", "invalid_body", "conflict", "not_found", "unauthenticated"];
 
 interface SendPanelProps {
   draft: Draft;
@@ -16,7 +15,7 @@ interface SendPanelProps {
   failure: Failure | null;
   sending: boolean;
   blocked: boolean;
-  /** The admin's Edit saves and approves; a viewer only sends. */
+  /** The admin's Edit saves and approves; a member only sends. */
   edit: boolean;
   disabled: boolean;
   onSend: () => void;
@@ -25,15 +24,10 @@ interface SendPanelProps {
 /** Step 6: the match in one glance, the send button, and why the last send failed. */
 export function SendPanel({ draft, sides, failure, sending, blocked, edit, disabled, onSend }: SendPanelProps) {
   const t = useTranslations("submit.send");
-  const error = failure && (KNOWN_ERRORS.includes(failure.code) ? failure.code : "failed");
   return (
     <div className="space-y-3">
       <MatchStrip draft={draft} sides={sides} />
-      {error && (
-        <p role="alert" className="rounded-md border border-loss/50 bg-loss/10 px-3 py-2 text-sm text-loss">
-          {t(`errors.${error}`, { minutes: failure?.waitMinutes ?? 1 })}
-        </p>
-      )}
+      {failure?.via === "send" && <FailureAlert failure={failure} />}
       <Button
         size="lg"
         className="w-full"

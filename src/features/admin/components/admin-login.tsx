@@ -8,6 +8,7 @@ import { Ball } from "@/components/ui/ball";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/field";
+import { GoogleSignIn } from "@/features/auth";
 import { useRouter } from "@/i18n/navigation";
 import { prefersReducedMotion } from "@/lib/motion";
 
@@ -20,7 +21,7 @@ const minutesFor = (seconds: number) => Math.max(1, Math.ceil(seconds / 60));
 const FULL_ROLL_CHARS = 12;
 const SHAKE = [0, -8, 8, -5, 5, 0].map((x) => ({ transform: `translateX(${x}px)` }));
 
-export function AdminLogin() {
+export function AdminLogin({ googleEnabled }: { googleEnabled: boolean }) {
   const t = useTranslations("admin.login");
   const router = useRouter();
   const [password, setPassword] = useState("");
@@ -98,6 +99,16 @@ export function AdminLogin() {
               {loading ? t("submitting") : t("submit")}
             </Button>
           </form>
+          {googleEnabled && (
+            <div className="space-y-3">
+              <p aria-hidden className="flex items-center gap-3 text-xs text-ivory-faint">
+                <span className="h-px flex-1 bg-line" />
+                {t("or")}
+                <span className="h-px flex-1 bg-line" />
+              </p>
+              <GoogleSignIn variant="outline" className="w-full" />
+            </div>
+          )}
         </CardBody>
       </Card>
     </div>

@@ -8,7 +8,7 @@
 
 ## Pages (`src/app/[locale]/`, public unless noted)
 
-`/` today's table · `/history` · `/leaderboard` · `/players/[slug]` (FIFA card) · `/money` · `/hall-of-fame` · `/rivalry` · `/wheel` · `/submit` (anyone proposes a match on the 3D table; the admin approves) · `/wrapped`, `/wrapped/[slug]` · `/tv` · `/audit` · `/admin` (login; pending submissions with approve / edit / reject, players and settings)
+`/` today's table · `/history` · `/leaderboard` · `/players/[slug]` (FIFA card) · `/money` · `/hall-of-fame` · `/rivalry` · `/wheel` · `/submit` (signed-in member schedules or records a match they play in, on the 3D table; `?id=` enters the result of a temp match; the admin approves) · `/wrapped`, `/wrapped/[slug]` · `/tv` · `/audit` · `/admin` (login; pending submissions with approve / edit / reject, players and settings)
 
 ## API routes (`src/app/api/`)
 
@@ -19,7 +19,11 @@
 | `POST`/`DELETE /api/admin/matches/[id]/highlights[/hid]` | admin cookie | highlight photos |
 | `/api/admin/players[/id]`, `POST /api/admin/media` | admin cookie | players, uploads (bytea) |
 | `POST /api/admin/guests` | admin cookie | quick-add a named guest from the wheel (`{ name }` → bare `PlayerRef`, idempotent by name, 409 on a member's name) |
-| `POST /api/submissions` | public; 5 per 15 min per hashed IP (429 + `retry-after`), body ≤ 8 KB (413), honeypot `website` (200, stores nothing) | a viewer proposes a match → `match_submissions` row `pending`; nothing reaches `matches` or `players` until approved |
+| `GET /api/auth/google?returnTo=`, `GET /api/auth/google/callback` | public; 404 unless `GOOGLE_CLIENT_ID`/`SECRET` set | OAuth code + PKCE; state in signed `anbill_oauth` (10 min); a member whose `players.email` matches gets `anbill_player`, an `ADMIN_EMAILS` email also gets the admin cookie; failures land on `returnTo?login=failed|denied` |
+| `POST /api/auth/logout` | none | clears member + admin cookies |
+| `POST /api/my/matches` | member cookie | schedule a temp match the caller plays in → `match_submissions` row `scheduled`; 409 `busy` if any seated member already has an unplayed one (checked under an advisory lock) |
+| `GET`/`PATCH /api/my/matches/[id]` | member cookie, seated (else 404) | read for prefill / change players, format, time while `scheduled` |
+| `POST /api/my/matches/[id]/result`, `…/cancel` | member cookie, seated (else 404) | result → `pending` (also fixes a pending one); cancel only while `scheduled` (409 otherwise) |
 | `GET /api/admin/submissions` | admin cookie | `{ submissions }`: pending proposals (≤ 50, newest first) with seats resolved |
 | `POST /api/admin/submissions/[id]/approve` | admin cookie | `{ edited?, via? }` → `{ matchId, submission }`; creates typed guests, then the match (key `sub-<id>`), audited; repeat returns the same match, 409 if rejected |
 | `POST /api/admin/submissions/[id]/reject` | admin cookie | `{ via? }` → `{ submission }`, audited; 409 if approved |

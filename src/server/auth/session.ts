@@ -9,11 +9,12 @@ import { getServerEnv } from "@/server/env";
 export const ADMIN_COOKIE = "anbill_admin";
 const MAX_AGE_SECONDS = 30 * 24 * 60 * 60;
 
-function sign(payload: string): string {
+/** HMAC with SESSION_SECRET; every signed cookie prefixes its payload (`admin:`, `player:`, `oauth:`) so one can't pass as another. */
+export function sign(payload: string): string {
   return createHmac("sha256", getServerEnv().SESSION_SECRET).update(payload).digest("base64url");
 }
 
-function safeEqual(a: string, b: string): boolean {
+export function safeEqual(a: string, b: string): boolean {
   const left = Buffer.from(a);
   const right = Buffer.from(b);
   return left.length === right.length && timingSafeEqual(left, right);

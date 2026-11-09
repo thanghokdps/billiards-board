@@ -161,6 +161,20 @@ export function PlayerForm({ player, nextBallNumber, newGuest, onClose }: Player
             />
           </FormField>
 
+          {!form.guest && (
+            <FormField id="player-email" label={t("form.email")} hint={t("form.emailHint")} error={error("email")}>
+              <Input
+                id="player-email"
+                type="email"
+                autoComplete="off"
+                value={form.email}
+                maxLength={120}
+                onChange={(e) => set("email", e.target.value)}
+                {...describedBy("player-email", true, error("email"))}
+              />
+            </FormField>
+          )}
+
           <FormField id="player-note" label={t("form.note")} hint={t("form.noteHint")} error={error("note")}>
             <Textarea
               id="player-note"

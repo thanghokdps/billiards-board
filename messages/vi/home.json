@@ -51,6 +51,16 @@
       "blowout": "Thắng đậm"
     }
   },
+  "temp": {
+    "title": "Sắp đấu · Chờ duyệt",
+    "schedule": "Lên lịch trận",
+    "scheduled": "Sắp đấu",
+    "scheduledAt": "Sắp đấu · {when}",
+    "pending": "Chờ duyệt",
+    "enterResult": "Nhập kết quả",
+    "editResult": "Sửa kết quả",
+    "empty": "Chưa có trận nào đang chờ. Lên lịch một trận đi."
+  },
   "wanted": {
     "title": "Truy nã",
     "badge": "Truy nã",

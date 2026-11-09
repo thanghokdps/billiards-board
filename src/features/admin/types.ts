@@ -13,4 +13,6 @@ export interface AdminPlayer {
   guest: boolean;
   /** Admin-only text about a guest (or anyone); never sent to public pages. */
   note: string | null;
+  /** Google sign-in email; admin page only. */
+  email: string | null;
 }

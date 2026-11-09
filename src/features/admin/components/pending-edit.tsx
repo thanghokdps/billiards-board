@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 
 import { Sheet } from "@/components/ui/sheet";
 import { submissionsApi } from "@/features/submissions";
-import { SubmitScene } from "@/features/submit";
+import { fromInput, SubmitScene } from "@/features/submit";
 import { useRouter } from "@/i18n/navigation";
 import type { PlayerRef } from "@/server/matches/schema";
 import type { SubmissionView } from "@/server/submissions/schema";
@@ -26,7 +26,8 @@ export function PendingEdit({ submission, roster, onClose }: PendingEditProps) {
         <SubmitScene
           roster={roster}
           mode="edit"
-          initial={submission.input}
+          initial={fromInput(submission.input)}
+          start="send"
           onSubmit={async (edited) => {
             await submissionsApi.approve(submission.id, { edited, via: "ui" });
           }}
